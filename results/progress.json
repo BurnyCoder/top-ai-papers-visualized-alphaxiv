@@ -1,11 +1,12 @@
 {
   "snapshot": "2026-11-26-over-20",
-  "stage": "Primary layout complete",
-  "done": 1,
-  "total": 1,
-  "elapsed_seconds": 0.0,
-  "updated_at": "2026-11-26T13:24:32+00:00",
+  "stage": "Complete",
+  "done": 4,
+  "total": 4,
+  "elapsed_seconds": 38.0,
+  "updated_at": "2026-11-26T13:37:18+00:00",
   "papers": 36276,
   "clusters": 313,
-  "unassigned": 13787
+  "recall_at_10": 0.12868011908699967,
+  "coverage": "verified"
 }

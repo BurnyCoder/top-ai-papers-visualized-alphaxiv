@@ -159,3 +159,17 @@ The literature review, state-of-the-art review, preregistration and run matrix a
 - 2026-11-26T13:26:43+00:00 · 2026-11-26-over-20 · Luna cluster names · 169/313 name=Mathematical theory of deep learning, api_reserved_usd=11.124693, api_limit_usd=50.0
 
 - 2026-11-26T13:27:34+00:00 · 2026-11-26-over-20 · Luna cluster names · 313/313 name=Tactile-enhanced vision-language-action manipulation, api_reserved_usd=14.437209, api_limit_usd=50.0
+
+- 2026-11-26T13:28:52+00:00 · 2026-11-26-over-20 · Seed evaluation · 1/10 seed=42, recall_at_10=0.1287
+
+- 2026-11-26T13:32:16+00:00 · 2026-11-26-over-20 · Seed evaluation · 2/10 seed=43, recall_at_10=0.1288
+
+- 2026-11-26T13:34:25+00:00 · 2026-11-26-over-20 · Seed evaluation · 5/10 seed=46, recall_at_10=0.127
+
+- 2026-11-26T13:36:36+00:00 · 2026-11-26-over-20 · Seed evaluation · 8/10 seed=49, recall_at_10=0.1285
+
+- 2026-11-26T13:36:37+00:00 · 2026-11-26-over-20 · Seed evaluation · 10/10 seed=51, recall_at_10=0.1273
+
+- 2026-11-26T13:36:47+00:00 · 2026-11-26-over-20 · Offline build · 0/4
+
+- 2026-11-26T13:37:18+00:00 · 2026-11-26-over-20 · Complete · 4/4 papers=36276, clusters=313, recall_at_10=0.12868011908699967, coverage=verified
