@@ -1,0 +1,35 @@
+{
+  "cap_usd": 50.0,
+  "estimated_usd": 2.18907091,
+  "estimated_by_phase_usd": {
+    "embeddings": 2.18907091,
+    "labels": 0.0
+  },
+  "reserved_usd": 4.209947,
+  "attempted_requests": 506,
+  "confirmed_receipts": 506,
+  "unconfirmed_attempts": 0,
+  "unconfirmed_bound_usd": 0.0,
+  "rate_card_usd_per_million": {
+    "embedding": 0.13,
+    "input": 0.1,
+    "cached": 0.01,
+    "write_30m": 0.125,
+    "write_12h": 0.25,
+    "output": 0.5
+  },
+  "reservation_rates_usd_per_million": {
+    "embeddings": [
+      0.25,
+      0.0
+    ],
+    "labels": [
+      0.5,
+      1.0
+    ]
+  },
+  "pricing_source": "https://developers.openai.com/api/docs/pricing",
+  "pricing_date": "2026-11-26",
+  "feed_access": "anonymous metadata",
+  "currency": "USD"
+}

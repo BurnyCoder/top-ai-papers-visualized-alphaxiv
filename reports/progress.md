@@ -211,3 +211,23 @@ The literature review, state-of-the-art review, preregistration and run matrix a
 - 2026-11-26T14:26:40+00:00 · 2026-11-26-over-10 · Verify tied ranks · pages of 125 · 100980/101003 width=191, scores_remaining=[13, 16, 17]
 
 - 2026-11-26T14:27:25+00:00 · 2026-11-26-over-10 · Verify tied ranks · pages of 125 · 101003/101003 width=157, scores_remaining=[]
+
+- 2026-11-26T14:30:04+00:00 · 2026-11-26-over-10 · OpenAI embeddings · 36275/100941 model=text-embedding-3-large, cache_hits=36275
+
+- 2026-11-26T14:31:05+00:00 · 2026-11-26-over-10 · OpenAI embeddings · 42291/100941 request_tokens=31760, cache_hits=36275, api_reserved_usd=0.352521, api_limit_usd=50.0
+
+- 2026-11-26T14:32:05+00:00 · 2026-11-26-over-10 · OpenAI embeddings · 49971/100941 request_tokens=33964, cache_hits=36275, api_reserved_usd=0.846203, api_limit_usd=50.0
+
+- 2026-11-26T14:33:06+00:00 · 2026-11-26-over-10 · OpenAI embeddings · 57523/100941 request_tokens=34302, cache_hits=36275, api_reserved_usd=1.340239, api_limit_usd=50.0
+
+- 2026-11-26T14:34:06+00:00 · 2026-11-26-over-10 · OpenAI embeddings · 65331/100941 request_tokens=32940, cache_hits=36275, api_reserved_usd=1.842617, api_limit_usd=50.0
+
+- 2026-11-26T14:35:07+00:00 · 2026-11-26-over-10 · OpenAI embeddings · 73011/100941 request_tokens=33180, cache_hits=36275, api_reserved_usd=2.337181, api_limit_usd=50.0
+
+- 2026-11-26T14:36:07+00:00 · 2026-11-26-over-10 · OpenAI embeddings · 80819/100941 request_tokens=33109, cache_hits=36275, api_reserved_usd=2.848093, api_limit_usd=50.0
+
+- 2026-11-26T14:37:08+00:00 · 2026-11-26-over-10 · OpenAI embeddings · 88627/100941 request_tokens=33950, cache_hits=36275, api_reserved_usd=3.357978, api_limit_usd=50.0
+
+- 2026-11-26T14:38:09+00:00 · 2026-11-26-over-10 · OpenAI embeddings · 96307/100941 request_tokens=34257, cache_hits=36275, api_reserved_usd=3.881218, api_limit_usd=50.0
+
+- 2026-11-26T14:38:46+00:00 · 2026-11-26-over-10 · OpenAI embeddings · 100941/100941 request_tokens=7982, cache_hits=36275, api_reserved_usd=4.209947, api_limit_usd=50.0

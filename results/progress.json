@@ -1,10 +1,13 @@
 {
   "snapshot": "2026-11-26-over-10",
-  "stage": "Verify tied ranks · pages of 125",
-  "done": 101003,
-  "total": 101003,
-  "elapsed_seconds": 1426.2,
-  "updated_at": "2026-11-26T14:27:25+00:00",
-  "width": 157,
-  "scores_remaining": []
+  "stage": "OpenAI embeddings",
+  "done": 100941,
+  "total": 100941,
+  "elapsed_seconds": 530.2,
+  "updated_at": "2026-11-26T14:38:46+00:00",
+  "request_tokens": 7982,
+  "cache_hits": 36275,
+  "api_reserved_usd": 4.209947,
+  "api_limit_usd": 50.0,
+  "estimated_stage_seconds_left": 0
 }

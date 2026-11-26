@@ -1,0 +1,11 @@
+{
+  "model": "text-embedding-3-large",
+  "dimensions": 3072,
+  "input_tokens": 26626493,
+  "rows": 100942,
+  "cache_hits_at_start": 36275,
+  "distinct_inputs": 100941,
+  "new_inputs": 64666,
+  "ordered_input_sha256": "e7ef86130686a0c4327e90dc4a4f9c81c1f04e0b37ec8f30d98bee574b7e01f5",
+  "vectors_sha256": "714a20cfa667810d0dbd4b0ea073e31825be9c506ce986d90ba56f6ea55f5f5b"
+}
