@@ -137,3 +137,13 @@ The literature review, state-of-the-art review, preregistration and run matrix a
 - 2026-11-26T13:08:46+00:00 · 2026-11-26-over-20 · Verify tied ranks · pages of 200 · 36262/36329 outstanding=67, scores_remaining=[21, 22, 23, 24, 25, 26, 28], sources_checked=35
 
 - 2026-11-26T13:09:14+00:00 · 2026-11-26-over-20 · Verify tied ranks · pages of 200 · 36329/36329 width=173, scores_remaining=[]
+
+- 2026-11-26T13:10:17+00:00 · 2026-11-26-over-20 · OpenAI embeddings · 10139/36275 model=text-embedding-3-large, cache_hits=10139
+
+- 2026-11-26T13:11:17+00:00 · 2026-11-26-over-20 · OpenAI embeddings · 16795/36275 request_tokens=33335, cache_hits=10139, api_reserved_usd=1.732266, api_limit_usd=50.0
+
+- 2026-11-26T13:12:18+00:00 · 2026-11-26-over-20 · OpenAI embeddings · 24731/36275 request_tokens=35719, cache_hits=10139, api_reserved_usd=3.833219, api_limit_usd=50.0
+
+- 2026-11-26T13:13:18+00:00 · 2026-11-26-over-20 · OpenAI embeddings · 31771/36275 request_tokens=34675, cache_hits=10139, api_reserved_usd=5.718284, api_limit_usd=50.0
+
+- 2026-11-26T13:13:55+00:00 · 2026-11-26-over-20 · OpenAI embeddings · 36275/36275 request_tokens=7391, cache_hits=10139, api_reserved_usd=7.009539, api_limit_usd=50.0
