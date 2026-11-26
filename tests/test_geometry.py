@@ -28,6 +28,20 @@ def test_umap_graph_and_recommendations_use_the_same_double_precision_ranks():
     assert np.all(np.diff(dist,axis=1)>=0)
 
 
+def test_independent_cpu_audit_preserves_order_at_a_tie_and_resumes(tmp_path):
+    import runpy
+    from atlas.io import file_hash, save_json
+    from atlas.geometry import exact_graph
+    vectors=np.ones((35,8),dtype=np.float32)
+    vectors[17,3]+=2**-18
+    path=tmp_path/"embeddings.npy";np.save(path,vectors)
+    save_json(tmp_path/"embedding-info.json",{"vectors_sha256":file_hash(path)})
+    audit=runpy.run_path("scripts/audit_release.py")["independent_neighbors"]
+    expected=exact_graph(vectors,30)[0][:,1:11]
+    np.testing.assert_array_equal(audit(tmp_path),expected)
+    np.testing.assert_array_equal(audit(tmp_path),expected)
+
+
 def test_reference_recall_and_multitag_pairs():
     xy = np.column_stack((np.arange(14),np.zeros(14)))
     d = abs(xy[:,0,None]-xy[:,0])

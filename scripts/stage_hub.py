@@ -20,7 +20,11 @@ def main():
     for name in ("manifest.json","papers.jsonl","papers.jsonl.gz","boundary-probes.json","embeddings.npy","embedding-info.json","geometry.npz","seed-layouts.npz",
                  "labels.json","label-traces.jsonl","api-usage.jsonl","evaluation.json","papers.parquet","checksums.json","audit.json","comparison.json",
                  "budget.json","budget-preflight.json","budget-reservations.jsonl",*(f.name for f in source.glob("rank-certificate-*.json"))):
-        if (source/name).is_file():shutil.copyfile(source/name,out/name)
+        path=source/name
+        if path.is_file():
+            dest=out/name
+            if not dest.exists() or (path.stat().st_size,path.stat().st_mtime_ns)!=(dest.stat().st_size,dest.stat().st_mtime_ns):
+                shutil.copy2(path,dest)
     if (source/"precision-check").exists():
         shutil.copytree(source/"precision-check",out/"precision-check",dirs_exist_ok=True)
     if (source/"evaluation.json").exists() and (source/"papers.parquet").exists():

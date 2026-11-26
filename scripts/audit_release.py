@@ -17,6 +17,36 @@ from atlas.editions import CAPPED, edition_path
 from atlas.catalog import local_catalog
 
 
+def independent_neighbors(folder):
+    """Audit the original vectors by CPU BLAS, preserving completed row blocks across restarts."""
+    digest=read_json(folder/"embedding-info.json")["vectors_sha256"]
+    vectors=np.load(folder/"embeddings.npy",mmap_mode="r")
+    if file_hash(folder/"embeddings.npy")!=digest:raise ValueError("Vector hash differs from the frozen source")
+    work=folder/"work"/"independent-cosine"
+    work.mkdir(parents=True,exist_ok=True)
+    state=work/"progress.json";path=work/"ranks.npy"
+    metadata=read_json(state) if state.exists() else {}
+    resume=path.exists() and metadata.get("source_sha256")==digest
+    done=metadata["rows"] if resume else 0
+    rank=np.lib.format.open_memmap(path,mode="r+" if resume else "w+",dtype="<i4",shape=(len(vectors),10))
+    if done<len(vectors):
+        with threadpool_limits(limits=4):
+            v=normalize(vectors.astype("float64"),copy=False)
+            for start in range(done,len(v),128):
+                stop=min(start+128,len(v))
+                dist=-(v[start:stop] @ v.T)
+                dist[np.arange(stop-start),np.arange(start,stop)]=np.inf
+                for i,row in enumerate(dist):
+                    cutoff=np.partition(row,9)[9]
+                    candidates=np.flatnonzero(row<=cutoff)
+                    rank[start+i]=candidates[np.argsort(row[candidates],kind="stable")[:10]]
+                if stop==len(v) or stop%2048==0:
+                    rank.flush()
+                    save_json(state,dict(source_sha256=digest,rows=stop))
+                    print(f"Independent cosine ranks {stop:,}/{len(v):,}",flush=True)
+    return rank
+
+
 def independent_credit_check(folder,receipts):
     """Reprice full receipts in decimal arithmetic and independently sum the integer ledger."""
     D=Decimal
@@ -96,21 +126,17 @@ def audit(snapshot):
     for filename,digest in read_json(folder/"checksums.json").items():
         assert file_hash(folder/filename)==digest,filename
     # Compute all cosine ranks in float64 using an independent sklearn retrieval implementation.
-    with threadpool_limits(limits=4):
-        v=normalize(vectors.astype("float64"),copy=False)
-        reference=np.empty((len(v),10),dtype=np.int32)
-        for start in range(0,len(v),256):
-            stop=min(start+256,len(v))
-            dist=1-v[start:stop] @ v.T
-            dist[np.arange(stop-start),np.arange(start,stop)]=np.inf
-            if threshold==10:
-                # Enumerating all candidates at or below the tenth distance handles ties exactly.
-                for i,row in enumerate(dist):
-                    cutoff=np.partition(row,9)[9]
-                    candidates=np.flatnonzero(row<=cutoff)
-                    reference[start+i]=candidates[np.argsort(row[candidates],kind="stable")[:10]]
-            else:reference[start:stop]=np.argsort(dist,axis=1,kind="stable")[:,:10]
-        del v
+    if threshold==10:reference=independent_neighbors(folder)
+    else:
+        with threadpool_limits(limits=4):
+            v=normalize(vectors.astype("float64"),copy=False)
+            reference=np.empty((len(v),10),dtype=np.int32)
+            for start in range(0,len(v),256):
+                stop=min(start+256,len(v))
+                dist=1-v[start:stop] @ v.T
+                dist[np.arange(stop-start),np.arange(start,stop)]=np.inf
+                reference[start:stop]=np.argsort(dist,axis=1,kind="stable")[:,:10]
+            del v
     def overlap(a,b):
         return sum(len(set(x).intersection(y)) for x,y in zip(a,b,strict=True))/(10*len(a))
     neighbor_agreement=overlap(reference,geo["neighbors"])
@@ -180,4 +206,5 @@ API keys are read in the local pipeline. Model instructions and paper text remai
 
 
 if __name__=="__main__":
-    audit(sys.argv[1])
+    if "--neighbors-only" in sys.argv[2:]:independent_neighbors(ROOT/"results"/sys.argv[1])
+    else:audit(sys.argv[1])
