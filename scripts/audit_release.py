@@ -5,6 +5,7 @@ import gzip
 import json
 import sys
 from collections import Counter
+from decimal import Decimal
 from pathlib import Path
 import numpy as np
 from scipy import stats
@@ -13,6 +14,32 @@ from sklearn.preprocessing import normalize
 from threadpoolctl import threadpool_limits
 from atlas.io import ROOT, file_hash, papers_at, read_json, save_json
 from atlas.editions import edition_path
+
+
+def independent_credit_check(folder,receipts):
+    """Reprice full receipts in decimal arithmetic and independently sum the integer ledger."""
+    D=Decimal
+    charge=D(0)
+    for r in receipts:
+        u=r["usage"]
+        if r["phase"]=="embeddings":charge+=D(".13")*u["total_tokens"]
+        else:
+            d=u["input_tokens_details"]
+            writes=d.get("cache_write_tokens",0) or 0
+            short=(d.get("cache_write_tokens_details") or {}).get("ttl_30m_tokens",0) or 0
+            # Start at the ordinary input price, then apply cache discounts and write premiums.
+            charge+=(D(".10")*u["input_tokens"]-D(".09")*(d.get("cached_tokens",0) or 0)
+                     +D(".025")*short+D(".15")*(writes-short)+D(".50")*u["output_tokens"])
+    dollars=charge/D(10**6)
+    header,*attempts=map(json.loads,(folder/"budget-reservations.jsonl").read_bytes().splitlines())
+    report=read_json(folder/"budget.json");tickets=[r["reservation"] for r in receipts]
+    assert len(set(tickets))==len(tickets) and set(tickets)<={a["id"] for a in attempts}
+    total=sum(a["reserved_micro_usd"] for a in attempts)
+    assert total<=header["cap_micro_usd"]
+    if read_json(folder/"manifest.json")["threshold_exclusive"]==20:assert header["cap_micro_usd"]<=50*10**6
+    assert D(total)/10**6==D(str(report["reserved_usd"]))
+    assert abs(dollars-D(str(report["estimated_usd"])))<=D(".0000000005")
+    return dict(independent_receipt_cost_usd=float(dollars),api_attempts=len(attempts),api_receipts=len(receipts))
 
 
 def audit(snapshot):
@@ -108,6 +135,12 @@ def audit(snapshot):
                 seed_layouts_rechecked=len(ev["seeds"]),clusters_with_validated_evidence=len(labels),extra_duplicate_names=same_names,
                 embedding_requests=sum(x["phase"]=="embeddings" for x in api),label_requests=sum(x["phase"]=="labels" for x in api),
                 complete_label_responses=len(traces),vector_norm_max_abs_error=float(abs(np.linalg.norm(vectors,axis=1)-1).max()))
+    credit_note=""
+    if (folder/"budget.json").exists():
+        result.update(independent_credit_check(folder,api))
+        credit_note=(f" Decimal repricing of {result['api_receipts']} usage receipts reproduced USD {result['independent_receipt_cost_usd']:.4f}. "
+                     f"The independent sum of all {result['api_attempts']} pre-transmission reservations stayed under the registered cap. "
+                     "[OpenAI standard rates](https://developers.openai.com/api/docs/pricing)")
     save_json(folder/"audit.json",result)
     report=f"""# Release review · {snapshot}
 
@@ -125,7 +158,7 @@ There were {same_names} repeated topic names beyond their first occurrence. The 
 
 ## Engineering checks
 
-API keys are read in the local pipeline. Model instructions and paper text remain outside the static code path. Browser-facing paper text is assigned through textContent. Completed embedding batches and labels survive interruption. Both the raw measurements and the standalone build are versioned. The regression and real-browser checks are documented in the reproduction guide.
+API keys are read in the local pipeline. Model instructions and paper text remain outside the static code path. Browser-facing paper text is assigned through textContent. Completed embedding batches and labels survive interruption. Both the raw measurements and the standalone build are versioned. The regression and real-browser checks are documented in the reproduction guide.{credit_note}
 
 [Raw audit]({folder.relative_to(review,walk_up=True).as_posix()}/audit.json) · [Per-seed results]({folder.relative_to(review,walk_up=True).as_posix()}/evaluation.json) · [Preregistration](../preregistration.md)
 """

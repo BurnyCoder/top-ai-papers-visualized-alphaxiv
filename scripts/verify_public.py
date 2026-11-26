@@ -50,6 +50,7 @@ def main():
     url=PAGES if not edition.parts else PAGES+edition.as_posix()+"/"
     public=read_json(ROOT/"docs"/edition/"atlas.json")
     assets=["atlas.json",public.get("csv","papers.csv"),"paper.pdf","progress.json"]
+    if (ROOT/"docs"/edition/"walkthrough.mp4").exists():assets.append("walkthrough.mp4")
     if "abstract_chunk_size" in public:
         size=public["abstract_chunk_size"]
         assets.extend(f"abstracts/{i//size}.json" for i in range(0,len(public["papers"]),size))
