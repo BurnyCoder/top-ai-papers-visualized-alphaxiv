@@ -91,6 +91,8 @@ def make_paper(path,manifest,evaluation,clusters,figdir):
         evidence=" · ".join(link("https://www.alphaxiv.org/abs/"+i,i) for i in g["evidence"][:2])
         p(escape(g["name"])+f" ({g['count']} papers). "+evidence,"CaptionText")
     p("Scope and limitations","Sub")
+    if threshold==50:
+        p("The two threshold editions use independent layouts. UMAP adjusts its default optimization budget to corpus size, so differences between editions can reflect both the population and the optimizer. "+link("https://umap-learn.readthedocs.io/en/latest/_modules/umap/umap_.html#simplicial_set_embedding","UMAP implementation"))
     p("The census represents public feed membership during the recorded window. Likes condition selection on platform attention. Older papers, topic popularity and exposure can affect inclusion. The analysis is descriptive and transductive. The interval quantifies variation from projection seeds conditional on these inputs. It does not estimate uncertainty across future papers. Hosted model revisions may alter a fresh run, so the exact vectors and returned labels accompany the release.")
     p("Reproduction and review","Sub")
     p("Restore the dated snapshot and run the offline build to reproduce tables, figures and the website. The archive includes checksums, paper metadata, embeddings, coordinates, supporting label IDs and per-seed scores. "+" · ".join([link(HUB,"Dataset and numerical artifacts"),link(GITHUB,"Code and instructions"),link(f"{GITHUB}/blob/main/{protocol_dir}/planned-runs.md","Run matrix")]))

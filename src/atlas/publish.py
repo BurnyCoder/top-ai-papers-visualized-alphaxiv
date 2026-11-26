@@ -106,6 +106,13 @@ def reports(folder,manifest,evaluation,clusters,embedding):
                f"The two dated editions share {comparison['shared']:,} paper groups. "
                f"{comparison['new_only']:,} groups appear only in the expanded edition and "
                f"{comparison['prior_only']:,} appear only in the earlier one.")
+    method_note=""
+    if (folder/"comparison.json").exists():
+        method_note=(f"UMAP's default optimization budget was {comparison['current_layout_epochs']} epochs here and "
+                     f"{comparison['previous_layout_epochs']} in the earlier edition. The rule depends on corpus size. "
+                     "Each edition has an independently fitted coordinate system. Cross-edition differences in recall "
+                     "can reflect the corpus and the optimization budget. "
+                     "[UMAP implementation](https://umap-learn.readthedocs.io/en/latest/_modules/umap/umap_.html#simplicial_set_embedding)")
     examples=sorted((c for g,c in clusters.items() if int(g)>=0),key=lambda c:-c["count"])[:4]
     ex="\n".join(f"- **{c['name']}** ({c['count']} papers). "+", ".join("["+i+"](https://www.alphaxiv.org/abs/"+i+")" for i in c["evidence"]) for c in examples)
     full=f"""# Snapshot summary · {folder.name}
@@ -126,6 +133,8 @@ The table describes seed {r['seed']}. The PCA and shuffled projections retain th
 
 The collection window was {manifest['started_at']} to {manifest['ended_at']}. The independent page sizes were {first['page_size']} and {last['page_size']}, taking {len(first['pages'])} and {len(last['pages'])} pages. The embedding matrix has {embedding['rows']:,} rows and {embedding['dimensions']:,} columns. The inputs contained {embedding['input_tokens']:,} tokens. {manifest['title_only']} papers used title-only input.
 
+{method_note}
+
 [Coverage audit]({data_url}/manifest.json) · [Per-seed results]({data_url}/evaluation.json) · [Research protocol](preregistration.md) · [Published dataset]({HUB})
 """
     exp=report/"experiments"/folder.name;exp.mkdir(parents=True,exist_ok=True)
@@ -144,6 +153,7 @@ The collection window was {manifest['started_at']} to {manifest['ended_at']}. Th
         learning+=(f"\nThe precision audit found a change in the tenth neighbor for {count:,} of {n:,} papers. "
                    "The released recommendations rank the archived vectors in float64. "
                    "[Boundary evidence and correction](../../reviews/precision.md)\n")
+    if method_note:learning+="\n"+method_note+"\n"
     save_bytes(exp/"learnings.md",learning.encode())
     paths=sorted((report/"experiments").glob("*/experiment.md"))
     index="\n".join(f"- [{p.parent.name}]({p.parent.name}/experiment.md) · [Learnings]({p.parent.name}/learnings.md)" for p in paths)
@@ -188,9 +198,12 @@ def build(folder,progress):
         if (prior/"papers.jsonl").exists():
             earlier={p["id"] for p in papers_at(prior)}
             current={p["id"] for p in papers}
+            # The pinned compatibility implementation uses 500 epochs through 10,000 rows, then 200.
             save_json(folder/"comparison.json",dict(previous_snapshot=prior.name,shared=len(earlier&current),
                       new_only=len(current-earlier),prior_only=len(earlier-current),
-                      within_added_band=sum(50<p["likes"]<=100 for p in papers)))
+                      within_added_band=sum(50<p["likes"]<=100 for p in papers),
+                      current_layout_epochs=500 if len(current)<=10000 else 200,
+                      previous_layout_epochs=500 if len(earlier)<=10000 else 200))
     save_bytes(docs/".nojekyll",b"");progress("Offline build",1,4)
     figures(figdir,A,clusters,evaluation,threshold);progress("Offline build",2,4)
     reports(folder,manifest,evaluation,clusters,embedding)
