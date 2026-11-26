@@ -2,6 +2,8 @@
 // The published explorer runs entirely on frozen artifacts. Canvas uses an equal scale on both axes.
 const by = id => document.getElementById(id);
 const canvas = by("canvas"), plot = by("plot"), ctx = canvas.getContext("2d");
+const pointLayer=document.createElement("canvas");
+let paintedView=[];
 const ids = new Map(), filters = ["cluster", "subject", "year", "likes"];
 let papers = [], clusters = {}, filtered = [], filteredSet = new Set(), selected = -1;
 let tab = "topics", rowsShown = 35, hovered = -1, scale = 1, cx = 0, cy = 0;
@@ -55,7 +57,7 @@ function queueDraw() {
   drawing = true;
   requestAnimationFrame(() => { drawing=false; draw(); });
 }
-function draw() {
+function drawPoints(ctx) {
   ctx.clearRect(0,0,width,height);
   ctx.fillStyle="#ccd5c4";
   for(let x=14;x<width;x+=26) for(let y=14;y<height;y+=26) ctx.fillRect(x,y,1,1);
@@ -84,6 +86,16 @@ function draw() {
     ctx.fillStyle="rgba(251,252,245,.89)"; ctx.fillRect(bounds[0],bounds[1],w,18);
     ctx.fillStyle="#224035"; ctx.fillText(name,x,y);
   }
+}
+function draw(){
+  const view=[filtered,cx,cy,scale,width,height,canvas.width,canvas.height];
+  if(view.some((v,i)=>v!==paintedView[i])){
+    pointLayer.width=canvas.width;pointLayer.height=canvas.height;
+    const layer=pointLayer.getContext("2d");
+    layer.setTransform(canvas.width/width,0,0,canvas.height/height,0,0);
+    drawPoints(layer);paintedView=view;
+  }
+  ctx.clearRect(0,0,width,height);ctx.drawImage(pointLayer,0,0,width,height);
   for(const i of [hovered,selected]){
     if(i<0 || !filteredSet.has(i)) continue;
     const [x,y]=toScreen(papers[i]);
