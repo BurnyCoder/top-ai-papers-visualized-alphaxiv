@@ -8,3 +8,5 @@
 6. Regenerate reports and figures, compare exported IDs, inspect the PDF and browser experience, then publish the GitHub Pages site and Hugging Face collection.
 
 [Protocol](preregistration.md) · [Run matrix](planned-runs.md) · [Progress](progress.md)
+
+The over-20 edition repeats the full analysis. Each physical OpenAI request reserves credit before transmission against the requested USD 50 ceiling. Public alphaXiv metadata, the previous embedding cache and local compute reduce incremental costs. Every score with overlapping pagination requires an independently checked rank certificate. [Edition protocol](over-20/preregistration.md) · [Collection amendment](over-20/collection-amendment.md)

@@ -1,6 +1,6 @@
 # Paper Atlas
 
-The **more than 20 likes** edition extends the verified census under a USD 50 API credit ceiling. [Registered protocol](reports/over-20/preregistration.md) · [Run matrix](reports/over-20/planned-runs.md)
+Explore all subjects in the **more than 20 likes** edition. Search by title, author or ID, then select a paper to see its ten closest neighbors in the original embedding space. The edition has a USD 50 API credit ceiling. [Interactive atlas](https://burnycoder.github.io/top-ai-papers-visualized-alphaxiv/over-20/) · [Paper](reports/over-20/paper.pdf) · [Registered protocol](reports/over-20/preregistration.md) · [Collection amendment](reports/over-20/collection-amendment.md) · [Run matrix](reports/over-20/planned-runs.md)
 
 <!-- results-over-20:start -->
 <!-- results-over-20:end -->

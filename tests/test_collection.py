@@ -43,3 +43,15 @@ def test_frozen_census_rejects_another_cutoff(tmp_path):
     (tmp_path/"manifest.json").write_text('{"threshold_exclusive":100}')
     (tmp_path/"papers.jsonl").write_text("")
     with pytest.raises(ValueError,match="different threshold"):collect(tmp_path,lambda *_:None,50)
+
+
+def test_twenty_reconstructs_overlapping_ties_by_score(tmp_path):
+    from atlas.reconcile import census_pass
+    rows=[raw(name,21) for name in "abcde"]+[raw("post",21,blog=True),raw("at",20),raw("under",19)]
+    def fetch(page,size,topic=None):
+        if topic is None and page==1:return rows[0:2]
+        return rows[page*size:(page+1)*size]
+    papers,audit=census_pass(tmp_path,fetch,2,20,lambda *a,**kw:None)
+    assert set(papers)==set("abcde") and audit["global_unique_papers"]==3
+    assert audit["boundary"]["first_at_or_below"]["likes"]==20 and audit["excluded_blogs"]==1
+    assert audit["repeated_pages"]==[1]

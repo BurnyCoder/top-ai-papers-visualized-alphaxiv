@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import logging
 import os
 import tempfile
@@ -59,7 +60,13 @@ def read_json(path):
 
 
 def papers_at(folder):
-    return [json.loads(line) for line in (folder / "papers.jsonl").read_text(encoding="utf-8").splitlines()]
+    with (folder/"papers.jsonl").open(encoding="utf-8") as source:
+        return [json.loads(line) for line in source]
+
+
+def file_hash(path):
+    """Stream large numeric artifacts without duplicating them in memory."""
+    with path.open("rb") as source:return hashlib.file_digest(source,"sha256").hexdigest()
 
 
 def start_log(snapshot):

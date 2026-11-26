@@ -9,12 +9,19 @@ import hashlib
 import json
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timezone
 from .collect import CATEGORIES, paper_record, scan
 from .io import now, save_bytes, save_json
 
 
 def census_pass(folder,fetch,size,threshold,progress):
     root=folder/"work"/f"feed-{size}"
+    root.mkdir(parents=True,exist_ok=True)
+    window=root/"started-at.txt"
+    if not window.exists():
+        old=min((f.stat().st_mtime for f in root.glob("*/*.json.gz")),default=None)
+        first=datetime.fromtimestamp(old,timezone.utc).isoformat(timespec="seconds") if old else now()
+        save_bytes(window,first.encode())
     def cached(page,limit,topic=None):
         key=hashlib.sha256((topic or "").encode()).hexdigest()[:16]
         path=root/key/f"{limit}-{page}.json.gz"
@@ -98,5 +105,6 @@ def census_pass(folder,fetch,size,threshold,progress):
     save_json(folder/f"rank-certificate-{size}.json",certificate)
     if remaining:raise RuntimeError(f"Unresolved global ranks at page size {size}: {dict(remaining)}")
     audit.update(eligible=len(papers),excluded_blogs=len(external),external_entries=sorted(external.values(),key=lambda x:x["id"]),
+                 started_at=window.read_text(),
                  ended_at=now(),rank_certificate=f"rank-certificate-{size}.json")
     return papers,audit

@@ -7,13 +7,14 @@ import warnings
 from collections import Counter
 import numpy as np
 from scipy.spatial.distance import cdist
+from scipy.spatial import cKDTree
 from scipy.stats import t
 from sklearn.cluster import HDBSCAN
 from sklearn.decomposition import PCA
 from sklearn.metrics import adjusted_rand_score
 from threadpoolctl import threadpool_limits
 
-from .io import read_json, save_bytes, save_json
+from .io import LOG, read_json, save_bytes, save_json
 
 SEEDS = tuple(range(42,52))
 
@@ -30,6 +31,18 @@ def load_arrays(path):
         return {key:archive[key] for key in archive.files}
 
 
+def lowest(values,k):
+    """Partial selection with the exact same row-ID tie break as a stable full sort."""
+    split=np.argpartition(values,k-1,axis=1)[:,:k]
+    chosen=np.take_along_axis(values,split,axis=1)
+    last=chosen.max(axis=1,keepdims=True)
+    order=np.lexsort((split,chosen),axis=1)
+    result=np.take_along_axis(split,order,axis=1)
+    boundary=(values==last).sum(axis=1)>(chosen==last).sum(axis=1)
+    for row in np.flatnonzero(boundary):result[row]=np.argsort(values[row],kind="stable")[:k]
+    return result
+
+
 def neighborhood(vectors, count=30):
     """Stable sort by original row (group ID) on exact cosine ties; self is explicit column zero."""
     unit = vectors / np.linalg.norm(vectors,axis=1,keepdims=True)
@@ -41,7 +54,7 @@ def neighborhood(vectors, count=30):
         stop=min(start+256,len(unit))
         dist=np.clip(1-unit[start:stop] @ unit.T,0,2)
         dist[np.arange(stop-start),np.arange(start,stop)]=np.inf
-        other=np.argsort(dist,axis=1,kind="stable")[:,:count-1]
+        other=lowest(dist,count-1)
         ids[start:stop,1:]=other
         values[start:stop,1:]=np.take_along_axis(dist,other,axis=1)
     return ids, values
@@ -49,14 +62,26 @@ def neighborhood(vectors, count=30):
 
 def original_neighbors(vectors):
     """Rank the archived vectors in float64 to resolve close cosine ties before publishing recommendations."""
-    unit=np.asarray(vectors,dtype=np.float64)
-    unit=unit/np.linalg.norm(unit,axis=1,keepdims=True)
+    unit=np.array(vectors,dtype=np.float64,copy=True)
+    unit/=np.sqrt(np.einsum("ij,ij->i",unit,unit))[:,None]
+    gpu=None
+    if len(unit)>15000:
+        # Optional FP64 cuBLAS multiplication; the independent CPU audit checks every rank.
+        try:
+            import cupy
+            if cupy.cuda.runtime.memGetInfo()[0]>unit.nbytes+256*1024**2:
+                gpu=cupy.asarray(unit)
+                cupy.asnumpy(gpu[:1] @ gpu[:1].T)
+                LOG.info("Using local CUDA FP64 for exhaustive original-space similarities")
+        except (ImportError,OSError,RuntimeError) as error:
+            gpu=None
+            LOG.info("Using CPU BLAS for exhaustive original-space similarities (%s)",type(error).__name__)
     ids=np.empty((len(unit),10),dtype=np.int32)
     for start in range(0,len(unit),256):
         stop=min(start+256,len(unit))
-        similarity=unit[start:stop] @ unit.T
+        similarity=(unit[start:stop] @ unit.T if gpu is None else cupy.asnumpy(gpu[start:stop] @ gpu.T))
         similarity[np.arange(stop-start),np.arange(start,stop)]=-np.inf
-        ids[start:stop]=np.argsort(-similarity,axis=1,kind="stable")[:,:10]
+        ids[start:stop]=lowest(-similarity,10)
     return ids
 
 
@@ -115,17 +140,17 @@ def geometry(folder, vectors, progress):
 
 
 def recall_at_ten(xy, neighbors):
-    """Corpus average intersection fraction, with stable exact Euclidean retrieval in blocks."""
-    n = len(xy)
-    total = 0
-    target = np.sort(neighbors[:,:10],axis=1)
-    for start in range(0,n,256):
-        stop = min(start+256,n)
-        dist = cdist(xy[start:stop],xy,metric="sqeuclidean")
-        dist[np.arange(stop-start),np.arange(start,stop)] = np.inf
-        near = np.argsort(dist,axis=1,kind="stable")[:,:10]
-        total += np.any(near[:,:,None]==target[start:stop,None,:],axis=2).sum()
-    return float(total/(n*10))
+    """Exact Euclidean tree queries with stable original row order at a distance tie."""
+    points=np.asarray(xy,dtype=np.float64)
+    distances,indices=cKDTree(points).query(points,k=min(12,len(points)),eps=0)
+    distances[indices==np.arange(len(points))[:,None]]=np.inf
+    order=np.lexsort((indices,distances),axis=1)
+    near=np.take_along_axis(indices,order[:,:10],axis=1)
+    sorted_dist=np.take_along_axis(distances,order,axis=1)
+    for row in np.flatnonzero(sorted_dist[:,9]==sorted_dist[:,10]):
+        exact=cdist(points[row:row+1],points,"sqeuclidean")[0];exact[row]=np.inf
+        near[row]=np.argsort(exact,kind="stable")[:10]
+    return float(np.any(near[:,:,None]==neighbors[:,None,:10],axis=2).mean())
 
 
 def tag_overlap(labels, masks):

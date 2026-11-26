@@ -4,8 +4,10 @@ from __future__ import annotations
 import colorsys
 import csv
 import hashlib
+import gzip
 import io
 import json
+import os
 import shutil
 from collections import Counter
 from pathlib import Path
@@ -16,7 +18,7 @@ import pyarrow.parquet as pq
 from .figures import figures
 from .editions import above_threshold, edition_path
 from .geometry import SEEDS, load_arrays, save_arrays
-from .io import COLLECTION, GITHUB, HUB, PACKAGE, PAGES, ROOT, RESULTS, papers_at, read_json, save_bytes, save_json
+from .io import COLLECTION, GITHUB, HUB, PACKAGE, PAGES, ROOT, RESULTS, file_hash, papers_at, read_json, save_bytes, save_json
 from .paper import make_paper, pct
 
 
@@ -60,15 +62,27 @@ def export_data(folder, docs, manifest, papers, A, labels):
         atlas_rows.append(record)
         table.append({**record,"neighbors":[papers[j]["paper_id"] for j in neigh],
                 "cluster_name":clusters[str(record["cluster"])]["name"],"membership_strength":float(A["strength"][i])})
-    save_json(docs/"atlas.json",dict(snapshot=folder.name,date=manifest["ended_at"][:10],threshold_exclusive=threshold,papers=atlas_rows,clusters=clusters,
-              cluster_count=sum(g>=0 for g in groups),unassigned=groups.get(-1,0)),compact=True)
-    stream=io.StringIO(newline="")
-    writer=csv.DictWriter(stream,fieldnames=list(table[0]),lineterminator="\n");writer.writeheader()
-    for row in table:
-        writer.writerow({k:json.dumps(v,ensure_ascii=False) if isinstance(v,list) else v for k,v in row.items()})
-    save_bytes(docs/"papers.csv",stream.getvalue().encode("utf-8-sig"))
+    catalog=dict(snapshot=folder.name,date=manifest["ended_at"][:10],threshold_exclusive=threshold,papers=atlas_rows,
+                 clusters=clusters,cluster_count=sum(g>=0 for g in groups),unassigned=groups.get(-1,0))
+    packed=threshold==20
+    table_path=docs/("papers.csv.gz" if packed else "papers.csv")
+    if packed:
+        # The map and search need title/author/coordinates immediately. Fetch abstracts on demand.
+        catalog.update(abstract_chunk_size=400,csv=table_path.name)
+        for start in range(0,len(atlas_rows),400):
+            part=[r.pop("abstract") for r in atlas_rows[start:start+400]]
+            save_json(docs/"abstracts"/f"{start//400}.json",part,compact=True)
+    save_json(docs/"atlas.json",catalog,compact=True)
+    temp=table_path.with_suffix(".partial")
+    with temp.open("wb") as stream:
+        raw=gzip.GzipFile(filename="",mode="wb",mtime=0,fileobj=stream) if packed else stream
+        with io.TextIOWrapper(raw,encoding="utf-8-sig",newline="") as output:
+            writer=csv.DictWriter(output,fieldnames=list(table[0]),lineterminator="\n");writer.writeheader()
+            for row in table:
+                writer.writerow({k:json.dumps(v,ensure_ascii=False) if isinstance(v,list) else v for k,v in row.items()})
+    os.replace(temp,table_path)
     pq.write_table(pa.Table.from_pylist(table), folder/"papers.parquet", compression="zstd")
-    with (docs/"papers.csv").open(encoding="utf-8-sig",newline="") as f:
+    with (gzip.open if packed else open)(table_path,"rt",encoding="utf-8-sig",newline="") as f:
         csv_ids=[r["id"] for r in csv.DictReader(f)]
     web_ids=[r["id"] for r in read_json(docs/"atlas.json")["papers"]]
     parquet_ids=pq.read_table(folder/"papers.parquet",columns=["id"])["id"].to_pylist()
@@ -103,7 +117,7 @@ def reports(folder,manifest,evaluation,clusters,embedding):
     method_note=""
     if (folder/"comparison.json").exists():
         comparison=read_json(folder/"comparison.json")
-        desc+=(f"\n\nOf these papers, **{comparison['within_added_band']:,}** had 51–100 likes. "
+        desc+=(f"\n\nOf these papers, **{comparison['within_added_band']:,}** had {threshold+1}–{comparison.get('previous_threshold',100)} likes. "
                f"The two dated editions share {comparison['shared']:,} paper groups. "
                f"{comparison['new_only']:,} groups appear only in the expanded edition and "
                f"{comparison['prior_only']:,} appear only in the earlier one.")
@@ -112,6 +126,11 @@ def reports(folder,manifest,evaluation,clusters,embedding):
                      "Each edition has an independently fitted coordinate system. Cross-edition differences in recall "
                      "can reflect the corpus and the optimization budget. "
                      "[UMAP implementation](https://umap-learn.readthedocs.io/en/latest/_modules/umap/umap_.html#simplicial_set_embedding)")
+    if (folder/"budget.json").exists():
+        b=read_json(folder/"budget.json")
+        desc+=(f"\n\nOpenAI usage receipts priced at standard rates total **USD {b['estimated_usd']:.4f}** "
+               f"for this edition. The ledger reserved USD {b['reserved_usd']:.4f} against the USD {b['cap_usd']:.2f} ceiling. "
+               f"Attempts without a usage receipt: {b['unconfirmed_attempts']}. [Credit ledger]({GITHUB}/blob/main/results/{folder.name}/budget.json)")
     cache_note=""
     if "cache_hits_at_start" in embedding:
         cache_note=(f" The embedding cache supplied {embedding['cache_hits_at_start']:,} distinct inputs at the start "
@@ -180,7 +199,7 @@ def build(folder,progress):
     edition=edition_path(threshold)
     docs=ROOT/"docs"/edition;docs.mkdir(parents=True,exist_ok=True)
     report=ROOT/"reports"/edition;figdir=report/"figures"
-    if manifest["coverage"]!="verified" or hashlib.sha256((folder/"papers.jsonl").read_bytes()).hexdigest()!=manifest["content_sha256"]:
+    if manifest["coverage"]!="verified" or file_hash(folder/"papers.jsonl")!=manifest["content_sha256"]:
         raise ValueError("Snapshot membership or checksum failed verification")
     A=load_arrays(folder/"geometry.npz");labels=read_json(folder/"labels.json")
     evaluation=read_json(folder/"evaluation.json");embedding=read_json(folder/"embedding-info.json")
@@ -188,30 +207,35 @@ def build(folder,progress):
         raise ValueError("The score references a different nearest-neighbor table")
     if str(A["paper_sha256"])!=manifest["content_sha256"] or str(A["vector_sha256"])!=embedding["vectors_sha256"]:
         raise ValueError("Geometry was fitted to a different paper order or vector matrix")
-    if (folder/"embeddings.npy").exists() and hashlib.sha256((folder/"embeddings.npy").read_bytes()).hexdigest()!=embedding["vectors_sha256"]:
+    if (folder/"embeddings.npy").exists() and file_hash(folder/"embeddings.npy")!=embedding["vectors_sha256"]:
         raise ValueError("The frozen embedding matrix failed its SHA-256 integrity check")
     progress("Offline build",0,4)
     clusters=export_data(folder,docs,manifest,papers,A,labels)
     for path in (PACKAGE/"web").iterdir():shutil.copyfile(path,docs/path.name)
-    if threshold==50:
-        # Publish a reciprocal edition link on the original map without changing its frozen data.
-        for asset in ("index.html","atlas.js"):
-            shutil.copyfile(PACKAGE/"web"/asset,ROOT/"docs"/asset)
-        prior=RESULTS/"2026-11-26"
+    if threshold in (20,50):
+        predecessors={50:("2026-11-26",100),20:("2026-11-26-over-50",50)}
+        previous_id,previous_threshold=predecessors[threshold]
+        for other in ([100,50] if threshold==20 else [100]):
+            for asset in ("index.html","atlas.js","atlas.css"):
+                dest=ROOT/"docs"/edition_path(other)
+                if dest.exists():shutil.copyfile(PACKAGE/"web"/asset,dest/asset)
+        prior=RESULTS/previous_id
         if (prior/"papers.jsonl").exists():
             earlier={p["id"] for p in papers_at(prior)}
             current={p["id"] for p in papers}
             # The pinned compatibility implementation uses 500 epochs through 10,000 rows, then 200.
             save_json(folder/"comparison.json",dict(previous_snapshot=prior.name,shared=len(earlier&current),
                       new_only=len(current-earlier),prior_only=len(earlier-current),
-                      within_added_band=sum(50<p["likes"]<=100 for p in papers),
+                      within_added_band=sum(threshold<p["likes"]<=previous_threshold for p in papers),
+                      **({"previous_threshold":previous_threshold} if threshold==20 else {}),
                       current_layout_epochs=500 if len(current)<=10000 else 200,
                       previous_layout_epochs=500 if len(earlier)<=10000 else 200))
     save_bytes(docs/".nojekyll",b"");progress("Offline build",1,4)
     figures(figdir,A,clusters,evaluation,threshold);progress("Offline build",2,4)
     reports(folder,manifest,evaluation,clusters,embedding)
     comparison=folder/"comparison.json"
-    make_paper(report/"paper.pdf",manifest,evaluation,clusters,figdir,read_json(comparison) if comparison.exists() else None)
+    make_paper(report/"paper.pdf",manifest,evaluation,clusters,figdir,read_json(comparison) if comparison.exists() else None,
+               read_json(folder/"budget.json") if (folder/"budget.json").exists() else None)
     shutil.copyfile(report/"paper.pdf",docs/"paper.pdf")
     # Publish each fitted layout so readers can recompute seed statistics without rerunning UMAP.
     archive=folder/"seed-layouts.npz"
@@ -220,11 +244,14 @@ def build(folder,progress):
         layouts={f"seed_{s}_{key}":arr for s,p in seed_files.items() for key,arr in load_arrays(p).items()}
         save_arrays(archive,paper_sha256=A["paper_sha256"],**layouts)
     checksum_files=["manifest.json","papers.jsonl","embedding-info.json","embeddings.npy","geometry.npz","seed-layouts.npz","labels.json","evaluation.json","papers.parquet","comparison.json"]
+    if threshold==20:
+        checksum_files.extend(["budget.json","budget-preflight.json","budget-reservations.jsonl","api-usage.jsonl","label-traces.jsonl"])
+        checksum_files.extend(path.name for path in sorted(folder.glob("rank-certificate-*.json")))
     checks={}
     previous=(folder/"checksums.json")
     if previous.exists():checks.update(read_json(previous))
     for file in checksum_files:
-        if (folder/file).exists():checks[file]=hashlib.sha256((folder/file).read_bytes()).hexdigest()
+        if (folder/file).exists():checks[file]=file_hash(folder/file)
     save_json(previous,checks)
     progress("Complete",4,4,papers=manifest["count"],clusters=evaluation["seeds"][0]["clusters"],
              recall_at_10=evaluation["seeds"][0]["umap_recall"],coverage=manifest["coverage"])

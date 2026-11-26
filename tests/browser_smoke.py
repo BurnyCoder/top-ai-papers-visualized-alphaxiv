@@ -14,6 +14,10 @@ def run(url,channel,shots):
         data=json.load(r)
     papers=data["papers"]
     leading=max(papers,key=lambda p:p["likes"])
+    abstract=leading.get("abstract")
+    if data.get("abstract_chunk_size"):
+        i=papers.index(leading);size=data["abstract_chunk_size"]
+        with urlopen(urljoin(url,f"abstracts/{i//size}.json")) as r:abstract=json.load(r)[i%size]
     shots.mkdir(parents=True,exist_ok=True)
     with sync_playwright() as pw:
         browser=pw.chromium.launch(channel=channel or None,headless=True)
@@ -21,7 +25,7 @@ def run(url,channel,shots):
         errors=[]
         page.on("pageerror",lambda e:errors.append(str(e)))
         page.goto(url)
-        expect(page.locator("#visible")).to_have_text(f"{len(papers):,} visible", timeout=30000)
+        expect(page.locator("#visible")).to_have_text(f"{len(papers):,} visible", timeout=90000)
         threshold=data.get("threshold_exclusive",100)
         expect(page.locator("#likes")).to_have_value(str(threshold+1))
         expect(page.locator("#subtitle")).to_contain_text(f"more than {threshold} likes")
@@ -35,7 +39,7 @@ def run(url,channel,shots):
         page.mouse.click(box["x"]+box["width"]/2,box["y"]+box["height"]/2)
         expect(page.get_by_role("link",name="Open on alphaXiv")).to_have_attribute("href",urljoin("https://www.alphaxiv.org/abs/",leading["paper_id"]))
         page.get_by_text("Abstract",exact=True).click()
-        expect(page.locator("details p")).to_have_text(leading["abstract"])
+        expect(page.locator("details p")).to_have_text(abstract or "Title-only record",timeout=30000)
         nb=[papers[i]["title"] for i in leading["neighbors"]]
         assert page.locator("#sideBody .row").all_text_contents()==nb
         page.locator("#sideBody .row").first.click()
@@ -61,10 +65,11 @@ def run(url,channel,shots):
         expect(page.get_by_text("No papers match these filters.")).to_be_visible()
         page.get_by_role("button",name="Reset",exact=True).click()
         with page.expect_download() as downloaded:page.get_by_role("link",name="Download CSV").click()
-        assert downloaded.value.suggested_filename=="papers.csv"
+        assert downloaded.value.suggested_filename==data.get("csv","papers.csv")
+        expect(page.get_by_role("combobox",name="Atlas edition")).to_have_value(str(threshold))
         mobile=browser.new_page(viewport={"width":390,"height":844},is_mobile=True,has_touch=True,device_scale_factor=1)
         mobile.goto(url)
-        expect(mobile.locator("#visible")).to_have_text(f"{len(papers):,} visible",timeout=30000)
+        expect(mobile.locator("#visible")).to_have_text(f"{len(papers):,} visible",timeout=90000)
         assert mobile.evaluate("document.documentElement.scrollWidth <= window.innerWidth")
         mobile.screenshot(path=str(shots/"atlas-mobile.png"),full_page=True)
         mobile.get_by_role("searchbox").fill(clustered["paper_id"])

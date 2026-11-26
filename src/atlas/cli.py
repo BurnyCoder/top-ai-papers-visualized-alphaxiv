@@ -1,6 +1,8 @@
 """The atlas entry point composes census, remote inference, analysis and offline publication."""
 import argparse
 import re
+import json
+from decimal import Decimal
 from datetime import datetime, timezone
 
 from dotenv import load_dotenv
@@ -10,22 +12,33 @@ from .io import LOG, RESULTS, ROOT, Progress, papers_at, start_log
 STAGES = ("collect", "embed", "main", "label", "evaluate", "build")
 
 
-def refresh(folder, through, progress, threshold=None):
+def refresh(folder, through, progress, threshold=None, max_api_usd=None):
     """Stop only at complete, reusable stage boundaries."""
     from .collect import collect
-    collect(folder, progress, threshold)
+    manifest=collect(folder, progress, threshold, anonymous=threshold==20 or max_api_usd is not None)
     if through == "collect":
         return
     from .inference import embed, name_clusters
+    from .budget import CreditBudget, JOURNAL, cost_report
+    budget=None
+    ledger=folder/JOURNAL
+    if manifest["threshold_exclusive"]==20 or max_api_usd is not None or ledger.exists():
+        if max_api_usd is None and ledger.exists():
+            with ledger.open("rb") as f:max_api_usd=Decimal(json.loads(f.readline())["cap_micro_usd"])/1000000
+        limit=max_api_usd if max_api_usd is not None else Decimal(50)
+        if manifest["threshold_exclusive"]==20 and limit>50:raise ValueError("The over-20 study has a USD 50 ceiling")
+        budget=CreditBudget(folder,limit)
     papers = papers_at(folder)
-    vectors = embed(folder, papers, progress)
+    vectors = embed(folder, papers, progress,budget=budget)
+    if budget:cost_report(folder)
     if through == "embed":
         return
     from .geometry import geometry, evaluate
     main = geometry(folder, vectors, progress)
     if through == "main":
         return
-    name_clusters(folder, papers, vectors, main["labels"], progress)
+    name_clusters(folder, papers, vectors, main["labels"], progress,budget=budget)
+    if budget:cost_report(folder)
     if through == "label":
         return
     evaluate(folder, papers, vectors, progress)
@@ -41,6 +54,7 @@ def main():
     update.add_argument("--snapshot", default=datetime.now(timezone.utc).strftime("%Y-%m-%dT%H%M%SZ"))
     update.add_argument("--through", choices=STAGES, default="build")
     update.add_argument("--threshold", type=int, help="Exclusive public-like cutoff (new snapshots default to 50)")
+    update.add_argument("--max-api-usd",type=Decimal,help="Hard cumulative reservation ceiling for this snapshot")
     rebuild = commands.add_parser("build", help="Rebuild static outputs from the frozen files without API calls")
     rebuild.add_argument("--snapshot", required=True)
     monitor = commands.add_parser("monitor", help="Serve the local run dashboard on loopback")
@@ -64,7 +78,7 @@ def main():
         try:
             if args.action == "refresh":
                 load_dotenv(ROOT / ".env", override=True)
-                refresh(folder, args.through, progress, args.threshold)
+                refresh(folder, args.through, progress, args.threshold, args.max_api_usd)
             else:
                 from .publish import build
                 build(folder, progress)

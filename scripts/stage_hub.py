@@ -18,7 +18,8 @@ def main():
     out=target/"results"/args.snapshot
     out.mkdir(parents=True,exist_ok=True)
     for name in ("manifest.json","papers.jsonl","embeddings.npy","embedding-info.json","geometry.npz","seed-layouts.npz",
-                 "labels.json","label-traces.jsonl","api-usage.jsonl","evaluation.json","papers.parquet","checksums.json","audit.json","comparison.json"):
+                 "labels.json","label-traces.jsonl","api-usage.jsonl","evaluation.json","papers.parquet","checksums.json","audit.json","comparison.json",
+                 "budget.json","budget-preflight.json","budget-reservations.jsonl",*(f.name for f in source.glob("rank-certificate-*.json"))):
         if (source/name).is_file():shutil.copyfile(source/name,out/name)
     if (source/"precision-check").exists():
         shutil.copytree(source/"precision-check",out/"precision-check",dirs_exist_ok=True)

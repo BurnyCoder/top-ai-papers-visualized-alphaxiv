@@ -30,7 +30,12 @@ def main():
     manifest=read_json(folder/"manifest.json")
     edition=edition_path(manifest["threshold_exclusive"])
     url=PAGES if not edition.parts else PAGES+edition.as_posix()+"/"
-    for name in ("atlas.json","papers.csv","paper.pdf","progress.json"):
+    public=read_json(ROOT/"docs"/edition/"atlas.json")
+    assets=["atlas.json",public.get("csv","papers.csv"),"paper.pdf","progress.json"]
+    if "abstract_chunk_size" in public:
+        size=public["abstract_chunk_size"]
+        assets.extend(f"abstracts/{i//size}.json" for i in range(0,len(public["papers"]),size))
+    for name in assets:
         with (ROOT/"docs"/edition/name).open("rb") as stream:
             local=hashlib.file_digest(stream,"sha256").hexdigest()
         verify(url+name,local)
