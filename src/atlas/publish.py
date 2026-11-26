@@ -51,7 +51,7 @@ def export_data(folder, docs, manifest, papers, A, labels):
         raise ValueError("Nonfinite map coordinates")
     atlas_rows=[];table=[]
     for i,p in enumerate(papers):
-        neigh=list(map(int,A["knn"][i,1:11]))
+        neigh=list(map(int,A["neighbors"][i]))
         if len(set(neigh))!=10 or i in neigh or min(neigh)<0 or max(neigh)>=len(papers) or p["likes"]<=100:
             raise ValueError("Invalid neighborhood or threshold in snapshot")
         record={**p,"x":float(A["xy"][i,0]),"y":float(A["xy"][i,1]),"cluster":int(A["labels"][i]),"neighbors":neigh}
@@ -147,6 +147,8 @@ def build(folder,progress):
         raise ValueError("Snapshot membership or checksum failed verification")
     A=load_arrays(folder/"geometry.npz");labels=read_json(folder/"labels.json")
     evaluation=read_json(folder/"evaluation.json");embedding=read_json(folder/"embedding-info.json")
+    if hashlib.sha256(A["neighbors"].astype("<i4").tobytes()).hexdigest()!=evaluation["reference_sha256"]:
+        raise ValueError("The score references a different nearest-neighbor table")
     if str(A["paper_sha256"])!=manifest["content_sha256"] or str(A["vector_sha256"])!=embedding["vectors_sha256"]:
         raise ValueError("Geometry was fitted to a different paper order or vector matrix")
     if (folder/"embeddings.npy").exists() and hashlib.sha256((folder/"embeddings.npy").read_bytes()).hexdigest()!=embedding["vectors_sha256"]:

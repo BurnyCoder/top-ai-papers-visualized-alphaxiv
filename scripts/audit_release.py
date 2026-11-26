@@ -38,10 +38,9 @@ def audit(snapshot):
         reference=NearestNeighbors(n_neighbors=10,algorithm="brute",metric="cosine",n_jobs=1).fit(vectors.astype("float64")).kneighbors(return_distance=False)
     def overlap(a,b):
         return sum(len(set(x).intersection(y)) for x,y in zip(a,b,strict=True))/(10*len(a))
-    neighbor_agreement=overlap(reference,geo["knn"][:,1:11])
-    # Small float32 rounding differences at exact ties are recorded rather than hidden.
-    if neighbor_agreement<.999:raise AssertionError(f"Original-space cross-check {neighbor_agreement}")
-    reference=geo["knn"][:,1:11]
+    neighbor_agreement=overlap(reference,geo["neighbors"])
+    if neighbor_agreement!=1:raise AssertionError(f"Original-space cross-check {neighbor_agreement}")
+    reference=geo["neighbors"]
     def independently_measure(points):
         near=NearestNeighbors(n_neighbors=10,algorithm="kd_tree").fit(points).kneighbors(return_distance=False)
         return overlap(near,reference)
@@ -65,7 +64,7 @@ def audit(snapshot):
 
 Two complete feed passes agreed on all {len(ids):,} research-paper group IDs. Both crossed the strict boundary, with no observed inversion. The JSONL, static map and CSV contain those IDs in the same order. The build independently round-trips the Parquet IDs too. All archived SHA-256 digests verified.
 
-Recomputing all nearest neighbors with scikit-learn in float64 recovered {neighbor_agreement:.6%} of the original float32 top-ten entries. The maximum absolute vector-norm error was {result['vector_norm_max_abs_error']:.3g}. A separate kd-tree implementation reproduced the display-seed UMAP, PCA and shuffled recall values ({x:.6f}, {baseline:.6f}, {control:.6f}). An independent Student t calculation reproduced the registered interval. All {len(labels)} assigned groups have valid evidence from their own members.
+Recomputing all nearest neighbors with scikit-learn in float64 recovered {neighbor_agreement:.6%} of the published top-ten entries. The archived vectors are float32 and the ranking uses float64 arithmetic. The maximum absolute vector-norm error was {result['vector_norm_max_abs_error']:.3g}. A separate kd-tree implementation reproduced the display-seed UMAP, PCA and shuffled recall values ({x:.6f}, {baseline:.6f}, {control:.6f}). An independent Student t calculation reproduced the registered interval. All {len(labels)} assigned groups have valid evidence from their own members.
 
 ## Interpretation and limitations
 
