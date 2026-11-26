@@ -14,6 +14,8 @@ uv run python -m http.server 8000 --bind 127.0.0.1 --directory docs
 
 For a new census use `uv run atlas refresh --threshold 50`. Reusing a snapshot name resumes its frozen cutoff. Passing a different cutoff with that name reports the mismatch. The same three assets are available as direct downloads from the dated release. Save them under `results/2026-11-26-over-50/` before running the build. [Dated files](https://huggingface.co/datasets/BurnyCoder/alphaxiv-paper-atlas/tree/atlas-2026-11-26-over-50/results/2026-11-26-over-50) · [Expanded protocol](../reports/over-50/preregistration.md)
 
+After building, `uv run python scripts/verify_public.py 2026-11-26-over-50` compares the live Pages assets and every checksummed file in the pinned Hub release against the local build. It streams the full public files over HTTPS.
+
 ### Original 100-like edition
 
 Install the [Hugging Face CLI](https://huggingface.co/docs/huggingface_hub/guides/cli) and download the numerical assets into the checkout. Git includes the dated census, labels, manifest and metrics. Each new date has an independent folder.
