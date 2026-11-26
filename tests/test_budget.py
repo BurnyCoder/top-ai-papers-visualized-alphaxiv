@@ -7,6 +7,16 @@ import pytest
 from atlas.budget import CreditBudget, BudgetExceeded, cost_report, request
 
 
+def test_fractional_guard_rounds_up_and_is_immutable_on_resume(tmp_path):
+    b=CreditBudget(tmp_path,"0.000002",fractional=True)
+    b.reserve("embeddings",3,0)
+    b=CreditBudget(tmp_path,"0.000002")
+    b.reserve("labels",2,0)
+    with pytest.raises(BudgetExceeded):b.reserve("embeddings",1,0)
+    report=cost_report(tmp_path)
+    assert report["reserved_usd"]==.000002 and report["reservation_rates_usd_per_million"]["labels"]==[.5,1.]
+
+
 def test_concurrent_reservations_cannot_cross_the_cap(tmp_path):
     a=CreditBudget(tmp_path,Decimal("0.001"))
     b=CreditBudget(tmp_path,Decimal("0.001"))

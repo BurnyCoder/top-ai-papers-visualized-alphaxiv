@@ -5,9 +5,11 @@ import hashlib
 import json
 import os
 import time
+from concurrent.futures import ThreadPoolExecutor
+from .editions import CAPPED, CURRENT_THRESHOLD
 
 import httpx
-from .io import LOG, PACKAGE, now, read_json, save_bytes, save_json
+from .io import LOG, PACKAGE, now, read_json, save_json, census_digest, census_path, write_census
 
 FEED = "https://api.alphaxiv.org/papers/v3/feed"
 CATEGORIES = set((PACKAGE / "categories.txt").read_text(encoding="utf-8").splitlines())
@@ -28,7 +30,7 @@ def paper_record(item):
                 likes=item["metrics"]["public_total_votes"])
 
 
-def scan(fetch, size, report=lambda *_args, **_kw: None, *, threshold=100, reconcile_ties=False):
+def scan(fetch, size, report=lambda *_args, **_kw: None, *, threshold=100, reconcile_ties=False, final_page=None):
     """Finish beyond the threshold, checking monotonic ordering over all returned rows."""
     papers, pages = {}, []
     duplicates = excluded_blogs = inversions = 0
@@ -47,7 +49,7 @@ def scan(fetch, size, report=lambda *_args, **_kw: None, *, threshold=100, recon
             raise ValueError("Feed contains a missing or noninteger public vote count")
         signature = hashlib.sha256("\n".join(r["paper_group_id"] for r in rows).encode()).hexdigest()
         if rows and signature in seen_pages:
-            if not reconcile_ties or page>=4 and all(p["group_sequence_sha256"]==signature for p in pages[-4:]):
+            if not reconcile_ties or final_page is None and page>=4 and all(p["group_sequence_sha256"]==signature for p in pages[-4:]):
                 raise RuntimeError(f"API repeated an entire page at offset {page * size}")
             repeated_pages.append(page)
         seen_pages.add(signature)
@@ -74,6 +76,7 @@ def scan(fetch, size, report=lambda *_args, **_kw: None, *, threshold=100, recon
         report(f"Crawl · pages of {size}", page+1, None, eligible=len(papers), lowest=summary["min_likes"])
         if not rows or max(votes) <= threshold:
             break
+        if final_page is not None and page>=final_page:raise RuntimeError("Preobserved cutoff moved during the crawl")
     return papers, dict(page_size=size, started_at=started, ended_at=now(), pages=pages, last_page=pages[-1],
                         eligible=len(papers), duplicates=duplicates, excluded_blogs=excluded_blogs, inversions=inversions,
                         boundary=boundary, external_entries=external_entries, vote_counts=vote_counts,
@@ -106,14 +109,14 @@ def feed_rows(client,page,size,topic=None):
 
 def collect(folder, progress, threshold=None, *, anonymous=False):
     """Require matching consecutive independent passes; retain a discrepancy audit on failure."""
-    if (folder / "manifest.json").exists() and (folder / "papers.jsonl").exists():
+    if (folder / "manifest.json").exists() and census_path(folder).exists():
         manifest=read_json(folder / "manifest.json")
         if threshold is not None and threshold != manifest["threshold_exclusive"]:
             raise ValueError(f"Snapshot {folder.name} already uses a different threshold. Choose a new snapshot ID.")
-        if hashlib.sha256((folder/"papers.jsonl").read_bytes()).hexdigest()!=manifest["content_sha256"]:
+        if census_digest(folder)!=manifest["content_sha256"]:
             raise RuntimeError("The stored census differs from the frozen manifest")
         return manifest
-    threshold = 20 if threshold is None else threshold
+    threshold = CURRENT_THRESHOLD if threshold is None else threshold
     key = os.environ.get("ALPHAXIV_API_KEY")
     if not anonymous and not key:
         raise ValueError("ALPHAXIV_API_KEY is required for a fresh census")
@@ -122,11 +125,20 @@ def collect(folder, progress, threshold=None, *, anonymous=False):
     headers={"User-Agent":"PaperAtlas/1.0 (alphaXiv public paper census)"}
     if not anonymous:
         headers["Authorization"]="Bearer "+key
-    with httpx.Client(timeout=75, headers=headers) as client:
+    with httpx.Client(timeout=75, headers=headers) as client, ThreadPoolExecutor(1) as secondary:
         def fetch(page, size, topic=None):
             return feed_rows(client,page,size,topic)
-        for size in ((100,200,97,173) if threshold==20 else (100,50,97,73)):
-            if threshold==20:
+        second=None
+        if threshold==10:
+            from .reconcile import census_pass
+            def secondary_progress(stage,done,total,**extra):
+                save_json(folder/"work"/"second-pass.json",dict(stage=stage,done=done,total=total,updated=now(),**extra))
+            second=secondary.submit(census_pass,folder,fetch,175,threshold,secondary_progress)
+        sizes=(125,175,97,173) if threshold==10 else (100,200,97,173) if threshold==20 else (100,50,97,73)
+        for size in sizes:
+            if size==175 and second is not None:
+                current,audit=second.result()
+            elif threshold in CAPPED:
                 from .reconcile import census_pass
                 current,audit=census_pass(folder,fetch,size,threshold,progress)
             else:
@@ -144,14 +156,13 @@ def collect(folder, progress, threshold=None, *, anonymous=False):
     rows = [current[k] for k in sorted(current)]
     if not rows:
         raise RuntimeError("Empty qualifying feed; refusing to publish an empty census")
-    data = "".join(json.dumps(r, ensure_ascii=False, separators=(",",":"))+"\n" for r in rows).encode()
-    save_bytes(folder / "papers.jsonl", data)
+    digest=write_census(folder,rows,compressed=threshold==10)
     manifest = dict(snapshot=folder.name, feed=FEED, query=QUERY, threshold_exclusive=threshold,
                     feed_access="anonymous public metadata" if anonymous else "authenticated public metadata",
-                    started_at=audits[0]["started_at"], ended_at=audits[-1]["ended_at"], count=len(rows),
-                    content_sha256=hashlib.sha256(data).hexdigest(), passes=audits, differences=differences,
+                    started_at=min(a["started_at"] for a in audits), ended_at=max(a["ended_at"] for a in audits), count=len(rows),
+                    content_sha256=digest, passes=audits, differences=differences,
                     coverage="verified", title_only=sum(r["title_only"] for r in rows))
-    if threshold==20:
+    if threshold in CAPPED:
         manifest["accepted_vote_changes"]=[dict(id=k,first=previous[k]["likes"],second=current[k]["likes"])
                     for k in sorted(current) if previous[k]["likes"]!=current[k]["likes"]]
     save_json(folder / "manifest.json", manifest)

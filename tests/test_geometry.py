@@ -18,6 +18,16 @@ def test_original_neighbors_resolve_the_tenth_place_in_double_precision():
     assert all(i not in row for i,row in enumerate(ranked))
 
 
+def test_umap_graph_and_recommendations_use_the_same_double_precision_ranks():
+    from atlas.geometry import exact_graph
+    vec=np.random.default_rng(42).standard_normal((35,8)).astype("float32")
+    vec[4]=vec[2]
+    ids,dist=exact_graph(vec,30)
+    assert ids[:,0].tolist()==list(range(35)) and np.all(dist[:,0]==0)
+    assert np.array_equal(ids[:,1:11],original_neighbors(vec))
+    assert np.all(np.diff(dist,axis=1)>=0)
+
+
 def test_reference_recall_and_multitag_pairs():
     xy = np.column_stack((np.arange(14),np.zeros(14)))
     d = abs(xy[:,0,None]-xy[:,0])

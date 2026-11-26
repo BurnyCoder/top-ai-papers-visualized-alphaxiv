@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import json
 import hashlib
+import gzip
+from contextlib import nullcontext
 import logging
 import os
 import tempfile
@@ -59,9 +61,36 @@ def read_json(path):
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
+def census_path(folder):
+    plain=folder/"papers.jsonl"
+    return plain if plain.exists() else folder/"papers.jsonl.gz"
+
+
+def census_stream(folder):
+    path=census_path(folder)
+    return gzip.open(path,"rb") if path.suffix==".gz" else path.open("rb")
+
+
 def papers_at(folder):
-    with (folder/"papers.jsonl").open(encoding="utf-8") as source:
-        return [json.loads(line) for line in source]
+    with census_stream(folder) as source:return [json.loads(line) for line in source]
+
+
+def census_digest(folder):
+    with census_stream(folder) as source:return hashlib.file_digest(source,"sha256").hexdigest()
+
+
+def write_census(folder,rows,*,compressed):
+    """Hash the canonical uncompressed rows as they are written, independent of transport."""
+    digest=hashlib.sha256()
+    target=folder/("papers.jsonl.gz" if compressed else "papers.jsonl")
+    with tempfile.NamedTemporaryFile(dir=folder,delete=False) as raw:
+        temp=Path(raw.name)
+        with (gzip.GzipFile(filename="",fileobj=raw,mode="wb",mtime=0,compresslevel=5) if compressed else nullcontext(raw)) as out:
+            for row in rows:
+                data=(json.dumps(row,ensure_ascii=False,separators=(",",":"))+"\n").encode()
+                digest.update(data);out.write(data)
+    os.replace(temp,target)
+    return digest.hexdigest()
 
 
 def file_hash(path):

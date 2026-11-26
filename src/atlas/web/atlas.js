@@ -218,7 +218,22 @@ by("paperTab").onclick=()=>{clearSelection();tab="papers";renderSide();queueDraw
 new ResizeObserver(resize).observe(plot);
 async function load(){
   const response=await fetch("atlas.json");if(!response.ok)throw Error(response.status);
-  const data=await response.json();papers=data.papers;clusters=data.clusters;
+  const data=await response.json();clusters=data.clusters;
+  if(data.paper_parts){
+    const parts=data.paper_parts, blocks=new Array(parts.length);
+    let next=0,loaded=0;
+    async function readParts(){
+      while(next<parts.length){
+        const i=next++, response=await fetch(parts[i]);
+        if(!response.ok)throw Error(response.status);
+        blocks[i]=await response.json();loaded+=blocks[i].length;
+        by("subtitle").textContent="Loading "+number(loaded)+" of "+number(data.paper_count)+" papers…";
+      }
+    }
+    await Promise.all(Array.from({length:Math.min(5,parts.length)},readParts));
+    papers=blocks.flat();
+    if(papers.length!==data.paper_count)throw Error("Incomplete index");
+  }else papers=data.papers;
   by("datasetLink").href="https://huggingface.co/datasets/BurnyCoder/alphaxiv-paper-atlas/tree/atlas-"+encodeURIComponent(data.snapshot);
   abstractChunkSize=data.abstract_chunk_size||0;
   if(data.csv){by("csvDownload").href=data.csv;by("csvDownload").textContent="Download CSV (.gz) ↓";}
@@ -226,7 +241,7 @@ async function load(){
   const threshold=data.threshold_exclusive??100;
   by("likes").min=String(threshold+1);by("likes").value=by("likes").min;
   const root=threshold===100?"./":"../";
-  for(const n of [20,50,100])option("edition",n,"Over "+n+" likes");
+  for(const n of [10,20,50,100])option("edition",n,"Over "+n+" likes");
   by("edition").value=String(threshold);by("edition").hidden=false;
   by("edition").onchange=e=>{const n=Number(e.target.value);location.href=root+(n===100?"":"over-"+n+"/");};
   const subjects=new Set(),years=new Set();

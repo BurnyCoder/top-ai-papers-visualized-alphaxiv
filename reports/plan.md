@@ -9,4 +9,6 @@
 
 [Protocol](preregistration.md) · [Run matrix](planned-runs.md) · [Progress](progress.md)
 
+The over-10 edition extends this design to the 11–20-like band, uses a single double-precision graph for retrieval and both projections, and keeps independent membership certificates. The incremental credit cap covers every transmitted attempt. [Over-10 protocol](over-10/preregistration.md) · [Run matrix](over-10/planned-runs.md)
+
 The over-20 edition repeats the full analysis. Each physical OpenAI request reserves credit before transmission against the requested USD 50 ceiling. Public alphaXiv metadata, the previous embedding cache and local compute reduce incremental costs. Every score with overlapping pagination requires an independently checked rank certificate. [Edition protocol](over-20/preregistration.md) · [Collection amendment](over-20/collection-amendment.md)

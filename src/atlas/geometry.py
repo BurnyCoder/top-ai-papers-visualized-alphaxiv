@@ -63,8 +63,8 @@ def neighborhood(vectors, count=30):
     return ids, values
 
 
-def original_neighbors(vectors):
-    """Rank the archived vectors in float64 to resolve close cosine ties before publishing recommendations."""
+def exact_graph(vectors,count,progress=None):
+    """Rank every eligible group in float64; append explicit self and cast only selected distances."""
     unit=np.array(vectors,dtype=np.float64,copy=True)
     unit/=np.sqrt(np.einsum("ij,ij->i",unit,unit))[:,None]
     gpu=None
@@ -79,13 +79,25 @@ def original_neighbors(vectors):
         except (ImportError,OSError,RuntimeError) as error:
             gpu=None
             LOG.info("Using CPU BLAS for exhaustive original-space similarities (%s)",type(error).__name__)
-    ids=np.empty((len(unit),10),dtype=np.int32)
-    for start in range(0,len(unit),256):
-        stop=min(start+256,len(unit))
+    ids=np.empty((len(unit),count),dtype=np.int32)
+    distances=np.zeros(ids.shape,dtype=np.float32)
+    ids[:,0]=np.arange(len(unit))
+    block=128 if len(unit)>60000 else 256
+    for start in range(0,len(unit),block):
+        stop=min(start+block,len(unit))
         similarity=(unit[start:stop] @ unit.T if gpu is None else cupy.asnumpy(gpu[start:stop] @ gpu.T))
-        similarity[np.arange(stop-start),np.arange(start,stop)]=-np.inf
-        ids[start:stop]=lowest(-similarity,10)
-    return ids
+        np.negative(similarity,out=similarity)
+        similarity[np.arange(stop-start),np.arange(start,stop)]=np.inf
+        ranked=lowest(similarity,count-1)
+        ids[start:stop,1:]=ranked
+        distances[start:stop,1:]=np.clip(1+np.take_along_axis(similarity,ranked,axis=1),0,2)
+        if progress and (start%(block*32)==0 or stop==len(unit)):
+            progress("Exact cosine neighbors",stop,len(unit),device="CUDA" if gpu is not None else "CPU")
+    return ids,distances
+
+
+def original_neighbors(vectors):
+    return exact_graph(vectors,11)[0][:,1:]
 
 
 def projection(vectors, indices, distances, dim, seed):
@@ -136,8 +148,17 @@ def geometry(folder, vectors, progress):
         raise ValueError("The preregistered configuration requires at least 31 qualifying papers")
     progress("Original neighbors and PCA",0,2)
     with threadpool_limits(limits=4):
-        indices, distances = neighborhood(vectors)
-        exact = original_neighbors(vectors)
+        if read_json(folder/"manifest.json")["threshold_exclusive"]==10:
+            checkpoint=folder/"work"/"exact-graph.npz"
+            if not checkpoint.exists():
+                indices,distances=exact_graph(vectors,30,progress)
+                save_arrays(checkpoint,indices=indices,distances=distances)
+            else:
+                cached=load_arrays(checkpoint);indices,distances=cached["indices"],cached["distances"]
+            exact=indices[:,1:11]
+        else:
+            indices, distances = neighborhood(vectors)
+            exact = original_neighbors(vectors)
         pca = PCA(n_components=10,svd_solver="full").fit_transform(vectors)
         pca_labels, _ = membership(pca)
         progress("Primary UMAP and HDBSCAN",1,2,seed=42)

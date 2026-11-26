@@ -6,11 +6,12 @@ import subprocess
 from urllib.parse import urljoin
 from urllib.request import urlopen
 from playwright.sync_api import sync_playwright,expect
+from atlas.catalog import remote_catalog
 
 
 def record(url,path):
     url=url.rstrip("/")+"/"
-    with urlopen(urljoin(url,"atlas.json")) as response:atlas=json.load(response)
+    atlas=remote_catalog(url)
     largest=max((g for g in atlas["clusters"] if int(g)>=0),key=lambda g:atlas["clusters"][g]["count"])
     paper=max((p for p in atlas["papers"] if str(p["cluster"])==largest),key=lambda p:p["likes"])
     path.parent.mkdir(parents=True,exist_ok=True)

@@ -62,3 +62,18 @@ def test_score_changes_cannot_add_an_unobserved_id():
     from atlas.reconcile import assign_observed_scores
     counts,changed=assign_observed_scores({"a":66,"b":66},{"b":{65},"old-only":{64}},Counter({65:1,66:1}))
     assert counts=={65:1,66:1} and changed==[{"id":"b","displayed":66,"rank_score":65}]
+
+
+def test_ten_counts_through_ties_and_compressed_snapshot(tmp_path):
+    from atlas.reconcile import census_pass
+    from atlas.io import write_census, census_digest, papers_at
+    rows=[raw(name,11) for name in "abcdef"]+[raw("post",11,blog=True),raw("at",10),raw("under",9)]
+    def fetch(page,size,topic=None):
+        if topic is None and page==1:return rows[:size]
+        return rows[page*size:(page+1)*size]
+    papers,audit=census_pass(tmp_path,fetch,2,10,lambda *a,**kw:None)
+    assert set(papers)==set("abcdef") and audit["last_page"]["max_likes"]==9
+    assert [audit["boundary"][k]["likes"] for k in ("last_above","first_at_or_below")]==[11,10]
+    digest=write_census(tmp_path,list(papers.values()),compressed=True)
+    assert (tmp_path/"papers.jsonl.gz").is_file() and census_digest(tmp_path)==digest
+    assert {p["id"] for p in papers_at(tmp_path)}==set(papers)

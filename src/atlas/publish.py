@@ -16,10 +16,12 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 
 from .figures import figures
-from .editions import above_threshold, edition_path
+from .editions import CAPPED, PREVIOUS, above_threshold, edition_path
+from .catalog import local_catalog
 from .geometry import SEEDS, load_arrays, save_arrays
 from .io import COLLECTION, GITHUB, HUB, PACKAGE, PAGES, ROOT, RESULTS, file_hash, papers_at, read_json, save_bytes, save_json
 from .paper import make_paper, pct
+from .io import census_path, census_digest
 
 
 def color_for(group):
@@ -64,7 +66,7 @@ def export_data(folder, docs, manifest, papers, A, labels):
                 "cluster_name":clusters[str(record["cluster"])]["name"],"membership_strength":float(A["strength"][i])})
     catalog=dict(snapshot=folder.name,date=manifest["ended_at"][:10],threshold_exclusive=threshold,papers=atlas_rows,
                  clusters=clusters,cluster_count=sum(g>=0 for g in groups),unassigned=groups.get(-1,0))
-    packed=threshold==20
+    packed=threshold in CAPPED
     table_path=docs/("papers.csv.gz" if packed else "papers.csv")
     if packed:
         # The map and search need title/author/coordinates immediately. Fetch abstracts on demand.
@@ -72,6 +74,16 @@ def export_data(folder, docs, manifest, papers, A, labels):
         for start in range(0,len(atlas_rows),400):
             part=[r.pop("abstract") for r in atlas_rows[start:start+400]]
             save_json(docs/"abstracts"/f"{start//400}.json",part,compact=True)
+    if threshold==10:
+        catalog.pop("papers")
+        catalog.update(paper_count=len(atlas_rows),paper_parts=[])
+        for start in range(0,len(atlas_rows),2000):
+            name=f"points/{start//2000}.json"
+            part=atlas_rows[start:start+2000]
+            for row in part:
+                row.pop("topics",None);row.pop("version",None)
+            save_json(docs/name,part,compact=True)
+            catalog["paper_parts"].append(name)
     save_json(docs/"atlas.json",catalog,compact=True)
     temp=table_path.with_suffix(".partial")
     with temp.open("wb") as stream:
@@ -81,10 +93,20 @@ def export_data(folder, docs, manifest, papers, A, labels):
             for row in table:
                 writer.writerow({k:json.dumps(v,ensure_ascii=False) if isinstance(v,list) else v for k,v in row.items()})
     os.replace(temp,table_path)
-    pq.write_table(pa.Table.from_pylist(table), folder/"papers.parquet", compression="zstd")
+    if threshold==10:
+        # Infer the nested schema over the first batch and reuse it for every row group.
+        first=pa.Table.from_pylist(table[:4096])
+        target=folder/"papers.parquet"
+        with pq.ParquetWriter(target.with_suffix(".partial"),first.schema,compression="zstd") as writer:
+            writer.write_table(first)
+            for start in range(4096,len(table),4096):
+                writer.write_table(pa.Table.from_pylist(table[start:start+4096],schema=first.schema))
+        os.replace(target.with_suffix(".partial"),target)
+    else:pq.write_table(pa.Table.from_pylist(table), folder/"papers.parquet", compression="zstd")
     with (gzip.open if packed else open)(table_path,"rt",encoding="utf-8-sig",newline="") as f:
         csv_ids=[r["id"] for r in csv.DictReader(f)]
-    web_ids=[r["id"] for r in read_json(docs/"atlas.json")["papers"]]
+    del catalog,atlas_rows,table
+    web_ids=[r["id"] for r in local_catalog(docs)["papers"]]
     parquet_ids=pq.read_table(folder/"papers.parquet",columns=["id"])["id"].to_pylist()
     if not ids==web_ids==csv_ids==parquet_ids or len(ids)!=manifest["count"]:
         raise ValueError("Census, browser map, CSV or Parquet IDs disagree")
@@ -114,7 +136,7 @@ def reports(folder,manifest,evaluation,clusters,embedding):
           f"compared with **{pct(r['pca_recall'])}** under PCA. The gain was {change}. "
           f"Even with UMAP, {pct(1-mean('umap_recall'))} of those neighbors fell outside a paper’s ten closest screen points. "
           "Select a paper to recover its original-space recommendations.")
-    if threshold==20:
+    if threshold in CAPPED:
         desc+=f" Shuffling the paper-to-position assignment retained {pct(mean('shuffled_recall'))} across the same seeds."
     method_note=""
     if (folder/"comparison.json").exists():
@@ -229,7 +251,7 @@ def build(folder,progress):
     edition=edition_path(threshold)
     docs=ROOT/"docs"/edition;docs.mkdir(parents=True,exist_ok=True)
     report=ROOT/"reports"/edition;figdir=report/"figures"
-    if manifest["coverage"]!="verified" or file_hash(folder/"papers.jsonl")!=manifest["content_sha256"]:
+    if manifest["coverage"]!="verified" or census_digest(folder)!=manifest["content_sha256"]:
         raise ValueError("Snapshot membership or checksum failed verification")
     A=load_arrays(folder/"geometry.npz");labels=read_json(folder/"labels.json")
     evaluation=read_json(folder/"evaluation.json");embedding=read_json(folder/"embedding-info.json")
@@ -242,22 +264,21 @@ def build(folder,progress):
     progress("Offline build",0,4)
     clusters=export_data(folder,docs,manifest,papers,A,labels)
     for path in (PACKAGE/"web").iterdir():shutil.copyfile(path,docs/path.name)
-    if threshold in (20,50):
-        predecessors={50:("2026-11-26",100),20:("2026-11-26-over-50",50)}
-        previous_id,previous_threshold=predecessors[threshold]
-        for other in ([100,50] if threshold==20 else [100]):
+    if threshold in PREVIOUS:
+        previous_id,previous_threshold=PREVIOUS[threshold]
+        for other in (n for n in (100,50,20) if n>threshold):
             for asset in ("index.html","atlas.js","atlas.css"):
                 dest=ROOT/"docs"/edition_path(other)
                 if dest.exists():shutil.copyfile(PACKAGE/"web"/asset,dest/asset)
         prior=RESULTS/previous_id
-        if (prior/"papers.jsonl").exists():
+        if census_path(prior).exists():
             earlier={p["id"] for p in papers_at(prior)}
             current={p["id"] for p in papers}
             # The pinned compatibility implementation uses 500 epochs through 10,000 rows, then 200.
             save_json(folder/"comparison.json",dict(previous_snapshot=prior.name,shared=len(earlier&current),
                       new_only=len(current-earlier),prior_only=len(earlier-current),
                       within_added_band=sum(threshold<p["likes"]<=previous_threshold for p in papers),
-                      **({"previous_threshold":previous_threshold} if threshold==20 else {}),
+                      **({"previous_threshold":previous_threshold} if threshold in CAPPED else {}),
                       current_layout_epochs=500 if len(current)<=10000 else 200,
                       previous_layout_epochs=500 if len(earlier)<=10000 else 200))
     save_bytes(docs/".nojekyll",b"");progress("Offline build",1,4)
@@ -273,8 +294,9 @@ def build(folder,progress):
     if not archive.exists() and all(p.exists() for p in seed_files.values()):
         layouts={f"seed_{s}_{key}":arr for s,p in seed_files.items() for key,arr in load_arrays(p).items()}
         save_arrays(archive,paper_sha256=A["paper_sha256"],**layouts)
-    checksum_files=["manifest.json","papers.jsonl","embedding-info.json","embeddings.npy","geometry.npz","seed-layouts.npz","labels.json","evaluation.json","papers.parquet","comparison.json"]
-    if threshold==20:
+    checksum_files=["manifest.json",census_path(folder).name,"embedding-info.json","embeddings.npy","geometry.npz","seed-layouts.npz","labels.json","evaluation.json","papers.parquet","comparison.json"]
+    if (folder/"boundary-probes.json").exists():checksum_files.append("boundary-probes.json")
+    if threshold in CAPPED:
         checksum_files.extend(["budget.json","budget-preflight.json","budget-reservations.jsonl","api-usage.jsonl","label-traces.jsonl"])
         checksum_files.extend(path.name for path in sorted(folder.glob("rank-certificate-*.json")))
     checks={}

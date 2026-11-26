@@ -1,0 +1,140 @@
+{
+  "threshold_exclusive": 10,
+  "observations": [
+    {
+      "page_size": 100,
+      "page": 1009,
+      "observed_at": "2026-11-26T14:04:18+00:00",
+      "last_above": {
+        "rank": 100999,
+        "id": "017e1242-6c10-759e-ad23-6ee229382122",
+        "likes": 11
+      },
+      "first_at_or_below": {
+        "rank": 101000,
+        "id": "01973a32-b478-7f15-95f2-5d604302b299",
+        "likes": 10
+      }
+    },
+    {
+      "page_size": 200,
+      "page": 504,
+      "observed_at": "2026-11-26T14:04:18+00:00",
+      "last_above": {
+        "rank": 100995,
+        "id": "019abec0-2690-77a9-ae0f-a5d060194962",
+        "likes": 11
+      },
+      "first_at_or_below": {
+        "rank": 100996,
+        "id": "01991497-b32d-7243-8443-eb1bb35183fb",
+        "likes": 10
+      }
+    },
+    {
+      "page_size": 125,
+      "page": 808,
+      "observed_at": "2026-11-26T14:04:20+00:00",
+      "last_above": {
+        "rank": 101003,
+        "id": "0198318e-f448-7494-acc9-20f621e994e2",
+        "likes": 11
+      },
+      "first_at_or_below": {
+        "rank": 101004,
+        "id": "019ebad3-d836-7d2f-bb56-71ad9e7a8652",
+        "likes": 10
+      }
+    },
+    {
+      "page_size": 175,
+      "page": 577,
+      "observed_at": "2026-11-26T14:04:19+00:00",
+      "last_above": {
+        "rank": 101003,
+        "id": "01a175f3-d1ac-7de0-8166-bf3649479b8f",
+        "likes": 11
+      },
+      "first_at_or_below": {
+        "rank": 101004,
+        "id": "0196ffe5-a410-71fa-a761-acbddd25e053",
+        "likes": 10
+      }
+    },
+    {
+      "page_size": 199,
+      "page": 507,
+      "observed_at": "2026-11-26T14:04:19+00:00",
+      "last_above": {
+        "rank": 101003,
+        "id": "0194dd43-9770-7673-901d-20887e505654",
+        "likes": 11
+      },
+      "first_at_or_below": {
+        "rank": 101004,
+        "id": "01991497-b32d-7243-8443-eb1bb35183fb",
+        "likes": 10
+      }
+    },
+    {
+      "page_size": 97,
+      "page": 1041,
+      "observed_at": "2026-11-26T14:04:19+00:00",
+      "last_above": {
+        "rank": 101003,
+        "id": "019abec0-2690-77a9-ae0f-a5d060194962",
+        "likes": 11
+      },
+      "first_at_or_below": {
+        "rank": 101004,
+        "id": "0182e063-4778-7d56-9656-2d60709924ca",
+        "likes": 10
+      }
+    },
+    {
+      "page_size": 131,
+      "page": 771,
+      "observed_at": "2026-11-26T14:04:20+00:00",
+      "last_above": {
+        "rank": 101003,
+        "id": "0198783a-17c8-7991-b73a-d3dbf7ef17ea",
+        "likes": 11
+      },
+      "first_at_or_below": {
+        "rank": 101004,
+        "id": "019c26cb-8e20-738d-88f6-802922883a41",
+        "likes": 10
+      }
+    },
+    {
+      "page_size": 150,
+      "page": 673,
+      "observed_at": "2026-11-26T14:04:19+00:00",
+      "last_above": {
+        "rank": 101003,
+        "id": "019c73dd-e64a-7115-a7c7-b3fb4dd28a18",
+        "likes": 11
+      },
+      "first_at_or_below": {
+        "rank": 101004,
+        "id": "0182e063-4778-7d56-9656-2d60709924ca",
+        "likes": 10
+      }
+    },
+    {
+      "page_size": 50,
+      "page": 2020,
+      "observed_at": "2026-11-26T14:04:20+00:00",
+      "last_above": {
+        "rank": 101003,
+        "id": "01967c0a-77d8-7eb6-a8ab-5fde960e1098",
+        "likes": 11
+      },
+      "first_at_or_below": {
+        "rank": 101004,
+        "id": "01973a32-b478-7f15-95f2-5d604302b299",
+        "likes": 10
+      }
+    }
+  ]
+}

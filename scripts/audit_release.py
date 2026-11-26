@@ -13,7 +13,8 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import normalize
 from threadpoolctl import threadpool_limits
 from atlas.io import ROOT, file_hash, papers_at, read_json, save_json
-from atlas.editions import edition_path
+from atlas.editions import CAPPED, edition_path
+from atlas.catalog import local_catalog
 
 
 def independent_credit_check(folder,receipts):
@@ -36,7 +37,13 @@ def independent_credit_check(folder,receipts):
     assert len(set(tickets))==len(tickets) and set(tickets)<={a["id"] for a in attempts}
     total=sum(a["reserved_micro_usd"] for a in attempts)
     assert total<=header["cap_micro_usd"]
-    if read_json(folder/"manifest.json")["threshold_exclusive"]==20:assert header["cap_micro_usd"]<=50*10**6
+    if read_json(folder/"manifest.json")["threshold_exclusive"] in CAPPED:assert header["cap_micro_usd"]<=50*10**6
+    rates=header.get("rate_numerators",{"embeddings":[1,0],"labels":[2,3]});divisor=header.get("rate_divisor",1)
+    running=0
+    for i,a in enumerate(attempts,1):
+        ir,orr=rates[a["phase"]]
+        running+=(ir*a["input_bound"]+orr*a["output_bound"]+divisor-1)//divisor
+        assert a["id"]==i and running==a["total_micro_usd"]
     assert D(total)/10**6==D(str(report["reserved_usd"]))
     assert abs(dollars-D(str(report["estimated_usd"])))<=D(".0000000005")
     return dict(independent_receipt_cost_usd=float(dollars),api_attempts=len(attempts),api_receipts=len(receipts))
@@ -74,7 +81,7 @@ def audit(snapshot):
             assert last["likes"]>threshold and (lower is None or lower["likes"]<=threshold and lower["rank"]==last["rank"]+1)
     ids=[p["id"] for p in papers];by_public={p["paper_id"]:i for i,p in enumerate(papers)}
     assert ids==sorted(set(ids))
-    public=read_json(docs/"atlas.json")
+    public=local_catalog(docs)
     assert public.get("threshold_exclusive",100)==threshold
     csvname=public.get("csv","papers.csv")
     if "abstract_chunk_size" in public:
@@ -96,7 +103,13 @@ def audit(snapshot):
             stop=min(start+256,len(v))
             dist=1-v[start:stop] @ v.T
             dist[np.arange(stop-start),np.arange(start,stop)]=np.inf
-            reference[start:stop]=np.argsort(dist,axis=1,kind="stable")[:,:10]
+            if threshold==10:
+                # Enumerating all candidates at or below the tenth distance handles ties exactly.
+                for i,row in enumerate(dist):
+                    cutoff=np.partition(row,9)[9]
+                    candidates=np.flatnonzero(row<=cutoff)
+                    reference[start+i]=candidates[np.argsort(row[candidates],kind="stable")[:10]]
+            else:reference[start:stop]=np.argsort(dist,axis=1,kind="stable")[:,:10]
         del v
     def overlap(a,b):
         return sum(len(set(x).intersection(y)) for x,y in zip(a,b,strict=True))/(10*len(a))

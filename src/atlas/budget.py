@@ -23,7 +23,7 @@ class BudgetExceeded(RuntimeError):
 
 
 class CreditBudget:
-    def __init__(self,folder,dollars):
+    def __init__(self,folder,dollars,*,fractional=False):
         self.journal=folder/JOURNAL
         amount=Decimal(str(dollars))*MILLION
         if not amount.is_finite() or amount!=amount.to_integral_value() or amount<0:
@@ -38,8 +38,11 @@ class CreditBudget:
             else:
                 if (folder/"api-usage.jsonl").exists():
                     raise ValueError("Cannot initialize an empty budget after hosted requests already occurred")
-                with self.journal.open("xb") as f:
-                    self._append(f,dict(time=now(),id=0,cap_micro_usd=self.cap,total_micro_usd=0))
+                header=dict(time=now(),id=0,cap_micro_usd=self.cap,total_micro_usd=0)
+                if fractional:header.update(rate_divisor=4,rate_numerators={"embeddings":[1,0],"labels":[2,4]})
+                with self.journal.open("xb") as f:self._append(f,header)
+            self.divisor=header.get("rate_divisor",1)
+            self.rates=header.get("rate_numerators",GUARD_RATES)
 
     @staticmethod
     def _append(stream,record):
@@ -49,10 +52,10 @@ class CreditBudget:
 
     def reserve(self,phase,input_bound,output_bound):
         """A process-shared lock and fsync commit the charge before the network call."""
-        ir,orr=GUARD_RATES[phase]
+        ir,orr=self.rates[phase]
         if input_bound<0 or output_bound<0 or phase=="embeddings" and output_bound:
             raise ValueError("Invalid token reservation")
-        charge=ir*input_bound+orr*output_bound
+        charge=(ir*input_bound+orr*output_bound+self.divisor-1)//self.divisor
         with self.lock,self.journal.open("r+b") as f:
             end=f.seek(0,os.SEEK_END);f.seek(max(0,end-2048))
             tail=f.read()
@@ -120,7 +123,8 @@ def cost_report(folder):
                 estimated_by_phase_usd={k:round(v,9) for k,v in costs.items()},reserved_usd=reserved/MILLION,
                 attempted_requests=len(entries),confirmed_receipts=len(confirmed),unconfirmed_attempts=len(entries)-len(confirmed),
                 unconfirmed_bound_usd=unknown/MILLION,rate_card_usd_per_million=RATES,
-                reservation_rates_usd_per_million=GUARD_RATES,pricing_source="https://developers.openai.com/api/docs/pricing",
+                reservation_rates_usd_per_million={phase:[x/head.get("rate_divisor",1) for x in pair]
+                    for phase,pair in head.get("rate_numerators",GUARD_RATES).items()},pricing_source="https://developers.openai.com/api/docs/pricing",
                 pricing_date="2026-11-26",feed_access="anonymous metadata",currency="USD")
     save_json(folder/"budget.json",report)
     return report
