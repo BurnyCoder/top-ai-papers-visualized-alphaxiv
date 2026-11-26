@@ -67,6 +67,11 @@ def run(url,channel,shots):
         with page.expect_download() as downloaded:page.get_by_role("link",name="Download CSV").click()
         assert downloaded.value.suggested_filename==data.get("csv","papers.csv")
         expect(page.get_by_role("combobox",name="Atlas edition")).to_have_value(str(threshold))
+        if threshold==20:
+            for other in (50,100,20):
+                page.get_by_role("combobox",name="Atlas edition").select_option(str(other))
+                expect(page.locator("#subtitle")).to_contain_text(f"more than {other} likes",timeout=90000)
+                expect(page.locator("#likes")).to_have_value(str(other+1))
         mobile=browser.new_page(viewport={"width":390,"height":844},is_mobile=True,has_touch=True,device_scale_factor=1)
         mobile.goto(url)
         expect(mobile.locator("#visible")).to_have_text(f"{len(papers):,} visible",timeout=90000)
