@@ -1,5 +1,10 @@
 # Paper Atlas
 
+The **more than 20 likes** edition extends the verified census under a USD 50 API credit ceiling. [Registered protocol](reports/over-20/preregistration.md) · [Run matrix](reports/over-20/planned-runs.md)
+
+<!-- results-over-20:start -->
+<!-- results-over-20:end -->
+
 Explore the independently fitted editions for **more than 50** and **more than 100** public likes. Both use the same search, clustering and evaluation methods. [Over 50 map](https://burnycoder.github.io/top-ai-papers-visualized-alphaxiv/over-50/) · [Over 100 map](https://burnycoder.github.io/top-ai-papers-visualized-alphaxiv/)
 
 [Expanded research paper](reports/over-50/paper.pdf) · [Expanded dataset](https://huggingface.co/datasets/BurnyCoder/alphaxiv-paper-atlas/tree/atlas-2026-11-26-over-50) · [Preregistration](reports/over-50/preregistration.md) · [Run matrix](reports/over-50/planned-runs.md)
