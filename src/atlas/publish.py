@@ -126,6 +126,9 @@ def reports(folder,manifest,evaluation,clusters,embedding):
                      "Each edition has an independently fitted coordinate system. Cross-edition differences in recall "
                      "can reflect the corpus and the optimization budget. "
                      "[UMAP implementation](https://umap-learn.readthedocs.io/en/latest/_modules/umap/umap_.html#simplicial_set_embedding)")
+        if comparison['current_layout_epochs']==comparison['previous_layout_epochs']:
+            method_note=(f"Both editions used {comparison['current_layout_epochs']} UMAP epochs per fit. "
+                         "The larger corpus changes each paper’s potential neighbors, and the two maps have independent coordinate systems.")
     if (folder/"budget.json").exists():
         b=read_json(folder/"budget.json")
         desc+=(f"\n\nOpenAI usage receipts priced at standard rates total **USD {b['estimated_usd']:.4f}** "
@@ -135,6 +138,20 @@ def reports(folder,manifest,evaluation,clusters,embedding):
     if "cache_hits_at_start" in embedding:
         cache_note=(f" The embedding cache supplied {embedding['cache_hits_at_start']:,} distinct inputs at the start "
                     f"of the completed embedding invocation. OpenAI embedded {embedding['new_inputs']:,} other inputs.")
+    coverage_note=""
+    if "rank_certificate" in first:
+        evidence=[]
+        for accepted in (first,last):
+            proof=read_json(folder/accepted["rank_certificate"])
+            evidence.append(f"| {accepted['page_size']} | {len(accepted['pages'])} | {sum(proof['initial_missing'].values()):,} | "
+                            f"{sum(x['pages'] for x in proof['supplements']):,} | {sum(proof['remaining'].values())} |")
+        coverage_note=("Unfiltered pages repeated groups within tied scores. Supplemental queries recovered the skipped IDs. "
+                       f"The last qualifying global rank was {first['boundary']['last_above']['rank']:,} at {first['boundary']['last_above']['likes']} likes. "
+                       f"The next entry had {first['boundary']['first_at_or_below']['likes']} likes. "
+                       f"{len(manifest['accepted_vote_changes'])} papers had different vote observations in the two accepted passes.\n\n"
+                       "| Page size | Global pages | Initially missing ranks | Supplementary pages | Unresolved ranks |\n"
+                       "|---:|---:|---:|---:|---:|\n"+"\n".join(evidence)+
+                       f"\n\n[First rank certificate]({data_url}/{first['rank_certificate']}) · [Second rank certificate]({data_url}/{last['rank_certificate']}) · [Collection amendment](collection-amendment.md)")
     examples=sorted((c for g,c in clusters.items() if int(g)>=0),key=lambda c:-c["count"])[:4]
     ex="\n".join(f"- **{c['name']}** ({c['count']} papers). "+", ".join("["+i+"](https://www.alphaxiv.org/abs/"+i+")" for i in c["evidence"]) for c in examples)
     full=f"""# Snapshot summary · {folder.name}
@@ -154,6 +171,8 @@ The table describes seed {r['seed']}. The PCA and shuffled projections retain th
 ## Coverage and provenance
 
 The collection window was {manifest['started_at']} to {manifest['ended_at']}. The independent page sizes were {first['page_size']} and {last['page_size']}, taking {len(first['pages'])} and {len(last['pages'])} pages. The embedding matrix has {embedding['rows']:,} rows and {embedding['dimensions']:,} columns. The inputs contained {embedding['input_tokens']:,} tokens. {manifest['title_only']} papers used title-only input.{cache_note}
+
+{coverage_note}
 
 {method_note}
 
