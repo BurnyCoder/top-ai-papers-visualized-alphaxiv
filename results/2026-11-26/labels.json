@@ -1,0 +1,1874 @@
+{
+  "0": {
+    "name": "On-policy distillation for language models",
+    "evidence": [
+      "2605.11182",
+      "2607.26246",
+      "2605.03677",
+      "2604.00626"
+    ],
+    "representatives": [
+      "2605.11182",
+      "2607.26246",
+      "2605.03677",
+      "2603.25562",
+      "2608.31046",
+      "2604.13016",
+      "2604.00626"
+    ],
+    "terms": [
+      "opd",
+      "teacher",
+      "student",
+      "distillation",
+      "policy distillation",
+      "policy",
+      "opsd",
+      "self distillation",
+      "policy self",
+      "distillation opd",
+      "token",
+      "privileged"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "f7a9c15ad349f5de1e1dd476c63cf6100890edd8ff414b34e5c9a6e242696ea9"
+  },
+  "1": {
+    "name": "Quantum many-body dynamics",
+    "evidence": [
+      "2403.00091",
+      "2505.09707",
+      "2503.23475",
+      "2506.06994"
+    ],
+    "representatives": [
+      "2504.07791",
+      "2403.00091",
+      "2505.09707",
+      "2506.06994",
+      "2503.23475",
+      "2503.06160",
+      "2503.14623"
+    ],
+    "terms": [
+      "quantum",
+      "energy",
+      "galaxies",
+      "mass",
+      "galaxy",
+      "dark",
+      "disk",
+      "gravity",
+      "theory",
+      "rm",
+      "magnetic",
+      "m_"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "36db79d6f94e932bc587f788b44d399c8aaf909f8f5bc7b34c6b33d6e996c041"
+  },
+  "2": {
+    "name": "Fluid dynamics and Navier–Stokes equations",
+    "evidence": [
+      "2509.14185",
+      "2304.11247",
+      "2503.03991"
+    ],
+    "representatives": [
+      "2509.14185",
+      "2304.11247",
+      "2310.10565",
+      "2503.03991",
+      "2503.01800",
+      "1506.03720",
+      "2502.07469"
+    ],
+    "terms": [
+      "fluid",
+      "equations",
+      "navier",
+      "navier stokes",
+      "stokes",
+      "physics informed",
+      "plasma",
+      "pdes",
+      "informed neural",
+      "inversion",
+      "physics",
+      "helmholtz"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "ba20bfdf4934ad00826dcedd6019ec9c1cc0ee0a7b2b50cca7252069c2d80ce1"
+  },
+  "3": {
+    "name": "Retrieval-augmented generation for large language models",
+    "evidence": [
+      "2312.10997",
+      "2005.11401",
+      "2404.10981",
+      "2408.08921"
+    ],
+    "representatives": [
+      "2312.10997",
+      "2502.01142",
+      "2005.11401",
+      "2503.10677",
+      "2404.10981",
+      "2408.08921",
+      "2501.09136"
+    ],
+    "terms": [
+      "rag",
+      "retrieval",
+      "retrieval augmented",
+      "augmented generation",
+      "knowledge",
+      "augmented",
+      "generation",
+      "graphrag",
+      "rag systems",
+      "generation rag",
+      "graph",
+      "llms"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "27303fed9bc8bf4afae3772f1383d67819ca06fdb1afd9a0273385ac01cdc90c"
+  },
+  "4": {
+    "name": "Self-evolving skills for LLM agents",
+    "evidence": [
+      "2602.08234",
+      "2605.06130",
+      "2603.01145"
+    ],
+    "representatives": [
+      "2602.08234",
+      "2605.06130",
+      "2604.04804",
+      "2603.02766",
+      "2607.22529",
+      "2606.18837",
+      "2603.01145"
+    ],
+    "terms": [
+      "skill",
+      "skills",
+      "agents",
+      "agent",
+      "agent skills",
+      "experience",
+      "skill library",
+      "reusable",
+      "library",
+      "learning",
+      "autoskill",
+      "tasks"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "6dbc50f7ae81e4db76590cb5fbe6cab4f428f7d93ca0b37fefc98c5811a71e37"
+  },
+  "5": {
+    "name": "Long-term memory for LLM agents",
+    "evidence": [
+      "2502.12110",
+      "2601.01885",
+      "2504.19413"
+    ],
+    "representatives": [
+      "2502.12110",
+      "2507.05257",
+      "2601.01885",
+      "2509.25911",
+      "2606.24775",
+      "2504.19413",
+      "2508.19828"
+    ],
+    "terms": [
+      "memory",
+      "agents",
+      "agent",
+      "memory systems",
+      "llm",
+      "retrieval",
+      "agent memory",
+      "long",
+      "systems",
+      "llm agents",
+      "long term",
+      "term memory"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "2c0e0b403ca6783e088e288cb5c2c014ad2306cf0b5044809633d295076bec7c"
+  },
+  "6": {
+    "name": "Financial time series forecasting",
+    "evidence": [
+      "2504.09664",
+      "2504.13522",
+      "2503.22192"
+    ],
+    "representatives": [
+      "2503.22192",
+      "2310.01728",
+      "2409.06289",
+      "2504.13522",
+      "2504.08818",
+      "2504.09664",
+      "2504.10789"
+    ],
+    "terms": [
+      "time series",
+      "forecasting",
+      "financial",
+      "series",
+      "stock",
+      "trading",
+      "portfolio",
+      "market",
+      "time",
+      "price",
+      "series forecasting",
+      "data"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "4fceee88695c94b4613829a7ab7db3a5c0c5adfb2e99a96b58a5eecfd4d42b7f"
+  },
+  "7": {
+    "name": "Medical diagnostic reasoning in language models",
+    "evidence": [
+      "2503.13939",
+      "2505.11733",
+      "2506.22405",
+      "2505.11462"
+    ],
+    "representatives": [
+      "2503.13939",
+      "2502.19634",
+      "2508.08224",
+      "2505.11733",
+      "2506.22405",
+      "2504.09258",
+      "2505.11462"
+    ],
+    "terms": [
+      "medical",
+      "clinical",
+      "diagnostic",
+      "reasoning",
+      "ct",
+      "disease",
+      "medical reasoning",
+      "mil",
+      "med",
+      "diagnosis",
+      "pathological",
+      "learning"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "168be3e63bc289c5f072072c43432d21daff565e96d63f718d39ab6aba66f04d"
+  },
+  "8": {
+    "name": "Qwen foundation and multimodal models",
+    "evidence": [
+      "2505.09388",
+      "2511.21631",
+      "2509.17765"
+    ],
+    "representatives": [
+      "2505.09388",
+      "2407.10671",
+      "2511.21631",
+      "2412.15115",
+      "2605.10730",
+      "2509.17765",
+      "2309.16609"
+    ],
+    "terms": [
+      "qwen",
+      "qwen3",
+      "qwen2",
+      "vl",
+      "qwen image",
+      "omni",
+      "qwen3 omni",
+      "image",
+      "qwen2 vl",
+      "training",
+      "audio",
+      "text"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "767e1bca0b948ca00b0734b65a04e80293956ba145776a9942d946ee3016b667"
+  },
+  "9": {
+    "name": "Continual learning in large language models",
+    "evidence": [
+      "2605.12484",
+      "2510.15103",
+      "2609.06986",
+      "2603.01097"
+    ],
+    "representatives": [
+      "2605.12484",
+      "2510.15103",
+      "2609.06986",
+      "2603.01097",
+      "2106.09685",
+      "2504.07448",
+      "2402.09353"
+    ],
+    "terms": [
+      "lora",
+      "forgetting",
+      "learning",
+      "continual",
+      "continual learning",
+      "peft",
+      "adaptation",
+      "tuning",
+      "task",
+      "fine tuning",
+      "reft",
+      "fine"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "47c092eae13691c4d0facac1ecb9bcacca16c573873ac64cb61ff1a4d9f40f14"
+  },
+  "10": {
+    "name": "Neural text-to-speech generation",
+    "evidence": [
+      "2504.12339",
+      "2505.07916",
+      "2504.12867"
+    ],
+    "representatives": [
+      "2504.12339",
+      "2505.07916",
+      "2504.04060",
+      "2306.15687",
+      "2505.03739",
+      "2504.10352",
+      "2504.12867"
+    ],
+    "terms": [
+      "speech",
+      "audio",
+      "tts",
+      "speaker",
+      "text speech",
+      "text",
+      "voice",
+      "acoustic",
+      "speech generation",
+      "emotion",
+      "spoken",
+      "quality"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "cf02f7a585cf981e2a2add14614e9a876ca2fa5eadf70cbb304cea98dc6a7cc6"
+  },
+  "11": {
+    "name": "Scaling laws for language model pretraining",
+    "evidence": [
+      "2001.08361",
+      "2503.19551",
+      "2504.15208"
+    ],
+    "representatives": [
+      "2503.19551",
+      "2001.08361",
+      "2509.14786",
+      "2504.15208",
+      "2508.10975",
+      "2503.04715",
+      "2504.11393"
+    ],
+    "terms": [
+      "data",
+      "training",
+      "scaling",
+      "laws",
+      "scaling laws",
+      "law",
+      "compute",
+      "optimal",
+      "language",
+      "scaling law",
+      "harmonic",
+      "pre"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "1aaa5939a89fcbdb0b0a49da0cb0a1eae0c65c040d005299aa802e34ec32f2a3"
+  },
+  "12": {
+    "name": "Neural network approximation theory",
+    "evidence": [
+      "2504.15110",
+      "2503.14338"
+    ],
+    "representatives": [
+      "2504.15110",
+      "2503.19867",
+      "2402.04843",
+      "2504.12519",
+      "2503.14338",
+      "2503.23982",
+      "2503.06917"
+    ],
+    "terms": [
+      "kans",
+      "matrix",
+      "kan",
+      "mlps",
+      "kolmogorov",
+      "theorem",
+      "arnold",
+      "kolmogorov arnold",
+      "networks",
+      "arnold networks",
+      "mathsf",
+      "approximation"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "506bfd1625d22fbf903b4a7a52a475fd98f257d49e67f318d0b0da8153b72ae3"
+  },
+  "13": {
+    "name": "Deep learning generalization theory",
+    "evidence": [
+      "2605.01172",
+      "2503.02113",
+      "1611.03530"
+    ],
+    "representatives": [
+      "2605.01172",
+      "2503.02113",
+      "1611.03530",
+      "2503.18258",
+      "2505.11581",
+      "2504.16929",
+      "2505.22785"
+    ],
+    "terms": [
+      "privacy",
+      "learning",
+      "networks",
+      "dp",
+      "data",
+      "neural",
+      "neural networks",
+      "deep",
+      "variables",
+      "theory",
+      "causal",
+      "machine learning"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "6e8a286d30c451bf053e67c2e847cf21d832ba94daaca0e229e425de3e3d2e93"
+  },
+  "14": {
+    "name": "Open language model training",
+    "evidence": [
+      "2501.00656",
+      "2302.13971",
+      "2502.02737",
+      "2407.21783"
+    ],
+    "representatives": [
+      "2502.02737",
+      "2407.21783",
+      "2501.00656",
+      "2302.13971",
+      "2505.00949",
+      "2310.06694",
+      "2608.27370"
+    ],
+    "terms": [
+      "llama",
+      "bert",
+      "kimi",
+      "training",
+      "olmo",
+      "language",
+      "byte",
+      "open",
+      "k2",
+      "data",
+      "k3",
+      "kimi k3"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "52186247baf79b1fbf5637765a47401559fffdce49d61e31561bcecb240436c3"
+  },
+  "15": {
+    "name": "Looped transformers and recurrent depth",
+    "evidence": [
+      "2610.40325",
+      "2502.17416",
+      "2605.26106",
+      "2605.12466"
+    ],
+    "representatives": [
+      "2610.40325",
+      "2502.17416",
+      "2605.12466",
+      "2610.02185",
+      "2609.40305",
+      "2605.23872",
+      "2605.26106"
+    ],
+    "terms": [
+      "looped",
+      "looping",
+      "transformers",
+      "transformer",
+      "depth",
+      "looped transformers",
+      "loops",
+      "recurrent",
+      "latent feedback",
+      "reasoning",
+      "recurrence",
+      "training"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "c6d64591d3b345232cbbd7aaa39bbe3e37d525f085463a66ce884b352e3efb8a"
+  },
+  "16": {
+    "name": "Systems for mixture-of-experts models",
+    "evidence": [
+      "2603.07685",
+      "2504.02263",
+      "2503.06823",
+      "2504.03871"
+    ],
+    "representatives": [
+      "2603.07685",
+      "2504.02263",
+      "2503.06823",
+      "2504.03871",
+      "2401.06066",
+      "2512.14080",
+      "2505.04519"
+    ],
+    "terms": [
+      "moe",
+      "experts",
+      "mixture experts",
+      "expert",
+      "gpu",
+      "training",
+      "moes",
+      "experts moe",
+      "memory",
+      "cpu",
+      "gpus",
+      "mixture"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "044a7ce109d0242adaa1a071037a767eabd97c23f35137e5aadc48c86aaa7ca9"
+  },
+  "17": {
+    "name": "Efficient attention for LLM inference",
+    "evidence": [
+      "2505.21487",
+      "2504.06319",
+      "2410.10819"
+    ],
+    "representatives": [
+      "2505.21487",
+      "2603.12201",
+      "2603.05451",
+      "2504.06319",
+      "2410.10819",
+      "2606.09079",
+      "2502.14837"
+    ],
+    "terms": [
+      "attention",
+      "cache",
+      "kv",
+      "memory",
+      "kv cache",
+      "hardware",
+      "quantization",
+      "linear attention",
+      "sparse attention",
+      "inference",
+      "bit",
+      "language"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "10cd7d61b9081bacae9f020a1bec4fce5cd923d74380c85d3cebddd5d23f48d7"
+  },
+  "18": {
+    "name": "Generative recommendation systems",
+    "evidence": [
+      "2502.18965",
+      "2505.04180",
+      "2305.05065",
+      "2508.20900"
+    ],
+    "representatives": [
+      "2503.24289",
+      "2502.18965",
+      "2507.15551",
+      "2505.04180",
+      "2305.05065",
+      "2508.20900",
+      "2506.13695"
+    ],
+    "terms": [
+      "recommendation",
+      "item",
+      "recommender",
+      "ranking",
+      "user",
+      "recommendation systems",
+      "id",
+      "recommender systems",
+      "items",
+      "retrieval",
+      "generative",
+      "systems"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "5ab2d8e5187a848901824e3de5ffeeaef944a03c1ff61fceaaac87f7057e332a"
+  },
+  "19": {
+    "name": "Discrete diffusion language models",
+    "evidence": [
+      "2502.09992",
+      "2406.07524",
+      "2508.10875"
+    ],
+    "representatives": [
+      "2609.04010",
+      "2410.17891",
+      "2502.09992",
+      "2406.07524",
+      "2508.09192",
+      "2508.10875",
+      "2503.09573"
+    ],
+    "terms": [
+      "diffusion",
+      "ar",
+      "diffusion language",
+      "discrete diffusion",
+      "language",
+      "discrete",
+      "dllms",
+      "autoregressive",
+      "dlms",
+      "generation",
+      "decoding",
+      "diffusion llms"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "d1e268f18b2ff0bbc6e386aa378b170b2cb0463d69aa63758ddda8e337d42613"
+  },
+  "20": {
+    "name": "GPT-4o image generation and evaluation",
+    "evidence": [
+      "2504.02782",
+      "2504.05979",
+      "2504.08003"
+    ],
+    "representatives": [
+      "2504.02782",
+      "2504.05979",
+      "2508.09987",
+      "2504.08003",
+      "2503.14905",
+      "2504.14245",
+      "2504.07046"
+    ],
+    "terms": [
+      "image",
+      "4o",
+      "gpt 4o",
+      "image generation",
+      "gpt",
+      "editing",
+      "detection",
+      "image editing",
+      "generation",
+      "images",
+      "image detection",
+      "deepfake"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "a80d0c4dea450167c1f63aa2cb4c41bb1be7971c6ddf8c2b2cb76b1738f70103"
+  },
+  "21": {
+    "name": "Efficient long-form video understanding with multimodal language models",
+    "evidence": [
+      "2504.02438",
+      "2503.18943",
+      "2503.04130",
+      "2510.09608"
+    ],
+    "representatives": [
+      "2510.09608",
+      "2504.02438",
+      "2504.01328",
+      "2503.18943",
+      "2504.11199",
+      "2503.04130",
+      "2504.17343"
+    ],
+    "terms": [
+      "video",
+      "video understanding",
+      "temporal",
+      "streaming",
+      "long",
+      "videos",
+      "long form",
+      "frames",
+      "understanding",
+      "form video",
+      "hour long",
+      "frame"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "1758a6ad922919dc56e87bb4c7086fa39233673ac2abbc65d87c7da0d778be4e"
+  },
+  "22": {
+    "name": "Autoregressive video diffusion",
+    "evidence": [
+      "2412.07772",
+      "2605.15141",
+      "2602.02214",
+      "2506.08009"
+    ],
+    "representatives": [
+      "2412.07772",
+      "2605.15141",
+      "2504.12259",
+      "2512.05081",
+      "2602.02214",
+      "2506.08009",
+      "2412.14169"
+    ],
+    "terms": [
+      "video",
+      "motion",
+      "video generation",
+      "generation",
+      "diffusion",
+      "video diffusion",
+      "frame",
+      "motion generation",
+      "autoregressive",
+      "temporal",
+      "attention",
+      "videos"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "8b6d19f57b1a403254719fef8f885163b1dd4a254a8c7f9853413b559784870b"
+  },
+  "23": {
+    "name": "JEPA-based latent world models",
+    "evidence": [
+      "2506.09985",
+      "2603.19312",
+      "2610.06805"
+    ],
+    "representatives": [
+      "2506.09985",
+      "2602.10098",
+      "2603.22281",
+      "2603.19312",
+      "2609.34085",
+      "2610.12818",
+      "2610.06805"
+    ],
+    "terms": [
+      "jepa",
+      "latent",
+      "world",
+      "planning",
+      "embedding predictive",
+      "joint embedding",
+      "jepas",
+      "predictive",
+      "latent world",
+      "action",
+      "predictive architecture",
+      "embedding"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "38d4ddf01e6b9bfbd2531d7b8ce7e782ebb1a31b5eb9f51eb001814541c4d3bc"
+  },
+  "24": {
+    "name": "Feed-forward 3D scene reconstruction",
+    "evidence": [
+      "2503.11651",
+      "2602.23361",
+      "2507.11539",
+      "2512.08924"
+    ],
+    "representatives": [
+      "2504.07961",
+      "2512.08924",
+      "2503.11651",
+      "2602.23361",
+      "2507.11539",
+      "2608.18388",
+      "2606.13652"
+    ],
+    "terms": [
+      "3d",
+      "camera",
+      "reconstruction",
+      "slam",
+      "geometry",
+      "3d reconstruction",
+      "motion",
+      "scene",
+      "4d",
+      "monocular",
+      "vggt",
+      "tracking"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "b42284315f64904ddd8de27637cf6655abcbf78c2e4d9e31372dc7ccba0cdf7a"
+  },
+  "25": {
+    "name": "3D Gaussian Splatting for Scene Reconstruction and Rendering",
+    "evidence": [
+      "2308.04079",
+      "2404.19702",
+      "2503.18682"
+    ],
+    "representatives": [
+      "2503.13272",
+      "2308.04079",
+      "2504.04294",
+      "2404.19702",
+      "2503.18682",
+      "2503.18052",
+      "2503.16710"
+    ],
+    "terms": [
+      "splatting",
+      "3d",
+      "gaussian",
+      "gaussian splatting",
+      "3dgs",
+      "gaussians",
+      "3d gaussian",
+      "rendering",
+      "scene",
+      "scenes",
+      "radiance",
+      "reconstruction"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "7981cfc306c6336dbccd3009cb8b97adbb46abe2d44845d5f6736544d2b3f6b8"
+  },
+  "26": {
+    "name": "Adversarial attacks on LLM safety",
+    "evidence": [
+      "2503.21598",
+      "2504.00218",
+      "2307.15043"
+    ],
+    "representatives": [
+      "2503.21598",
+      "2504.00218",
+      "2504.13474",
+      "2503.23175",
+      "2307.15043",
+      "2504.15585",
+      "2505.11449"
+    ],
+    "terms": [
+      "unlearning",
+      "safety",
+      "attacks",
+      "attack",
+      "llm",
+      "llms",
+      "security",
+      "malicious",
+      "cybersecurity",
+      "ai",
+      "jailbreak",
+      "language"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "43f47b46cdbf2ce9ebb4b577d97ab17894236186895237c5f1ee6c779ceed306"
+  },
+  "27": {
+    "name": "Vision-language models for visual understanding",
+    "evidence": [
+      "2103.00020",
+      "2412.16334",
+      "2112.03857"
+    ],
+    "representatives": [
+      "2103.00020",
+      "2412.16334",
+      "2504.17432",
+      "2304.07193",
+      "2503.15485",
+      "2505.09926",
+      "2112.03857"
+    ],
+    "terms": [
+      "detr",
+      "clip",
+      "detection",
+      "anomaly",
+      "visual",
+      "image",
+      "language",
+      "training",
+      "anomaly detection",
+      "vision",
+      "ap",
+      "object"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "c918152f6c8e79fc76fb037e07965232af3505293458c3e85b8810ff498b2fc8"
+  },
+  "28": {
+    "name": "Training LLM agents for deep search",
+    "evidence": [
+      "2504.03160",
+      "2503.09516",
+      "2509.10446",
+      "2508.07976"
+    ],
+    "representatives": [
+      "2504.03160",
+      "2509.13309",
+      "2503.09516",
+      "2605.04036",
+      "2508.07976",
+      "2509.10446",
+      "2503.05592"
+    ],
+    "terms": [
+      "search",
+      "deep research",
+      "agents",
+      "reasoning",
+      "research",
+      "deepresearch",
+      "deep",
+      "retrieval",
+      "training",
+      "rl",
+      "browsecomp",
+      "llms"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "15a2b407ca1e40a690445210607611e343d259eeeb9ce7509961726b4bb4eea1"
+  },
+  "29": {
+    "name": "AI-driven mathematical reasoning and formal theorem proving",
+    "evidence": [
+      "2504.21801",
+      "2605.22763",
+      "2507.23726"
+    ],
+    "representatives": [
+      "2511.22570",
+      "2504.21801",
+      "2605.22763",
+      "2503.21934",
+      "2507.15855",
+      "2602.10177",
+      "2507.23726"
+    ],
+    "terms": [
+      "mathematical",
+      "math",
+      "prover",
+      "reasoning",
+      "imo",
+      "olympiad",
+      "problems",
+      "lean",
+      "mathematical reasoning",
+      "theorem",
+      "formal",
+      "theorem proving"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "a2c84fb30e6268792e710ffbaeb21d2acd15e5d7c0cb4e681e607e33ef3718eb"
+  },
+  "30": {
+    "name": "Reinforcement learning from human feedback",
+    "evidence": [
+      "2503.22230",
+      "2504.04950",
+      "2204.05862",
+      "2402.14740"
+    ],
+    "representatives": [
+      "2503.22230",
+      "2504.04950",
+      "2305.18290",
+      "2504.14439",
+      "2204.05862",
+      "2503.17338",
+      "2402.14740"
+    ],
+    "terms": [
+      "reward",
+      "rlhf",
+      "preference",
+      "feedback",
+      "human feedback",
+      "human",
+      "learning human",
+      "learning",
+      "preferences",
+      "reinforcement",
+      "reinforcement learning",
+      "training"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "be5b7cfda16900e5c95d08489b1fdce7f1bd95eec8f266b6406dff07b7352a22"
+  },
+  "31": {
+    "name": "Learning policies for robotic manipulation",
+    "evidence": [
+      "2505.07819",
+      "2510.14830",
+      "2503.24361",
+      "2503.02881"
+    ],
+    "representatives": [
+      "2504.12609",
+      "2508.08241",
+      "2602.16710",
+      "2510.14830",
+      "2505.07819",
+      "2503.24361",
+      "2503.02881"
+    ],
+    "terms": [
+      "robot",
+      "manipulation",
+      "dexterous",
+      "robotic",
+      "policy",
+      "real",
+      "learning",
+      "data",
+      "humanoid",
+      "contact",
+      "tactile",
+      "diffusion"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "fe941056a39ed2df43f6c313f1095eb1c267e4ada400046964b371c0e33cdefd"
+  },
+  "32": {
+    "name": "Multimodal visual reasoning in large language models",
+    "evidence": [
+      "2503.06749",
+      "2503.10615",
+      "2503.20752",
+      "2503.21776"
+    ],
+    "representatives": [
+      "2503.06749",
+      "2509.24251",
+      "2503.10615",
+      "2503.20752",
+      "2503.17352",
+      "2601.19834",
+      "2503.21776"
+    ],
+    "terms": [
+      "reasoning",
+      "visual",
+      "multimodal",
+      "visual reasoning",
+      "cot",
+      "video",
+      "language",
+      "vision",
+      "multimodal reasoning",
+      "r1",
+      "perception",
+      "mllms"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "6baa9bd254df96af174d309bf88626769be0221b43f42b4d6f60c20adb4cb3bf"
+  },
+  "33": {
+    "name": "World-action models for robot control",
+    "evidence": [
+      "2603.17240",
+      "2606.15768",
+      "2609.07398"
+    ],
+    "representatives": [
+      "2603.17240",
+      "2606.15768",
+      "2610.10528",
+      "2609.07398",
+      "2605.12090",
+      "2601.05230",
+      "2503.18938"
+    ],
+    "terms": [
+      "action",
+      "world",
+      "video",
+      "robot",
+      "world action",
+      "wam",
+      "wams",
+      "actions",
+      "latent",
+      "manipulation",
+      "real",
+      "learning"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "d3931cf7ba9c407ce1e78d170f102707e2361b0d021a58c7dcfebb22d11a876f"
+  },
+  "34": {
+    "name": "Spatial reasoning in multimodal language models",
+    "evidence": [
+      "2505.23747",
+      "2412.14171",
+      "2509.02359",
+      "2503.17349"
+    ],
+    "representatives": [
+      "2505.23747",
+      "2412.14171",
+      "2505.20279",
+      "2509.02359",
+      "2503.17349",
+      "2506.21458",
+      "2504.15037"
+    ],
+    "terms": [
+      "spatial",
+      "visual",
+      "3d",
+      "spatial reasoning",
+      "mllms",
+      "reasoning",
+      "language",
+      "vision",
+      "vlms",
+      "multimodal",
+      "vision language",
+      "spatial understanding"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "9057abcdb4e476514c891e3587def4f61e5001b9cd64d937e0f6fd47caa061eb"
+  },
+  "35": {
+    "name": "Vision-language-action models for robotics",
+    "evidence": [
+      "2406.09246",
+      "2307.15818",
+      "2505.18719"
+    ],
+    "representatives": [
+      "2505.18719",
+      "2601.02456",
+      "2406.09246",
+      "2505.11917",
+      "2307.15818",
+      "2501.16664",
+      "2506.19850"
+    ],
+    "terms": [
+      "vla",
+      "action",
+      "robot",
+      "language action",
+      "vision language",
+      "language",
+      "vision",
+      "manipulation",
+      "robotic",
+      "action vla",
+      "tasks",
+      "world"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "a0673ea67c0bc285fdcc727b9de50df46855a241372308434069465acc4f6d67"
+  },
+  "36": {
+    "name": "Vision-language models for autonomous driving",
+    "evidence": [
+      "2503.23463",
+      "2506.13757",
+      "2402.12289",
+      "2503.07608"
+    ],
+    "representatives": [
+      "2503.23463",
+      "2506.13757",
+      "2402.12289",
+      "2503.07608",
+      "2504.11514",
+      "2510.12796",
+      "2311.01043"
+    ],
+    "terms": [
+      "driving",
+      "autonomous driving",
+      "autonomous",
+      "end",
+      "end autonomous",
+      "language",
+      "planning",
+      "reasoning",
+      "emma",
+      "action",
+      "trajectory",
+      "vision language"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "0adf73c60c631572ebf087f39e585463efa665608c9b3f05388952f883645f46"
+  },
+  "37": {
+    "name": "Test-time compute scaling in large language models",
+    "evidence": [
+      "2608.04001",
+      "2408.03314",
+      "2502.06703",
+      "2504.00294"
+    ],
+    "representatives": [
+      "2608.04001",
+      "2408.03314",
+      "2502.06703",
+      "2504.14047",
+      "2605.08083",
+      "2504.00294",
+      "2502.12215"
+    ],
+    "terms": [
+      "test time",
+      "time",
+      "test",
+      "scaling",
+      "reasoning",
+      "tts",
+      "time scaling",
+      "time compute",
+      "compute",
+      "inference",
+      "language",
+      "scaling test"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "fe1d2ff5fe2cee77acaf075756c3e6bd6380d07c795c93c14c68c869b2a44cfe"
+  },
+  "38": {
+    "name": "Vision-language model training and scaling",
+    "evidence": [
+      "2504.10479",
+      "2412.05271",
+      "2312.14238"
+    ],
+    "representatives": [
+      "2504.10479",
+      "2312.14238",
+      "2412.05271",
+      "2603.03276",
+      "2503.15621",
+      "2605.25979",
+      "2310.03744"
+    ],
+    "terms": [
+      "multimodal",
+      "llava",
+      "visual",
+      "vision",
+      "onevision",
+      "language",
+      "data",
+      "internvl3",
+      "internvl",
+      "openvision",
+      "training",
+      "encoder"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "b50ed638f874f59438cd77b930fa25241ccf4da9156faf12d5f8358ed3e0a624"
+  },
+  "39": {
+    "name": "Evolutionary self-improvement of LLM agents",
+    "evidence": [
+      "2511.10395",
+      "2510.23595",
+      "2508.02085",
+      "2604.01658"
+    ],
+    "representatives": [
+      "2511.10395",
+      "2510.23595",
+      "2605.10663",
+      "2508.02085",
+      "2506.13131",
+      "2504.05108",
+      "2604.01658"
+    ],
+    "terms": [
+      "agent",
+      "agents",
+      "rl",
+      "evolutionary",
+      "alphaevolve",
+      "llms",
+      "llm",
+      "experience",
+      "search",
+      "evolutionary search",
+      "tasks",
+      "evolution"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "e86a3bc520892bc70923e8b17eb6a0a903bdae55b685fbc1bf12aa616d83a667"
+  },
+  "40": {
+    "name": "Unified multimodal understanding and generation",
+    "evidence": [
+      "2504.04423",
+      "2505.02567",
+      "2503.21193"
+    ],
+    "representatives": [
+      "2504.04423",
+      "2505.02567",
+      "2605.12500",
+      "2506.09344",
+      "2503.21193",
+      "2509.09666",
+      "2503.13436"
+    ],
+    "terms": [
+      "image",
+      "generation",
+      "multimodal",
+      "unified",
+      "unified multimodal",
+      "understanding generation",
+      "visual",
+      "understanding",
+      "image generation",
+      "multimodal understanding",
+      "text",
+      "editing"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "28600a29e8ba45bae27e3190ac47ab90c4124770b2b6e3933da475cec8af1bf8"
+  },
+  "41": {
+    "name": "Reasoning in large language models",
+    "evidence": [
+      "2501.09686",
+      "2503.10814",
+      "2504.09037",
+      "2502.17419"
+    ],
+    "representatives": [
+      "2501.09686",
+      "2503.10814",
+      "2504.09037",
+      "2506.06941",
+      "2502.17419",
+      "2503.24377",
+      "2503.10573"
+    ],
+    "terms": [
+      "reasoning",
+      "llms",
+      "lrms",
+      "language",
+      "survey",
+      "large",
+      "deepseek",
+      "deepseek r1",
+      "mathematical reasoning",
+      "mathematical",
+      "r1",
+      "large reasoning"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "eb59bf99541d7407fcc3d2d041ee25755c146d031827f7d60ff0b35b2836b7a9"
+  },
+  "42": {
+    "name": "Self-improving agent harnesses",
+    "evidence": [
+      "2606.09498",
+      "2610.14224",
+      "2604.25850",
+      "2610.26770"
+    ],
+    "representatives": [
+      "2606.09498",
+      "2610.14224",
+      "2604.25850",
+      "2609.01437",
+      "2609.35738",
+      "2609.24974",
+      "2610.26770"
+    ],
+    "terms": [
+      "harness",
+      "harnesses",
+      "agent",
+      "agents",
+      "harness evolution",
+      "agent harness",
+      "execution",
+      "agent harnesses",
+      "task",
+      "evolution",
+      "bench",
+      "training"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "2eb2533373115e613e958b993f8d75df17ef7e80784aa8ca209269ae8949bc73"
+  },
+  "43": {
+    "name": "Autoregressive visual generation tokenizers",
+    "evidence": [
+      "2504.08736",
+      "2503.16430",
+      "2512.13687"
+    ],
+    "representatives": [
+      "2504.08736",
+      "2503.16430",
+      "2503.16194",
+      "2512.13687",
+      "2502.20321",
+      "2504.17789",
+      "2610.20533"
+    ],
+    "terms": [
+      "generation",
+      "image",
+      "tokenizer",
+      "visual",
+      "image generation",
+      "ar",
+      "autoregressive",
+      "tokenizers",
+      "latent",
+      "imagenet",
+      "tokenization",
+      "token"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "1d6bdf7a9e5c4fd44b76d124e772a44e90695b3735b7d3e301e9f7396bde5bc2"
+  },
+  "44": {
+    "name": "LLM-as-a-judge evaluation",
+    "evidence": [
+      "2411.15594",
+      "2412.05579"
+    ],
+    "representatives": [
+      "2411.15594",
+      "2412.05579",
+      "2402.06196",
+      "2503.06072",
+      "2303.18223",
+      "2508.15361",
+      "2405.10936"
+    ],
+    "terms": [
+      "llms",
+      "llm",
+      "language",
+      "judge",
+      "judges",
+      "cultural",
+      "llm judge",
+      "survey",
+      "multilingual",
+      "llm judges",
+      "large",
+      "human"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "7d61640ed6c61c14346b6d88f7054d25a568d5011127923563a886246e2c0705"
+  },
+  "45": {
+    "name": "Autonomous AI scientific discovery",
+    "evidence": [
+      "2408.06292",
+      "2504.08066",
+      "2505.16938"
+    ],
+    "representatives": [
+      "2408.06292",
+      "2504.08066",
+      "2504.05559",
+      "2505.16938",
+      "2605.20025",
+      "2504.03424",
+      "2603.08127"
+    ],
+    "terms": [
+      "scientific",
+      "research",
+      "scientific discovery",
+      "ai",
+      "discovery",
+      "scientists",
+      "agent",
+      "scientist",
+      "agents",
+      "ai scientists",
+      "ai scientist",
+      "human"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "3931ad721e50303976527bda68c10ee45ba73816601f66e4a54363dccfdbe23c"
+  },
+  "46": {
+    "name": "Self-improving software engineering agents",
+    "evidence": [
+      "2504.15228",
+      "2512.18552",
+      "2603.08640"
+    ],
+    "representatives": [
+      "2504.15228",
+      "2503.12374",
+      "2512.07921",
+      "2512.18552",
+      "2511.18538",
+      "2603.08640",
+      "2605.03546"
+    ],
+    "terms": [
+      "agents",
+      "agent",
+      "swe",
+      "software",
+      "self",
+      "code",
+      "rsi",
+      "coding",
+      "self improvement",
+      "recursive self",
+      "bench",
+      "ai"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "1a68b98ce26aabad178c80cdc4412a0368378f03cc6de0f67bca7d7392f50e00"
+  },
+  "47": {
+    "name": "Large language model multi-agent systems",
+    "evidence": [
+      "2402.01680",
+      "2501.06322",
+      "2503.21460"
+    ],
+    "representatives": [
+      "2503.23037",
+      "2504.19678",
+      "2503.21460",
+      "2402.01680",
+      "2509.02547",
+      "2502.04644",
+      "2501.06322"
+    ],
+    "terms": [
+      "agent",
+      "agents",
+      "agentic",
+      "multi agent",
+      "llm",
+      "multi",
+      "mas",
+      "reasoning",
+      "llms",
+      "based",
+      "coordination",
+      "agent systems"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "1286513fa256d61478610fb38e46b51369e79fbcc6ff832c4e87453ae371464c"
+  },
+  "48": {
+    "name": "AI agents and human-AI collaboration",
+    "evidence": [
+      "2505.10468",
+      "2504.05755",
+      "2506.06576"
+    ],
+    "representatives": [
+      "2505.10468",
+      "2609.15818",
+      "2506.06576",
+      "2504.05755",
+      "2610.20442",
+      "2503.12687",
+      "2503.13754"
+    ],
+    "terms": [
+      "ai",
+      "agents",
+      "human",
+      "ai agents",
+      "systems",
+      "agent",
+      "intelligence",
+      "agi",
+      "agentic",
+      "consciousness",
+      "chapter",
+      "human ai"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "56b14ce4f41cec5605c3e19e8043e5d3887e0c57becd470b0ae9d0d7462b8829"
+  },
+  "49": {
+    "name": "Latent diffusion for image generation",
+    "evidence": [
+      "2112.10752",
+      "2504.16064",
+      "2502.14831",
+      "2510.11690"
+    ],
+    "representatives": [
+      "2112.10752",
+      "2504.16064",
+      "2502.14831",
+      "2510.11690",
+      "2504.11457",
+      "2602.11401",
+      "2511.20645"
+    ],
+    "terms": [
+      "diffusion",
+      "image",
+      "latent",
+      "latent diffusion",
+      "repa",
+      "pixel",
+      "rae",
+      "generation",
+      "vae",
+      "image generation",
+      "training",
+      "images"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "edf852cf58b9c9f4f3e3ca4296439aeac33a75d25644de1fc4bdd5e7892f6a4e"
+  },
+  "50": {
+    "name": "Flow matching for generative modeling",
+    "evidence": [
+      "2210.02747",
+      "2504.05304",
+      "2505.13447",
+      "2506.02070"
+    ],
+    "representatives": [
+      "2210.02747",
+      "2504.05304",
+      "2505.13447",
+      "2506.02070",
+      "2602.04770",
+      "2504.10612",
+      "2601.22158"
+    ],
+    "terms": [
+      "flow",
+      "diffusion",
+      "generative modeling",
+      "flow matching",
+      "generative",
+      "matching",
+      "velocity",
+      "diffusion flow",
+      "modeling",
+      "sde",
+      "generation",
+      "data"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "733c5dfcd389e6b93f787af826d9bf5128dad125d8e4332e031931cf3efc31e2"
+  },
+  "51": {
+    "name": "Diffusion model generation and sampling",
+    "evidence": [
+      "2006.11239",
+      "2303.01469",
+      "2410.12557"
+    ],
+    "representatives": [
+      "2006.11239",
+      "2311.18828",
+      "2208.11970",
+      "2303.01469",
+      "2410.12557",
+      "2306.11719",
+      "2404.14743"
+    ],
+    "terms": [
+      "diffusion",
+      "guidance",
+      "classifier",
+      "denoising",
+      "fid",
+      "generative",
+      "training",
+      "step",
+      "denoising diffusion",
+      "sampling",
+      "quality samples",
+      "generation"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "6086aca50dcaba5fe08c801830a2c2c33a4bbe2a74e677992e7a1595af23fef0"
+  },
+  "52": {
+    "name": "Adaptive reasoning efficiency in large language models",
+    "evidence": [
+      "2505.10832",
+      "2505.13417",
+      "2505.13379",
+      "2503.16419"
+    ],
+    "representatives": [
+      "2505.10832",
+      "2602.13517",
+      "2503.16419",
+      "2505.13417",
+      "2504.09858",
+      "2505.13379",
+      "2505.10425"
+    ],
+    "terms": [
+      "reasoning",
+      "thinking",
+      "overthinking",
+      "llms",
+      "think",
+      "length",
+      "lrms",
+      "rft",
+      "nothinking",
+      "short reasoning",
+      "reasoning length",
+      "explicit thinking"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "c4a59509c66e517a658ee866978dc250036be9a659b3079509b48ee19def7c63"
+  },
+  "53": {
+    "name": "Chain-of-thought reasoning in language models",
+    "evidence": [
+      "2604.22709",
+      "2501.04682",
+      "2504.03234"
+    ],
+    "representatives": [
+      "2604.22709",
+      "2412.13171",
+      "2508.01191",
+      "2503.19602",
+      "2501.04682",
+      "2504.03234",
+      "2503.15268"
+    ],
+    "terms": [
+      "cot",
+      "reasoning",
+      "thought",
+      "chain thought",
+      "chain",
+      "cots",
+      "thought cot",
+      "language",
+      "tokens",
+      "cot reasoning",
+      "llms",
+      "thinking"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "e0eeb0db8dfde53271c1df203fd6421334ea78aa0204c8174e9908853e43cb46"
+  },
+  "54": {
+    "name": "Reinforcement learning for LLM reasoning",
+    "evidence": [
+      "2506.14245",
+      "2503.16219",
+      "2501.12948"
+    ],
+    "representatives": [
+      "2506.14245",
+      "2503.16219",
+      "2504.13837",
+      "2504.20571",
+      "2501.12948",
+      "2607.16097",
+      "2505.24864"
+    ],
+    "terms": [
+      "reasoning",
+      "rl",
+      "rlvr",
+      "training",
+      "reward",
+      "rewards",
+      "learning",
+      "reinforcement",
+      "reinforcement learning",
+      "math",
+      "llms",
+      "entropy"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "1143f9f685d6d90bcd5437ed23360f9956b3cc5c900518392b50bff4ae7f7190"
+  },
+  "55": {
+    "name": "Reinforcement learning for LLM reasoning",
+    "evidence": [
+      "2504.20834",
+      "2504.02546",
+      "2504.14286",
+      "2604.02288"
+    ],
+    "representatives": [
+      "2504.20834",
+      "2510.08191",
+      "2604.02288",
+      "2512.01374",
+      "2607.07508",
+      "2504.14286",
+      "2504.02546"
+    ],
+    "terms": [
+      "policy",
+      "rl",
+      "grpo",
+      "training",
+      "learning",
+      "policy optimization",
+      "reinforcement learning",
+      "reinforcement",
+      "optimization",
+      "group",
+      "sft",
+      "sampling"
+    ],
+    "model": "gpt-6-luna",
+    "prompt_sha256": "9a9ec003dcde2a34b948eb73b47650aadabe8eb6ab8a3aaf7184a011afcb32c5"
+  }
+}

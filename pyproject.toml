@@ -29,7 +29,11 @@ build-backend = "hatchling.build"
 packages = ["src/atlas"]
 
 [dependency-groups]
-dev = ["pytest", "pypdf"]
+dev = [
+    "pytest",
+    "pypdf",
+    "playwright>=1.65.2",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
