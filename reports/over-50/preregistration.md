@@ -1,0 +1,9 @@
+# Preregistered extension · more than 50 likes
+
+**Libor “Burny” Burian · 26 November 2026**
+
+Repeat the [original protocol](../preregistration.md) on every research paper with `metrics.public_total_votes > 50` in the authenticated all-time alphaXiv feed, across all subjects. Include 51 and exclude 50. Exclude marked external blog and link entries, retain alphaXiv-exclusive manuscripts, and count each paper group once. Require two independently paginated, monotonically ordered passes with identical eligible IDs, each ending on a page entirely at or below 50 or at the end of the feed. Report the boundary ranks before blog removal, exclusions, duplicates and observation window. [API specification](https://api-dev.alphaxiv.org/api.json)
+
+The directional hypothesis is that 2D cosine UMAP preserves more of the original ten nearest paper neighbors than 2D PCA on this expanded corpus. Report the mean UMAP-minus-PCA recall across seeds 42–51 with a two-sided 95% Student interval. A lower endpoint above zero supports the hypothesis. An upper endpoint at or below zero falsifies it. An interval spanning zero is inconclusive. The interval quantifies seed variation within the frozen corpus. The previous higher-threshold result is known and the corpora can overlap.
+
+Reuse unchanged title-and-abstract vectors by input and model hash. Embed new inputs with OpenAI text-embedding-3-large. Recompute neighbors in float64, refit both UMAP spaces on the entire new corpus, and name the resulting clusters with GPT-6 Luna. Hold the original settings, shuffled-position control, PCA clustering ablation and held-out arXiv-tag analysis fixed. Measure overlap with the earlier census by group ID and count papers in the 51–100 band separately. Show unassigned papers and verify equality of snapshot, map and table IDs. [Numerical audit of the earlier release](../reviews/precision.md) · [Run matrix](planned-runs.md)
