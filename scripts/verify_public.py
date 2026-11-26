@@ -49,7 +49,8 @@ def main():
     edition=edition_path(manifest["threshold_exclusive"])
     url=PAGES if not edition.parts else PAGES+edition.as_posix()+"/"
     public=read_json(ROOT/"docs"/edition/"atlas.json")
-    assets=["atlas.json",public.get("csv","papers.csv"),"paper.pdf","progress.json",*public.get("paper_parts",[])]
+    assets=["index.html","atlas.js","atlas.css","atlas.json",public.get("csv","papers.csv"),"paper.pdf",
+            "progress.html","progress.json",*public.get("paper_parts",[])]
     if "controls" in public:assets.append(public["controls"]["file"])
     if (ROOT/"docs"/edition/"walkthrough.mp4").exists():assets.append("walkthrough.mp4")
     if "abstract_chunk_size" in public:

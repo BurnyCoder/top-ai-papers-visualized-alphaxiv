@@ -1,0 +1,10 @@
+{
+  "previous_snapshot": "2026-11-26-over-20",
+  "shared": 36276,
+  "new_only": 64666,
+  "prior_only": 0,
+  "within_added_band": 64662,
+  "previous_threshold": 20,
+  "current_layout_epochs": 200,
+  "previous_layout_epochs": 200
+}

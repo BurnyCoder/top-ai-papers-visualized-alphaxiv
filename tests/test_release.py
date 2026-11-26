@@ -8,6 +8,16 @@ from atlas.publish import export_data
 from atlas.catalog import local_catalog
 
 
+def test_static_asset_bytes_match_git_line_endings(tmp_path,monkeypatch):
+    from atlas import publish
+    src=tmp_path/"package"/"web";src.mkdir(parents=True)
+    (src/"progress.html").write_bytes(b"<h1>Progress</h1>\r\n")
+    monkeypatch.setattr(publish,"PACKAGE",src.parent)
+    dest=tmp_path/"page";dest.mkdir()
+    publish.install_web_assets(dest)
+    assert (dest/"progress.html").read_bytes()==b"<h1>Progress</h1>\n"
+
+
 @pytest.mark.parametrize("threshold",[10,20,50,100])
 def test_all_eligible_groups_exported_in_order(tmp_path,threshold):
     papers=[dict(id=str(i),paper_id=str(i),title=str(i),likes=threshold+1,abstract="x") for i in range(12)]

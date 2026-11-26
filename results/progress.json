@@ -1,11 +1,12 @@
 {
   "snapshot": "2026-11-26-over-10",
-  "stage": "Seed evaluation",
-  "done": 7,
-  "total": 10,
-  "elapsed_seconds": 963.0,
-  "updated_at": "2026-11-26T15:24:42+00:00",
-  "seed": 48,
-  "recall_at_10": 0.0924,
-  "estimated_stage_seconds_left": 471
+  "stage": "Complete",
+  "done": 4,
+  "total": 4,
+  "elapsed_seconds": 66.1,
+  "updated_at": "2026-11-26T15:33:19+00:00",
+  "papers": 100942,
+  "clusters": 725,
+  "recall_at_10": 0.0896187909888847,
+  "coverage": "verified"
 }

@@ -1,0 +1,15 @@
+{
+  "snapshot": "2026-11-26-over-10",
+  "stage": "Complete",
+  "done": 4,
+  "total": 4,
+  "updated_at": "2026-11-26T14:27:25+00:00",
+  "papers": 100942,
+  "clusters": 725,
+  "seed_42_recall_at_10": 0.0896187909888847,
+  "estimated_usd": 2.32265826,
+  "reserved_usd": 8.751246,
+  "cap_usd": 50.0,
+  "unconfirmed_attempts": 0,
+  "collection_window_end": "2026-11-26T14:27:25+00:00"
+}

@@ -24,6 +24,14 @@ from .paper import make_paper, pct
 from .io import census_path, census_digest
 
 
+def install_web_assets(destination,names=None):
+    """Match the repository's LF static assets on every authoring platform."""
+    assets=PACKAGE/"web"
+    paths=assets.iterdir() if names is None else (assets/name for name in names)
+    for path in paths:
+        save_bytes(destination/path.name,path.read_bytes().replace(b"\r\n",b"\n"))
+
+
 def color_for(group):
     if group<0: return "#91988e"
     palette=["#06765b","#a25238","#7763a6","#287aa4","#bd6c23","#427c39","#b75c82","#287f84","#8f6940","#786890"]
@@ -270,13 +278,12 @@ def build(folder,progress):
         raise ValueError("The frozen embedding matrix failed its SHA-256 integrity check")
     progress("Offline build",0,4)
     clusters=export_data(folder,docs,manifest,papers,A,labels,evaluation)
-    for path in (PACKAGE/"web").iterdir():shutil.copyfile(path,docs/path.name)
+    install_web_assets(docs)
     if threshold in PREVIOUS:
         previous_id,previous_threshold=PREVIOUS[threshold]
         for other in (n for n in (100,50,20) if n>threshold):
-            for asset in ("index.html","atlas.js","atlas.css"):
-                dest=ROOT/"docs"/edition_path(other)
-                if dest.exists():shutil.copyfile(PACKAGE/"web"/asset,dest/asset)
+            dest=ROOT/"docs"/edition_path(other)
+            if dest.exists():install_web_assets(dest,("index.html","atlas.js","atlas.css"))
         prior=RESULTS/previous_id
         if census_path(prior).exists():
             earlier={p["id"] for p in papers_at(prior)}

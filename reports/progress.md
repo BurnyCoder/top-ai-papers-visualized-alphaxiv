@@ -271,3 +271,11 @@ The literature review, state-of-the-art review, preregistration and run matrix a
 - 2026-11-26T15:17:13+00:00 · 2026-11-26-over-10 · Seed evaluation · 2/10 seed=43, recall_at_10=0.0888
 
 - 2026-11-26T15:24:36+00:00 · 2026-11-26-over-10 · Seed evaluation · 5/10 seed=46, recall_at_10=0.0894
+
+- 2026-11-26T15:31:53+00:00 · 2026-11-26-over-10 · Seed evaluation · 8/10 seed=49, recall_at_10=0.089
+
+- 2026-11-26T15:31:58+00:00 · 2026-11-26-over-10 · Seed evaluation · 10/10 seed=51, recall_at_10=0.0912
+
+- 2026-11-26T15:32:24+00:00 · 2026-11-26-over-10 · Offline build · 0/4
+
+- 2026-11-26T15:33:19+00:00 · 2026-11-26-over-10 · Complete · 4/4 papers=100942, clusters=725, recall_at_10=0.0896187909888847, coverage=verified
