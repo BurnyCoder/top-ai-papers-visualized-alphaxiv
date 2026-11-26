@@ -1,5 +1,10 @@
 # Paper Atlas
 
+The **more than 10 likes** study uses the all-time alphaXiv feed, OpenAI paper embeddings and separate display and clustering spaces. New hosted calls have a USD 50 ceiling. [Registered protocol](reports/over-10/preregistration.md) · [Run matrix](reports/over-10/planned-runs.md)
+
+<!-- results-over-10:start -->
+<!-- results-over-10:end -->
+
 Explore all subjects in the **more than 20 likes** edition. Search by title, author or ID, then select a paper to see its ten closest neighbors in the original embedding space. The edition has a USD 50 API credit ceiling. [Interactive atlas](https://burnycoder.github.io/top-ai-papers-visualized-alphaxiv/over-20/) · [Paper](reports/over-20/paper.pdf) · [Registered protocol](reports/over-20/preregistration.md) · [Collection amendment](reports/over-20/collection-amendment.md) · [Run matrix](reports/over-20/planned-runs.md)
 
 [Watch the map walkthrough](https://burnycoder.github.io/top-ai-papers-visualized-alphaxiv/over-20/walkthrough.mp4)
