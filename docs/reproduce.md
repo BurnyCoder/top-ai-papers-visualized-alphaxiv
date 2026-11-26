@@ -7,12 +7,14 @@ Install [uv](https://docs.astral.sh/uv/getting-started/installation/), clone the
 Install the [Hugging Face CLI](https://huggingface.co/docs/huggingface_hub/guides/cli) and download the numerical assets into the checkout. Git includes the dated census, labels, manifest and metrics. Each new date has an independent folder.
 
 ```sh
-hf download BurnyCoder/alphaxiv-paper-atlas results/2026-11-26/geometry.npz results/2026-11-26/embeddings.npy results/2026-11-26/seed-layouts.npz --type dataset --local-dir .
+hf download BurnyCoder/alphaxiv-paper-atlas results/2026-11-26/geometry.npz results/2026-11-26/embeddings.npy results/2026-11-26/seed-layouts.npz --type dataset --revision atlas-2026-11-26 --local-dir .
 uv run atlas build --snapshot 2026-11-26
 uv run python -m http.server 8000 --bind 127.0.0.1 --directory docs
 ```
 
 Open [the local map](http://127.0.0.1:8000). The offline build validates the snapshot, generates the table, figures, PDF and static map, and checks their paper IDs. Exact cached vectors enable independent neighbor and projection analyses. UMAP's optimizer and library versions can affect numerical reproductions.
+
+The same files are available by direct HTTPS. Save them under `results/2026-11-26/` in a checkout of the tagged source and run the build command above. [Source tag](https://github.com/BurnyCoder/top-ai-papers-visualized-alphaxiv/tree/atlas-2026-11-26) · [embeddings.npy](https://huggingface.co/datasets/BurnyCoder/alphaxiv-paper-atlas/resolve/atlas-2026-11-26/results/2026-11-26/embeddings.npy?download=true) · [geometry.npz](https://huggingface.co/datasets/BurnyCoder/alphaxiv-paper-atlas/resolve/atlas-2026-11-26/results/2026-11-26/geometry.npz?download=true) · [seed-layouts.npz](https://huggingface.co/datasets/BurnyCoder/alphaxiv-paper-atlas/resolve/atlas-2026-11-26/results/2026-11-26/seed-layouts.npz?download=true)
 
 ## Fetch a fresh collection
 
