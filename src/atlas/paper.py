@@ -85,6 +85,7 @@ def make_paper(path,manifest,evaluation,clusters,figdir,comparison=None,budget=N
     p("Figure 3. Panels A–C retain topic identity while changing screen coordinates. Panel D shows the assignments recovered by clustering PCA coordinates. Colors in D identify its own groups.","CaptionText")
     p("What the map loses","Sub")
     p(f"Even with the primary projection, a mean of {pct(1-avg('umap_recall'))} of the original ten neighbors fell outside the ten closest displayed points. The neighbor list exposes those relationships directly. The directional primary hypothesis was {primary['conclusion']} under the preregistered criterion.")
+    if threshold==20:p(f"The mean recall under shuffled paper positions was {pct(avg('shuffled_recall'))} across the same seeds.")
     story.append(PageBreak())
     p("Stability, limitations and reproducibility","SectionTitle")
     image("metrics.png",59)

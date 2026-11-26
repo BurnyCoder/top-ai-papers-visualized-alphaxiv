@@ -114,6 +114,8 @@ def reports(folder,manifest,evaluation,clusters,embedding):
           f"compared with **{pct(r['pca_recall'])}** under PCA. The gain was {change}. "
           f"Even with UMAP, {pct(1-mean('umap_recall'))} of those neighbors fell outside a paper’s ten closest screen points. "
           "Select a paper to recover its original-space recommendations.")
+    if threshold==20:
+        desc+=f" Shuffling the paper-to-position assignment retained {pct(mean('shuffled_recall'))} across the same seeds."
     method_note=""
     if (folder/"comparison.json").exists():
         comparison=read_json(folder/"comparison.json")
@@ -138,6 +140,9 @@ def reports(folder,manifest,evaluation,clusters,embedding):
     if "cache_hits_at_start" in embedding:
         cache_note=(f" The embedding cache supplied {embedding['cache_hits_at_start']:,} distinct inputs at the start "
                     f"of the completed embedding invocation. OpenAI embedded {embedding['new_inputs']:,} other inputs.")
+        if embedding["distinct_inputs"]!=embedding["rows"]:
+            cache_note+=(f" Identical title-and-abstract text occurred in separate paper groups. "
+                         f"{embedding['distinct_inputs']:,} distinct inputs cover {embedding['rows']:,} map points.")
     coverage_note=""
     if "rank_certificate" in first:
         evidence=[]
@@ -195,6 +200,12 @@ The collection window was {manifest['started_at']} to {manifest['ended_at']}. Th
                    "The released recommendations rank the archived vectors in float64. "
                    "[Boundary evidence and correction](../../reviews/precision.md)\n")
     if method_note:learning+="\n"+method_note+"\n"
+    if "rank_certificate" in first:
+        counts=[sum(read_json(folder/p["rank_certificate"])["initial_missing"].values()) for p in (first,last)]
+        learning+=(f"\nThe unfiltered passes skipped {counts[0]:,} and {counts[1]:,} distinct qualifying groups, "
+                   "including external entries, through overlap within tied vote scores. Checking the cutoff rank alone "
+                   "would have missed them. Supplementary public queries and group-level rank accounting recovered "
+                   f"the same final paper membership twice. [Coverage amendment](../../{edition.as_posix()}/collection-amendment.md)\n")
     save_bytes(exp/"learnings.md",learning.encode())
     paths=sorted((report/"experiments").glob("*/experiment.md"))
     index="\n".join(f"- [{p.parent.name}]({p.parent.name}/experiment.md) · [Learnings]({p.parent.name}/learnings.md)" for p in paths)

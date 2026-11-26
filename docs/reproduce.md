@@ -17,6 +17,8 @@ uv run python -m http.server 8000 --bind 127.0.0.1 --directory docs
 
 Open `http://127.0.0.1:8000/over-20/`. The explorer fetches abstract text when requested. Its gzip-compressed CSV expands into a UTF-8 table. The tagged Parquet table contains the same papers in the same order. [Dataset](https://huggingface.co/datasets/BurnyCoder/alphaxiv-paper-atlas/tree/atlas-2026-11-26-over-20) · [Coverage amendment](../reports/over-20/collection-amendment.md)
 
+Alternatively, run `uv run python scripts/verify_public.py 2026-11-26-over-20 --restore-arrays .` from the tagged checkout. It streams the live map assets and pinned Hub files, checks each digest, and restores the three numerical arrays after verification.
+
 For a fresh over-20 census, use `uv run atlas refresh --threshold 20 --max-api-usd 50 --snapshot NEW_ID`. Reusing that ID resumes the same immutable ledger. The public metadata feed has no API credit charge. Every OpenAI attempt reserves an upper bound before transmission, and the final budget report prices returned usage at the cited standard rates. `uv run atlas monitor --port 18765` serves live progress. The optional `uv run --extra cuda atlas refresh ...` uses local GPU FP64 matrix multiplication when supported. All hosted models run through OpenAI. [Pricing](https://developers.openai.com/api/docs/pricing) · [CuPy installation](https://docs.cupy.dev/en/stable/install.html)
 
 Set `ATLAS_SEED_WORKERS=2` on a machine with sufficient memory to fit independent sensitivity seeds concurrently. Each process opens the same read-only vectors and writes a distinct checkpoint. The default runs one seed at a time.
