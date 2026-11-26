@@ -104,7 +104,8 @@ def embed(folder, papers, progress, client=None):
     np.save(buffer, matrix, allow_pickle=False)
     save_bytes(output, buffer.getvalue())
     save_json(folder / "embedding-info.json", dict(model=EMBEDDER, dimensions=DIM, input_tokens=total_tokens,
-              rows=len(papers), ordered_input_sha256=digest("\n".join(keys)), vectors_sha256=hashlib.sha256(buffer.getbuffer()).hexdigest()))
+              rows=len(papers), cache_hits_at_start=hits, distinct_inputs=len(text_by_key), new_inputs=len(missing),
+              ordered_input_sha256=digest("\n".join(keys)), vectors_sha256=hashlib.sha256(buffer.getbuffer()).hexdigest()))
     return matrix
 
 

@@ -10,10 +10,10 @@ from .io import LOG, RESULTS, ROOT, Progress, papers_at, start_log
 STAGES = ("collect", "embed", "main", "label", "evaluate", "build")
 
 
-def refresh(folder, through, progress):
+def refresh(folder, through, progress, threshold=None):
     """Stop only at complete, reusable stage boundaries."""
     from .collect import collect
-    collect(folder, progress)
+    collect(folder, progress, threshold)
     if through == "collect":
         return
     from .inference import embed, name_clusters
@@ -40,11 +40,14 @@ def main():
     update = commands.add_parser("refresh", help="Collect a new snapshot or resume a named one")
     update.add_argument("--snapshot", default=datetime.now(timezone.utc).strftime("%Y-%m-%dT%H%M%SZ"))
     update.add_argument("--through", choices=STAGES, default="build")
+    update.add_argument("--threshold", type=int, help="Exclusive public-like cutoff (new snapshots default to 50)")
     rebuild = commands.add_parser("build", help="Rebuild static outputs from the frozen files without API calls")
     rebuild.add_argument("--snapshot", required=True)
     monitor = commands.add_parser("monitor", help="Serve the local run dashboard on loopback")
     monitor.add_argument("--port", type=int, default=8765)
     args = parser.parse_args()
+    if args.action=="refresh" and args.threshold is not None and args.threshold < 0:
+        parser.error("The exclusive vote threshold must be nonnegative")
     if args.action == "monitor":
         from .monitor import serve
         return serve(args.port)
@@ -61,7 +64,7 @@ def main():
         try:
             if args.action == "refresh":
                 load_dotenv(ROOT / ".env", override=True)
-                refresh(folder, args.through, progress)
+                refresh(folder, args.through, progress, args.threshold)
             else:
                 from .publish import build
                 build(folder, progress)

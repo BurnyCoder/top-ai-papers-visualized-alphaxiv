@@ -4,6 +4,7 @@ import json
 import shutil
 import subprocess
 from pathlib import Path
+from atlas.editions import edition_path
 
 
 def main():
@@ -17,13 +18,25 @@ def main():
     out=target/"results"/args.snapshot
     out.mkdir(parents=True,exist_ok=True)
     for name in ("manifest.json","papers.jsonl","embeddings.npy","embedding-info.json","geometry.npz","seed-layouts.npz",
-                 "labels.json","label-traces.jsonl","api-usage.jsonl","evaluation.json","papers.parquet","checksums.json","audit.json"):
+                 "labels.json","label-traces.jsonl","api-usage.jsonl","evaluation.json","papers.parquet","checksums.json","audit.json","comparison.json"):
         if (source/name).is_file():shutil.copyfile(source/name,out/name)
     if (source/"precision-check").exists():
         shutil.copytree(source/"precision-check",out/"precision-check",dirs_exist_ok=True)
     if (source/"evaluation.json").exists() and (source/"papers.parquet").exists():
         ev=json.loads((source/"evaluation.json").read_text(encoding="utf-8"))
         r=ev["seeds"][0]
+        threshold=manifest["threshold_exclusive"]
+        route=edition_path(threshold)
+        base="https://burnycoder.github.io/top-ai-papers-visualized-alphaxiv/"
+        site=base if threshold==100 else base+route.as_posix()+"/"
+        paper=(Path("reports")/route/"paper.pdf").as_posix()
+        # Both published tables remain selectable in the Hub dataset viewer.
+        configs=[]
+        for path in sorted((root/"results").glob("*/papers.parquet")):
+            dated=path.parent.name
+            config="default" if dated==args.snapshot else dated
+            configs.append(f"- config_name: '{config}'\n  data_files:\n  - split: train\n    path: results/{dated}/papers.parquet")
+        catalog="\n".join(configs)
         card=f"""---
 pretty_name: alphaXiv Paper Atlas
 language:
@@ -34,17 +47,14 @@ tags:
 - dimensionality-reduction
 - clustering
 configs:
-- config_name: default
-  data_files:
-  - split: train
-    path: results/{args.snapshot}/papers.parquet
+{catalog}
 ---
 
 # alphaXiv Paper Atlas
 
-**[Open the interactive map](https://burnycoder.github.io/top-ai-papers-visualized-alphaxiv/) · [Code and preregistration](https://github.com/BurnyCoder/top-ai-papers-visualized-alphaxiv) · [Research paper](reports/paper.pdf)**
+**[Open the interactive map]({site}) · [Code and preregistration](https://github.com/BurnyCoder/top-ai-papers-visualized-alphaxiv) · [Research paper]({paper})**
 
-The {args.snapshot} snapshot contains {manifest['count']:,} distinct research papers with strictly more than 100 public alphaXiv likes. The feed was read twice with different page sizes. The collection covers all subjects and includes alphaXiv-exclusive manuscripts. Titles, abstracts and authors are credited to the individual papers. Consult the linked original publications for their licenses.
+The {args.snapshot} snapshot contains {manifest['count']:,} distinct research papers with strictly more than {threshold} public alphaXiv likes. Two accepted passes used different page sizes. The collection covers all subjects and includes alphaXiv-exclusive manuscripts. Titles, abstracts and authors are credited to the individual papers. Consult the linked original publications for their licenses. [Original 100-like atlas]({base}) · [Original dataset tag](https://huggingface.co/datasets/BurnyCoder/alphaxiv-paper-atlas/tree/atlas-2026-11-26)
 
 Two-dimensional UMAP displays OpenAI text-embedding-3-large vectors. A separate ten-dimensional UMAP and HDBSCAN generated {r['clusters']} clusters. GPT-6 Luna named each cluster from representative evidence. {r['unassigned']:,} unassigned papers remain visible. Exact original-space neighbors are listed by public paper ID. See [the evaluation](results/{args.snapshot}/evaluation.json) for all seeds and uncertainty. This descriptive snapshot conditions on platform attention. The train split is a Hub viewer convention covering the entire census.
 

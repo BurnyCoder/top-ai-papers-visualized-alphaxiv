@@ -33,11 +33,17 @@ def load_arrays(path):
 def neighborhood(vectors, count=30):
     """Stable sort by original row (group ID) on exact cosine ties; self is explicit column zero."""
     unit = vectors / np.linalg.norm(vectors,axis=1,keepdims=True)
-    dist = np.clip(1 - unit @ unit.T, 0, 2)
-    np.fill_diagonal(dist, np.inf)
-    other = np.argsort(dist,axis=1,kind="stable")[:,:count-1]
-    ids = np.column_stack((np.arange(len(unit)), other)).astype(np.int32)
-    values = np.column_stack((np.zeros(len(unit)),np.take_along_axis(dist,other,axis=1))).astype(np.float32)
+    # Row blocks bound temporary memory as the eligible census grows.
+    ids=np.empty((len(unit),count),dtype=np.int32)
+    values=np.zeros(ids.shape,dtype=np.float32)
+    ids[:,0]=np.arange(len(unit))
+    for start in range(0,len(unit),256):
+        stop=min(start+256,len(unit))
+        dist=np.clip(1-unit[start:stop] @ unit.T,0,2)
+        dist[np.arange(stop-start),np.arange(start,stop)]=np.inf
+        other=np.argsort(dist,axis=1,kind="stable")[:,:count-1]
+        ids[start:stop,1:]=other
+        values[start:stop,1:]=np.take_along_axis(dist,other,axis=1)
     return ids, values
 
 

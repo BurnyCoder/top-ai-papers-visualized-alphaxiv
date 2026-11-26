@@ -7,13 +7,19 @@ from pathlib import Path
 import numpy as np
 from scipy import stats
 from sklearn.neighbors import NearestNeighbors
+from sklearn.metrics.pairwise import cosine_distances
 from threadpoolctl import threadpool_limits
 from atlas.io import ROOT, papers_at, read_json, save_json
+from atlas.editions import edition_path
 
 
 def audit(snapshot):
     folder=ROOT/"results"/snapshot
     manifest=read_json(folder/"manifest.json"); papers=papers_at(folder)
+    threshold=manifest["threshold_exclusive"]
+    docs=ROOT/"docs"/edition_path(threshold)
+    review=ROOT/"reports"/edition_path(threshold)/"reviews"
+    review.mkdir(parents=True,exist_ok=True)
     ev=read_json(folder/"evaluation.json");labels=read_json(folder/"labels.json")
     geo=np.load(folder/"geometry.npz",allow_pickle=False)
     vectors=np.load(folder/"embeddings.npy",allow_pickle=False)
@@ -21,12 +27,17 @@ def audit(snapshot):
     traces=list(map(json.loads,(folder/"label-traces.jsonl").read_text(encoding="utf-8").splitlines()))
     passes=manifest["passes"][-2:]
     assert all(p["inversions"]==0 and p["eligible"]==len(papers) for p in passes)
-    assert all(p["last_page"]["max_likes"] is None or p["last_page"]["max_likes"]<=100 for p in passes)
-    assert not any(manifest["differences"][-1].values()) and min(p["likes"] for p in papers)>100
+    assert all(p["last_page"]["max_likes"] is None or p["last_page"]["max_likes"]<=threshold for p in passes)
+    assert not any(manifest["differences"][-1].values()) and min(p["likes"] for p in papers)>threshold
+    for p in passes:
+        if "boundary" in p:
+            last=p["boundary"]["last_above"];lower=p["boundary"]["first_at_or_below"]
+            assert last["likes"]>threshold and (lower is None or lower["likes"]<=threshold and lower["rank"]==last["rank"]+1)
     ids=[p["id"] for p in papers];by_public={p["paper_id"]:i for i,p in enumerate(papers)}
     assert ids==sorted(set(ids))
-    public=read_json(ROOT/"docs/atlas.json")
-    with (ROOT/"docs/papers.csv").open(encoding="utf-8-sig",newline="") as stream:
+    public=read_json(docs/"atlas.json")
+    assert public.get("threshold_exclusive",100)==threshold
+    with (docs/"papers.csv").open(encoding="utf-8-sig",newline="") as stream:
         assert ids==[p["id"] for p in csv.DictReader(stream)]==[p["id"] for p in public["papers"]]
     for g,record in labels.items():
         assert 2<=len(record["evidence"])<=4 and set(record["evidence"])<=set(record["representatives"])
@@ -35,7 +46,13 @@ def audit(snapshot):
         assert hashlib.sha256((folder/filename).read_bytes()).hexdigest()==digest,filename
     # Compute all cosine ranks in float64 using an independent sklearn retrieval implementation.
     with threadpool_limits(limits=4):
-        reference=NearestNeighbors(n_neighbors=10,algorithm="brute",metric="cosine",n_jobs=1).fit(vectors.astype("float64")).kneighbors(return_distance=False)
+        v=vectors.astype("float64")
+        reference=np.empty((len(v),10),dtype=np.int32)
+        for start in range(0,len(v),256):
+            stop=min(start+256,len(v))
+            dist=cosine_distances(v[start:stop],v)
+            dist[np.arange(stop-start),np.arange(start,stop)]=np.inf
+            reference[start:stop]=np.argsort(dist,axis=1,kind="stable")[:,:10]
     def overlap(a,b):
         return sum(len(set(x).intersection(y)) for x,y in zip(a,b,strict=True))/(10*len(a))
     neighbor_agreement=overlap(reference,geo["neighbors"])
@@ -85,9 +102,9 @@ There were {same_names} repeated topic names beyond their first occurrence. The 
 
 API keys are read in the local pipeline. Model instructions and paper text remain outside the static code path. Browser-facing paper text is assigned through textContent. Completed embedding batches and labels survive interruption. Both the raw measurements and the standalone build are versioned. The regression and real-browser checks are documented in the reproduction guide.
 
-[Raw audit](../../results/{snapshot}/audit.json) · [Per-seed results](../../results/{snapshot}/evaluation.json) · [Preregistration](../preregistration.md)
+[Raw audit]({folder.relative_to(review,walk_up=True).as_posix()}/audit.json) · [Per-seed results]({folder.relative_to(review,walk_up=True).as_posix()}/evaluation.json) · [Preregistration](../preregistration.md)
 """
-    (ROOT/"reports/reviews/release.md").write_text(report,encoding="utf-8")
+    (review/"release.md").write_text(report,encoding="utf-8")
     print(json.dumps(result,indent=2))
 
 

@@ -1,6 +1,7 @@
 """An allowlisted loopback dashboard exposes progress without serving the project directory."""
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlsplit
+import socket
 from .io import RESULTS, PACKAGE
 
 
@@ -22,5 +23,13 @@ def serve(port):
             self.send_header("Cache-Control", "no-store")
             self.end_headers()
             self.wfile.write(content)
-    print(f"Live run dashboard http://127.0.0.1:{port}/", flush=True)
-    ThreadingHTTPServer(("127.0.0.1", port), Handler).serve_forever()
+    class LocalDashboard(ThreadingHTTPServer):
+        # Windows permits several listeners on a reused port and may route requests to another app.
+        allow_reuse_address=False
+        def server_bind(self):
+            if hasattr(socket,"SO_EXCLUSIVEADDRUSE"):
+                self.socket.setsockopt(socket.SOL_SOCKET,socket.SO_EXCLUSIVEADDRUSE,1)
+            super().server_bind()
+    with LocalDashboard(("127.0.0.1",port),Handler) as server:
+        print(f"Live run dashboard http://127.0.0.1:{server.server_port}/",flush=True)
+        server.serve_forever()

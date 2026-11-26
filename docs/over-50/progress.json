@@ -1,0 +1,11 @@
+{
+  "snapshot": "2026-11-26-over-50",
+  "stage": "Complete",
+  "done": 4,
+  "total": 4,
+  "updated_at": "2026-11-26T11:55:41+00:00",
+  "papers": 10140,
+  "clusters": 115,
+  "seed_42_recall_at_10": 0.18739644970414202,
+  "collection_window_end": "2026-11-26T11:55:41+00:00"
+}

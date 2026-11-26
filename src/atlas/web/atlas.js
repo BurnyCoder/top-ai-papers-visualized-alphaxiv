@@ -128,7 +128,7 @@ canvas.addEventListener("keydown",e=>{
 by("plus").onclick=()=>zoomAt(1.35);by("minus").onclick=()=>zoomAt(1/1.35);by("fit").onclick=()=>fitTo(filtered);
 function updateFilter(){
   const q=by("query").value.trim().toLocaleLowerCase(), g=by("cluster").value;
-  const s=by("subject").value, y=by("year").value, likes=Number(by("likes").value)||101;
+  const s=by("subject").value, y=by("year").value, likes=Number(by("likes").value)||Number(by("likes").min);
   filtered=[];
   for(let i=0;i<papers.length;i++){const p=papers[i];
     if(p.likes>=likes && (g===""||String(p.cluster)===g) && (!s||p.subjects.includes(s)) &&
@@ -140,7 +140,7 @@ function updateFilter(){
   rowsShown=35;hideTip();renderSide();
 }
 function clearSelection(){selected=-1;history.replaceState(null,"",location.pathname+location.search);}
-function resetFields(){by("query").value="";for(const k of filters)by(k).value=k==="likes"?"101":"";}
+function resetFields(){by("query").value="";for(const k of filters)by(k).value=k==="likes"?by(k).min:"";}
 function chooseCluster(id){clearSelection();by("cluster").value=String(id);tab="papers";updateFilter();fitTo(filtered);}
 function paperRow(i,meta=true){
   const p=papers[i], n=button("","row",()=>openPaper(i)), text=element("span",p.title);
@@ -203,12 +203,19 @@ new ResizeObserver(resize).observe(plot);
 async function load(){
   const response=await fetch("atlas.json");if(!response.ok)throw Error(response.status);
   const data=await response.json();papers=data.papers;clusters=data.clusters;
+  // The original, tagged atlas predates the threshold field and used a strict cutoff of 100.
+  const threshold=data.threshold_exclusive??100;
+  by("likes").min=String(threshold+1);by("likes").value=by("likes").min;
+  const other=by("editionLink");
+  other.href=threshold===100?"over-50/":"../";
+  other.textContent=threshold===100?"Over 50 likes":"Over 100 likes";
+  other.hidden=false;
   const subjects=new Set(),years=new Set();
   papers.forEach((p,i)=>{ids.set(p.paper_id,i);p.search=[p.title,p.paper_id,p.id,...p.authors].join(" ").toLocaleLowerCase();
     p.subjects.forEach(t=>subjects.add(t));if(p.date)years.add(p.date.slice(0,4));});
   for(const [id] of Object.entries(clusters).sort((a,b)=>a[1].name.localeCompare(b[1].name)))option("cluster",id,topicName(id));
   [...subjects].sort().forEach(s=>option("subject",s,s));[...years].sort().reverse().forEach(y=>option("year",y,y));
-  by("subtitle").textContent=number(papers.length)+" papers with more than 100 likes on alphaXiv. Explore "+number(data.cluster_count)+" topic clusters.";
+  by("subtitle").textContent=number(papers.length)+" papers with more than "+threshold+" likes on alphaXiv. Explore "+number(data.cluster_count)+" topic clusters.";
   by("stamp").textContent="Snapshot · "+data.date;
   by("footnote").textContent=number(data.unassigned)+" papers appear in gray without a cluster assignment.";
   const deep=new URLSearchParams(location.hash.slice(1)).get("paper");

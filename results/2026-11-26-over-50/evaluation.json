@@ -1,0 +1,275 @@
+{
+  "snapshot": "2026-11-26-over-50",
+  "reference_sha256": "2943eeefc65f27bcd8f53c5610201cca81b4fb7d290b6b58210341aa1fcd6990",
+  "seeds": [
+    {
+      "seed": 42,
+      "reference_sha256": "2943eeefc65f27bcd8f53c5610201cca81b4fb7d290b6b58210341aa1fcd6990",
+      "umap_recall": 0.18739644970414202,
+      "pca_recall": 0.014151873767258382,
+      "shuffled_recall": 0.0010650887573964497,
+      "difference": 0.17324457593688364,
+      "clusters": 115,
+      "unassigned": 3262,
+      "unassigned_fraction": 0.3216962524654832,
+      "jointly_assigned_fraction": 0.6783037475345167,
+      "ari_all": 1.0,
+      "ari_joint": 1.0,
+      "tag_agreement": {
+        "shared": 261532,
+        "pairs": 326403,
+        "fraction": 0.8012548904268649
+      },
+      "shuffled_tag_agreement": {
+        "shared": 143074,
+        "pairs": 326403,
+        "fraction": 0.4383354319660052
+      }
+    },
+    {
+      "seed": 43,
+      "reference_sha256": "2943eeefc65f27bcd8f53c5610201cca81b4fb7d290b6b58210341aa1fcd6990",
+      "umap_recall": 0.18824457593688362,
+      "pca_recall": 0.014151873767258382,
+      "shuffled_recall": 0.0009763313609467456,
+      "difference": 0.17409270216962525,
+      "clusters": 109,
+      "unassigned": 3225,
+      "unassigned_fraction": 0.3180473372781065,
+      "jointly_assigned_fraction": 0.6120315581854043,
+      "ari_all": 0.5814566967886381,
+      "ari_joint": 0.873420686548879,
+      "tag_agreement": {
+        "shared": 329396,
+        "pairs": 400514,
+        "fraction": 0.8224331733722167
+      },
+      "shuffled_tag_agreement": {
+        "shared": 176178,
+        "pairs": 400514,
+        "fraction": 0.43987975451544764
+      }
+    },
+    {
+      "seed": 44,
+      "reference_sha256": "2943eeefc65f27bcd8f53c5610201cca81b4fb7d290b6b58210341aa1fcd6990",
+      "umap_recall": 0.1865483234714004,
+      "pca_recall": 0.014151873767258382,
+      "shuffled_recall": 0.0008579881656804734,
+      "difference": 0.17239644970414203,
+      "clusters": 113,
+      "unassigned": 3668,
+      "unassigned_fraction": 0.36173570019723866,
+      "jointly_assigned_fraction": 0.5819526627218935,
+      "ari_all": 0.5521067732350559,
+      "ari_joint": 0.8545896267381949,
+      "tag_agreement": {
+        "shared": 225139,
+        "pairs": 284123,
+        "fraction": 0.7923997705219219
+      },
+      "shuffled_tag_agreement": {
+        "shared": 125882,
+        "pairs": 284123,
+        "fraction": 0.4430545925532252
+      }
+    },
+    {
+      "seed": 45,
+      "reference_sha256": "2943eeefc65f27bcd8f53c5610201cca81b4fb7d290b6b58210341aa1fcd6990",
+      "umap_recall": 0.1865877712031558,
+      "pca_recall": 0.014151873767258382,
+      "shuffled_recall": 0.0010552268244575936,
+      "difference": 0.17243589743589743,
+      "clusters": 109,
+      "unassigned": 3393,
+      "unassigned_fraction": 0.3346153846153846,
+      "jointly_assigned_fraction": 0.6000986193293886,
+      "ari_all": 0.5713667492838489,
+      "ari_joint": 0.9305042594312882,
+      "tag_agreement": {
+        "shared": 261578,
+        "pairs": 329495,
+        "fraction": 0.7938754761073764
+      },
+      "shuffled_tag_agreement": {
+        "shared": 143684,
+        "pairs": 329495,
+        "fraction": 0.4360733850286044
+      }
+    },
+    {
+      "seed": 46,
+      "reference_sha256": "2943eeefc65f27bcd8f53c5610201cca81b4fb7d290b6b58210341aa1fcd6990",
+      "umap_recall": 0.18594674556213017,
+      "pca_recall": 0.014151873767258382,
+      "shuffled_recall": 0.0010256410256410256,
+      "difference": 0.1717948717948718,
+      "clusters": 114,
+      "unassigned": 3692,
+      "unassigned_fraction": 0.3641025641025641,
+      "jointly_assigned_fraction": 0.5841222879684418,
+      "ari_all": 0.5711967812153581,
+      "ari_joint": 0.9010018746532978,
+      "tag_agreement": {
+        "shared": 193308,
+        "pairs": 244303,
+        "fraction": 0.7912633082688301
+      },
+      "shuffled_tag_agreement": {
+        "shared": 107747,
+        "pairs": 244303,
+        "fraction": 0.4410383826641507
+      }
+    },
+    {
+      "seed": 47,
+      "reference_sha256": "2943eeefc65f27bcd8f53c5610201cca81b4fb7d290b6b58210341aa1fcd6990",
+      "umap_recall": 0.18682445759368838,
+      "pca_recall": 0.014151873767258382,
+      "shuffled_recall": 0.0009566074950690336,
+      "difference": 0.17267258382643,
+      "clusters": 108,
+      "unassigned": 3386,
+      "unassigned_fraction": 0.3339250493096647,
+      "jointly_assigned_fraction": 0.5995069033530572,
+      "ari_all": 0.5612542277039169,
+      "ari_joint": 0.8349653155430435,
+      "tag_agreement": {
+        "shared": 377713,
+        "pairs": 472147,
+        "fraction": 0.7999902572715701
+      },
+      "shuffled_tag_agreement": {
+        "shared": 210242,
+        "pairs": 472147,
+        "fraction": 0.4452892849049131
+      }
+    },
+    {
+      "seed": 48,
+      "reference_sha256": "2943eeefc65f27bcd8f53c5610201cca81b4fb7d290b6b58210341aa1fcd6990",
+      "umap_recall": 0.18646942800788954,
+      "pca_recall": 0.014151873767258382,
+      "shuffled_recall": 0.0009368836291913214,
+      "difference": 0.17231755424063117,
+      "clusters": 120,
+      "unassigned": 3668,
+      "unassigned_fraction": 0.36173570019723866,
+      "jointly_assigned_fraction": 0.585207100591716,
+      "ari_all": 0.5686486062153797,
+      "ari_joint": 0.8608927756110359,
+      "tag_agreement": {
+        "shared": 196537,
+        "pairs": 245383,
+        "fraction": 0.8009397554027785
+      },
+      "shuffled_tag_agreement": {
+        "shared": 108599,
+        "pairs": 245383,
+        "fraction": 0.44256937114633044
+      }
+    },
+    {
+      "seed": 49,
+      "reference_sha256": "2943eeefc65f27bcd8f53c5610201cca81b4fb7d290b6b58210341aa1fcd6990",
+      "umap_recall": 0.18636094674556214,
+      "pca_recall": 0.014151873767258382,
+      "shuffled_recall": 0.0010650887573964497,
+      "difference": 0.17220907297830376,
+      "clusters": 108,
+      "unassigned": 3470,
+      "unassigned_fraction": 0.3422090729783038,
+      "jointly_assigned_fraction": 0.5935897435897436,
+      "ari_all": 0.5558802317401501,
+      "ari_joint": 0.8607703575116415,
+      "tag_agreement": {
+        "shared": 243259,
+        "pairs": 305274,
+        "fraction": 0.7968546289562819
+      },
+      "shuffled_tag_agreement": {
+        "shared": 137990,
+        "pairs": 305274,
+        "fraction": 0.45202015238769105
+      }
+    },
+    {
+      "seed": 50,
+      "reference_sha256": "2943eeefc65f27bcd8f53c5610201cca81b4fb7d290b6b58210341aa1fcd6990",
+      "umap_recall": 0.18773175542406312,
+      "pca_recall": 0.014151873767258382,
+      "shuffled_recall": 0.0008777120315581854,
+      "difference": 0.17357988165680474,
+      "clusters": 112,
+      "unassigned": 3500,
+      "unassigned_fraction": 0.34516765285996054,
+      "jointly_assigned_fraction": 0.5887573964497042,
+      "ari_all": 0.5426827867333514,
+      "ari_joint": 0.9058502541759587,
+      "tag_agreement": {
+        "shared": 246689,
+        "pairs": 318475,
+        "fraction": 0.7745945521626502
+      },
+      "shuffled_tag_agreement": {
+        "shared": 140224,
+        "pairs": 318475,
+        "fraction": 0.44029829656958946
+      }
+    },
+    {
+      "seed": 51,
+      "reference_sha256": "2943eeefc65f27bcd8f53c5610201cca81b4fb7d290b6b58210341aa1fcd6990",
+      "umap_recall": 0.18738658777120315,
+      "pca_recall": 0.014151873767258382,
+      "shuffled_recall": 0.0008974358974358974,
+      "difference": 0.17323471400394477,
+      "clusters": 107,
+      "unassigned": 3512,
+      "unassigned_fraction": 0.3463510848126233,
+      "jointly_assigned_fraction": 0.5933925049309665,
+      "ari_all": 0.5704630671948692,
+      "ari_joint": 0.9244318647572168,
+      "tag_agreement": {
+        "shared": 252334,
+        "pairs": 312252,
+        "fraction": 0.8081101161882069
+      },
+      "shuffled_tag_agreement": {
+        "shared": 138780,
+        "pairs": 312252,
+        "fraction": 0.44444871449982704
+      }
+    }
+  ],
+  "primary": {
+    "mean_difference": 0.17279783037475346,
+    "ci95": [
+      0.172288090903941,
+      0.17330756984556592
+    ],
+    "conclusion": "supported"
+  },
+  "pca_ablation": {
+    "clusters": 17,
+    "unassigned": 8395,
+    "unassigned_fraction": 0.8279092702169625,
+    "jointly_assigned_fraction": 0.13678500986193293,
+    "ari_all": 0.03407610675997582,
+    "ari_joint": 0.24770702637121755,
+    "tag_agreement": {
+      "shared": 83908,
+      "pairs": 195024,
+      "fraction": 0.4302444827303306
+    },
+    "shuffled_tag_agreement": {
+      "shared": 87002,
+      "pairs": 195024,
+      "fraction": 0.44610919681680206
+    }
+  },
+  "n": 10140,
+  "tagged": 10121,
+  "k": 10
+}
