@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import io
+import hashlib
 import warnings
 from collections import Counter
 import numpy as np
@@ -40,11 +41,24 @@ def neighborhood(vectors, count=30):
     return ids, values
 
 
+def original_neighbors(vectors):
+    """Rank the archived vectors in float64 to resolve close cosine ties before publishing recommendations."""
+    unit=np.asarray(vectors,dtype=np.float64)
+    unit=unit/np.linalg.norm(unit,axis=1,keepdims=True)
+    ids=np.empty((len(unit),10),dtype=np.int32)
+    for start in range(0,len(unit),256):
+        stop=min(start+256,len(unit))
+        similarity=unit[start:stop] @ unit.T
+        similarity[np.arange(stop-start),np.arange(start,stop)]=-np.inf
+        ids[start:stop]=np.argsort(-similarity,axis=1,kind="stable")[:,:10]
+    return ids
+
+
 def projection(vectors, indices, distances, dim, seed):
     """The precomputed exact graph is shared, but each dimension and seed gets its own optimizer."""
     from umap import UMAP
     reducer = UMAP(n_components=dim,n_neighbors=indices.shape[1],metric="cosine",min_dist=.1 if dim==2 else 0.,
-                   random_state=seed,n_jobs=1,force_approximation_algorithm=True,
+                   random_state=seed,n_jobs=1,force_approximation_algorithm=True,compatibility_layout=True,
                    precomputed_knn=(indices.copy(), distances.copy(), None))
     with warnings.catch_warnings():
         # This atlas embeds a closed corpus and never calls UMAP.transform() for future points.
@@ -53,7 +67,7 @@ def projection(vectors, indices, distances, dim, seed):
 
 
 def membership(coords):
-    model = HDBSCAN(min_cluster_size=20,min_samples=5,cluster_selection_method="eom",metric="euclidean",n_jobs=1)
+    model = HDBSCAN(min_cluster_size=20,min_samples=5,cluster_selection_method="eom",metric="euclidean",n_jobs=1,copy=False)
     return model.fit_predict(coords), model.probabilities_
 
 
@@ -71,17 +85,25 @@ def run_seed(folder, vectors, indices, distances, seed):
 def geometry(folder, vectors, progress):
     path = folder / "geometry.npz"
     if path.exists():
-        return load_arrays(path)
+        main=load_arrays(path)
+        if "neighbors" not in main:
+            with threadpool_limits(limits=4):
+                main["neighbors"]=original_neighbors(vectors)
+            save_arrays(path,**main)
+        return main
     if len(vectors)<31:
         raise ValueError("The preregistered configuration requires at least 31 qualifying papers")
     progress("Original neighbors and PCA",0,2)
     with threadpool_limits(limits=4):
         indices, distances = neighborhood(vectors)
+        exact = original_neighbors(vectors)
         pca = PCA(n_components=10,svd_solver="full").fit_transform(vectors)
         pca_labels, _ = membership(pca)
         progress("Primary UMAP and HDBSCAN",1,2,seed=42)
         main = run_seed(folder,vectors,indices,distances,42)
-    main.update(knn=indices,knn_dist=distances,pca=pca,pca_labels=pca_labels)
+    main.update(knn=indices,knn_dist=distances,neighbors=exact,pca=pca,pca_labels=pca_labels,
+                paper_sha256=np.array(read_json(folder/"manifest.json")["content_sha256"]),
+                vector_sha256=np.array(read_json(folder/"embedding-info.json")["vectors_sha256"]))
     save_arrays(path,**main)
     return main
 
@@ -131,10 +153,11 @@ def cluster_metrics(labels, base, masks, seed):
 
 def evaluate(folder,papers,vectors,progress):
     output = folder / "evaluation.json"
-    if output.exists():
-        return read_json(output)
     main = geometry(folder,vectors,progress)
-    reference = main["knn"][:,1:11]
+    reference = main["neighbors"]
+    reference_hash=hashlib.sha256(reference.astype("<i4").tobytes()).hexdigest()
+    if output.exists() and read_json(output).get("reference_sha256")==reference_hash:
+        return read_json(output)
     pca_score = recall_at_ten(main["pca"][:,:2],reference)
     subjects = sorted({s for paper in papers for s in paper["subjects"]})
     bits = {s:1<<i for i,s in enumerate(subjects)}
@@ -143,14 +166,14 @@ def evaluate(folder,papers,vectors,progress):
     with threadpool_limits(limits=4):
         for seed in SEEDS:
             stage = folder / "work" / f"metric-{seed}.json"
-            if stage.exists():
+            if stage.exists() and read_json(stage).get("reference_sha256")==reference_hash:
                 row = read_json(stage)
             else:
                 geometry_seed = main if seed==42 else run_seed(folder,vectors,main["knn"],main["knn_dist"],seed)
                 xy = geometry_seed["xy"]
                 score = recall_at_ten(xy,reference)
                 shuffled = xy[np.random.default_rng(seed).permutation(len(xy))]
-                row = dict(seed=seed, umap_recall=score, pca_recall=pca_score,
+                row = dict(seed=seed, reference_sha256=reference_hash, umap_recall=score, pca_recall=pca_score,
                            shuffled_recall=recall_at_ten(shuffled,reference),difference=score-pca_score,
                            **cluster_metrics(geometry_seed["labels"],main["labels"],masks,seed))
                 save_json(stage,row)
@@ -159,7 +182,7 @@ def evaluate(folder,papers,vectors,progress):
     delta = np.array([s["difference"] for s in scores])
     mean = float(delta.mean())
     radius = float(t.ppf(.975,len(delta)-1)*delta.std(ddof=1)/np.sqrt(len(delta)))
-    result = dict(snapshot=folder.name, seeds=scores, primary=dict(mean_difference=mean,ci95=[mean-radius,mean+radius],
+    result = dict(snapshot=folder.name,reference_sha256=reference_hash,seeds=scores, primary=dict(mean_difference=mean,ci95=[mean-radius,mean+radius],
                   conclusion="supported" if mean-radius>0 else "falsified" if mean+radius<=0 else "inconclusive"),
                   pca_ablation=cluster_metrics(main["pca_labels"],main["labels"],masks,42),
                   n=len(papers), tagged=int(np.sum(masks!=0)), k=10)

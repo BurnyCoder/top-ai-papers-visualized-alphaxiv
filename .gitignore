@@ -19,4 +19,5 @@ logs/
 results/*/work/
 results/*/embeddings.npy
 results/*/geometry.npz
+results/*/seed-layouts.npz
 site/

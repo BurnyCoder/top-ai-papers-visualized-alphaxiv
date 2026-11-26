@@ -39,9 +39,13 @@ def embed(folder, papers, progress, client=None):
     """Cache completed documents before starting another paid request. API inputs are cl100k tokens."""
     import tiktoken
     output = folder / "embeddings.npy"
-    if output.exists():
+    if output.exists() and (folder / "embedding-info.json").exists():
         matrix = np.load(output, allow_pickle=False)
-        if matrix.shape != (len(papers), DIM) or not np.isfinite(matrix).all():
+        archived=read_json(folder / "embedding-info.json")
+        input_keys=[digest(EMBEDDER+"\0"+paper_text(p)) for p in papers]
+        if (matrix.shape != (len(papers), DIM) or not np.isfinite(matrix).all()
+                or digest("\n".join(input_keys))!=archived["ordered_input_sha256"]
+                or hashlib.sha256(output.read_bytes()).hexdigest()!=archived["vectors_sha256"]):
             raise ValueError("Frozen embedding shape or values invalid")
         return matrix
     CACHE.mkdir(exist_ok=True)

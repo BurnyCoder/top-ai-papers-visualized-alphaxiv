@@ -1,6 +1,6 @@
 """Check ranking math and multi-label counting against transparent synthetic cases."""
 import numpy as np
-from atlas.geometry import neighborhood, recall_at_ten, tag_overlap
+from atlas.geometry import neighborhood, original_neighbors, recall_at_ten, tag_overlap
 
 
 def test_identical_vectors_keep_self_out_and_ties_in_id_order():
@@ -8,6 +8,14 @@ def test_identical_vectors_keep_self_out_and_ties_in_id_order():
     ids,_ = neighborhood(v,12)
     assert ids[4,0] == 4 and ids[4,1:5].tolist() == [0,1,2,3]
     assert all(i not in ids[i,1:] for i in range(len(v)))
+
+
+def test_original_neighbors_resolve_the_tenth_place_in_double_precision():
+    # Nine exact matches leave one slot for two near-identical, representable float32 vectors.
+    vectors=np.array([[1.,0.]]*10+[[.5,.5+2**-24],[.5,.5]],dtype=np.float32)
+    ranked=original_neighbors(vectors)
+    assert ranked[0].tolist()==[*range(1,10),11]
+    assert all(i not in row for i,row in enumerate(ranked))
 
 
 def test_reference_recall_and_multitag_pairs():

@@ -1,0 +1,11 @@
+{
+  "manifest.json": "0ef8d09e41d968f1192cb8c1eb4b848f212b376282fecfd17bfc63adcf14a0d4",
+  "papers.jsonl": "e31299e113b9302bca48919354c11963a4d8eaaf9bdf2cba2226cd93b6c20491",
+  "embedding-info.json": "e864047f518883d93804a83bbb12753000094661c7acf6b418aa5b60a0a1aa79",
+  "embeddings.npy": "250f8f231d44a4d40b307a2dbea65cc2138bdb41cbb4410c99f2831b76d5db32",
+  "geometry.npz": "44a04fc849619d543ca2293ebd9861e850a23f985661ab9fd99da8667bf61978",
+  "labels.json": "f5840275ca35dafd4f6d3866ff56abba42cfb06bbd7b2af5af3ed8e79f14e4a3",
+  "evaluation.json": "5ea421ea653ecb4d9fa0598e863093b44b4c899c59067c7255b771338d628fd7",
+  "papers.parquet": "e67f1e44d59862f76b049ab5a354df8b711eea6b1a20ef7caff05152a8673d34",
+  "seed-layouts.npz": "4188a3893c3f048f32778ed9e314c25ef9a4872181c6bcee050ee3121f631ddc"
+}

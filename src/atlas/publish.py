@@ -14,7 +14,7 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 
 from .figures import figures
-from .geometry import load_arrays
+from .geometry import SEEDS, load_arrays, save_arrays
 from .io import COLLECTION, GITHUB, HUB, PACKAGE, PAGES, ROOT, RESULTS, papers_at, read_json, save_bytes, save_json
 from .paper import make_paper, pct
 
@@ -34,6 +34,10 @@ def export_data(folder, docs, manifest, papers, A, labels):
     for group,count in groups.items():
         entry=labels[str(group)] if group>=0 else {"name":"Unassigned","evidence":[],"representatives":[],"terms":[]}
         clusters[str(group)]={**entry,"count":count,"color":color_for(group)}
+    repeated=Counter(c["name"].casefold() for c in clusters.values())
+    for group,entry in clusters.items():
+        if repeated[entry["name"].casefold()]>1:
+            entry["display_name"]=entry["name"]+f" · group {group}"
     if set(labels)!=set(str(g) for g in groups if g>=0):
         raise ValueError("Host label IDs and assigned groups differ")
     ids=[p["id"] for p in papers]; public_ids={p["paper_id"] for p in papers}
@@ -47,7 +51,7 @@ def export_data(folder, docs, manifest, papers, A, labels):
         raise ValueError("Nonfinite map coordinates")
     atlas_rows=[];table=[]
     for i,p in enumerate(papers):
-        neigh=list(map(int,A["knn"][i,1:11]))
+        neigh=list(map(int,A["neighbors"][i]))
         if len(set(neigh))!=10 or i in neigh or min(neigh)<0 or max(neigh)>=len(papers) or p["likes"]<=100:
             raise ValueError("Invalid neighborhood or threshold in snapshot")
         record={**p,"x":float(A["xy"][i,0]),"y":float(A["xy"][i,1]),"cluster":int(A["labels"][i]),"neighbors":neigh}
@@ -57,7 +61,7 @@ def export_data(folder, docs, manifest, papers, A, labels):
     save_json(docs/"atlas.json",dict(snapshot=folder.name,date=manifest["ended_at"][:10],papers=atlas_rows,clusters=clusters,
               cluster_count=sum(g>=0 for g in groups),unassigned=groups.get(-1,0)),compact=True)
     stream=io.StringIO(newline="")
-    writer=csv.DictWriter(stream,fieldnames=list(table[0]));writer.writeheader()
+    writer=csv.DictWriter(stream,fieldnames=list(table[0]),lineterminator="\n");writer.writeheader()
     for row in table:
         writer.writerow({k:json.dumps(v,ensure_ascii=False) if isinstance(v,list) else v for k,v in row.items()})
     save_bytes(docs/"papers.csv",stream.getvalue().encode("utf-8-sig"))
@@ -122,6 +126,12 @@ The collection window was {manifest['started_at']} to {manifest['ended_at']}. Th
              f"At seed 42 the ten-PC ablation assigned {pct(1-a['unassigned_fraction'])} of papers, compared with {pct(1-r['unassigned_fraction'])} for ten-dimensional UMAP. "
              f"Shared subject agreement among assigned and tagged pairs was {pct(a['tag_agreement']['fraction'])} and {pct(r['tag_agreement']['fraction'])}, respectively. "
              "These are conditional comparisons because the assigned sets can differ. The evaluation uses the frozen corpus and held-out tags.\n")
+    boundary=folder/"precision-check"/"boundary.json"
+    if boundary.exists():
+        count=len(read_json(boundary))
+        learning+=(f"\nThe precision audit found a change in the tenth neighbor for {count:,} of {n:,} papers. "
+                   "The released recommendations rank the archived vectors in float64. "
+                   "[Boundary evidence and correction](../../reviews/precision.md)\n")
     save_bytes(exp/"learnings.md",learning.encode())
     paths=sorted((report/"experiments").glob("*/experiment.md"))
     index="\n".join(f"- [{p.parent.name}]({p.parent.name}/experiment.md) · [Learnings]({p.parent.name}/learnings.md)" for p in paths)
@@ -143,6 +153,12 @@ def build(folder,progress):
         raise ValueError("Snapshot membership or checksum failed verification")
     A=load_arrays(folder/"geometry.npz");labels=read_json(folder/"labels.json")
     evaluation=read_json(folder/"evaluation.json");embedding=read_json(folder/"embedding-info.json")
+    if hashlib.sha256(A["neighbors"].astype("<i4").tobytes()).hexdigest()!=evaluation["reference_sha256"]:
+        raise ValueError("The score references a different nearest-neighbor table")
+    if str(A["paper_sha256"])!=manifest["content_sha256"] or str(A["vector_sha256"])!=embedding["vectors_sha256"]:
+        raise ValueError("Geometry was fitted to a different paper order or vector matrix")
+    if (folder/"embeddings.npy").exists() and hashlib.sha256((folder/"embeddings.npy").read_bytes()).hexdigest()!=embedding["vectors_sha256"]:
+        raise ValueError("The frozen embedding matrix failed its SHA-256 integrity check")
     progress("Offline build",0,4)
     clusters=export_data(folder,docs,manifest,papers,A,labels)
     for path in (PACKAGE/"web").iterdir():shutil.copyfile(path,docs/path.name)
@@ -151,7 +167,13 @@ def build(folder,progress):
     reports(folder,manifest,evaluation,clusters,embedding)
     make_paper(report/"paper.pdf",manifest,evaluation,clusters,figdir)
     shutil.copyfile(report/"paper.pdf",docs/"paper.pdf")
-    checksum_files=["manifest.json","papers.jsonl","embedding-info.json","embeddings.npy","geometry.npz","labels.json","evaluation.json","papers.parquet"]
+    # Publish each fitted layout so readers can recompute seed statistics without rerunning UMAP.
+    archive=folder/"seed-layouts.npz"
+    seed_files={s:folder/"work"/f"seed-{s}.npz" for s in SEEDS}
+    if not archive.exists() and all(p.exists() for p in seed_files.values()):
+        layouts={f"seed_{s}_{key}":arr for s,p in seed_files.items() for key,arr in load_arrays(p).items()}
+        save_arrays(archive,paper_sha256=A["paper_sha256"],**layouts)
+    checksum_files=["manifest.json","papers.jsonl","embedding-info.json","embeddings.npy","geometry.npz","seed-layouts.npz","labels.json","evaluation.json","papers.parquet"]
     checks={}
     previous=(folder/"checksums.json")
     if previous.exists():checks.update(read_json(previous))

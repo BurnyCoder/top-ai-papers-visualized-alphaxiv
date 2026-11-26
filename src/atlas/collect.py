@@ -74,7 +74,10 @@ def verify_passes(previous, current):
 def collect(folder, progress):
     """Require matching consecutive independent passes; retain a discrepancy audit on failure."""
     if (folder / "manifest.json").exists() and (folder / "papers.jsonl").exists():
-        return read_json(folder / "manifest.json")
+        manifest=read_json(folder / "manifest.json")
+        if hashlib.sha256((folder/"papers.jsonl").read_bytes()).hexdigest()!=manifest["content_sha256"]:
+            raise RuntimeError("The stored census differs from the frozen manifest")
+        return manifest
     key = os.environ.get("ALPHAXIV_API_KEY")
     if not key:
         raise ValueError("ALPHAXIV_API_KEY is required for a fresh census")

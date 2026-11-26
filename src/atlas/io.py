@@ -29,11 +29,20 @@ def save_bytes(path, value):
     """Replace only after the entire new file has reached disk, including on Windows."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
+    if path.is_file() and path.stat().st_size==len(value) and path.read_bytes()==value:
+        return
     with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as handle:
         temp = Path(handle.name)
         handle.write(value)
     try:
-        os.replace(temp, path)
+        for attempt in range(7):
+            try:
+                os.replace(temp, path)
+                break
+            except PermissionError:
+                if attempt==6:
+                    raise
+                time.sleep(.1*2**attempt)
     finally:
         temp.unlink(missing_ok=True)
 
@@ -71,9 +80,27 @@ class Progress:
     def __init__(self, snapshot):
         self.snapshot = snapshot
         self.start = time.monotonic()
+        self.stage = ""
+        self.stage_start = self.start
+        self.initial_done = 0
+        self.last_note = 0.0
 
     def __call__(self, stage, done, total, **extra):
+        clock=time.monotonic()
+        changed=stage!=self.stage
+        if changed:
+            self.stage,self.stage_start,self.initial_done=stage,clock,done
         state = dict(snapshot=self.snapshot, stage=stage, done=done, total=total,
-                     elapsed_seconds=round(time.monotonic()-self.start, 1), updated_at=now(), **extra)
+                     elapsed_seconds=round(clock-self.start, 1), updated_at=now(), **extra)
+        if total is not None and done>self.initial_done:
+            state["estimated_stage_seconds_left"]=round((total-done)*(clock-self.stage_start)/(done-self.initial_done))
         save_json(RESULTS / "progress.json", state)
+        if changed or clock-self.last_note>=60 or done==total:
+            self.last_note=clock
+            notes=ROOT/"reports"/"progress.md"
+            notes.parent.mkdir(parents=True,exist_ok=True)
+            with notes.open("a",encoding="utf-8") as file:
+                details=", ".join(f"{k}={v}" for k,v in extra.items())
+                line=f"- {state['updated_at']} · {self.snapshot} · {stage} · {done}/{total if total is not None else '?'} {details}"
+                file.write("\n"+line.rstrip()+"\n")
         LOG.info("%s %s/%s %s", stage, done, total if total is not None else "?", extra or "")

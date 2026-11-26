@@ -25,6 +25,10 @@ function option(target, value, text) {
 }
 function paperURL(id) { return "https://www.alphaxiv.org/abs/" + id.split("/").map(encodeURIComponent).join("/"); }
 function groupFor(id) { return clusters[String(id)]; }
+function topicName(id) {
+  const topic=groupFor(id);
+  return topic.display_name || topic.name;
+}
 function toScreen(p) { return [(p.x-cx)*scale+width/2, height/2-(p.y-cy)*scale]; }
 function fitTo(indices) {
   if (!indices.length) return;
@@ -70,7 +74,7 @@ function draw() {
   ctx.font="600 10px system-ui"; ctx.textAlign="center"; ctx.textBaseline="middle";
   for (const [g,c] of [...centers].sort((a,b)=>b[1][2]-a[1][2])) {
     if(c[2]<12 || occupied.length>=Math.max(3,Math.floor(width/85))) continue;
-    const name=groupFor(g).name, w=ctx.measureText(name).width+10, x=c[0]/c[2], y=c[1]/c[2]-10;
+    const name=topicName(g), w=ctx.measureText(name).width+10, x=c[0]/c[2], y=c[1]/c[2]-10;
     const bounds=[x-w/2,y-9,x+w/2,y+9];
     if(bounds[0]<6 || bounds[2]>width-6 || bounds[1]<6 || bounds[3]>height-6 ||
        occupied.some(b=>!(b[2]+5<bounds[0] || b[0]-5>bounds[2] || b[3]+3<bounds[1] || b[1]-3>bounds[3]))) continue;
@@ -159,7 +163,7 @@ function renderSide(){
     b.append(button("← Paper list","smallbtn",()=>{clearSelection();renderSide();queueDraw();}));
     b.append(element("h2",p.title),element("div",p.paper_id+" · "+number(p.likes)+" likes · "+p.date,"detailmeta"));
     b.append(element("p",p.authors.join(", ")));
-    b.append(button(topic.name,"smallbtn detailgroup",()=>chooseCluster(p.cluster)));
+    b.append(button(topicName(p.cluster),"smallbtn detailgroup",()=>chooseCluster(p.cluster)));
     if(p.subjects.length)b.append(element("div",p.subjects.join(" · "),"detailmeta"));
     const d=element("details");d.append(element("summary","Abstract"),element("p",p.abstract||"Title-only record"));b.append(d);
     const link=element("a","Open on alphaXiv ↗","open");link.href=paperURL(p.paper_id);link.target="_blank";link.rel="noopener";b.append(link);
@@ -172,12 +176,12 @@ function renderSide(){
     for(const i of filtered){const g=papers[i].cluster;counts.set(g,(counts.get(g)||0)+1);}
     for(const [g,count] of [...counts].sort((a,c)=>(a[0]<0)-(c[0]<0)||c[1]-a[1])){
       const topic=groupFor(g), n=button("","row",()=>chooseCluster(g)), sw=element("span",undefined,"swatch");
-      sw.style.setProperty("--color",topic.color);n.append(sw,element("span",topic.name),element("span",number(count),"count"));b.append(n);
+      sw.style.setProperty("--color",topic.color);n.append(sw,element("span",topicName(g)),element("span",number(count),"count"));b.append(n);
     }
   }else{
     const g=by("cluster").value, topic=groupFor(g);
     if(g!=="" && topic){
-      b.append(element("h2",topic.name));
+      b.append(element("h2",topicName(g)));
       if(topic.evidence && topic.evidence.length){const box=element("div",undefined,"evidence");
         box.append(element("h3","Evidence for Luna’s label","sectitle"));
         for(const id of topic.evidence){if(ids.has(id))box.append(paperRow(ids.get(id),false));}b.append(box);}
@@ -202,9 +206,9 @@ async function load(){
   const subjects=new Set(),years=new Set();
   papers.forEach((p,i)=>{ids.set(p.paper_id,i);p.search=[p.title,p.paper_id,p.id,...p.authors].join(" ").toLocaleLowerCase();
     p.subjects.forEach(t=>subjects.add(t));if(p.date)years.add(p.date.slice(0,4));});
-  for(const [id,g] of Object.entries(clusters).sort((a,b)=>a[1].name.localeCompare(b[1].name)))option("cluster",id,g.name);
+  for(const [id] of Object.entries(clusters).sort((a,b)=>a[1].name.localeCompare(b[1].name)))option("cluster",id,topicName(id));
   [...subjects].sort().forEach(s=>option("subject",s,s));[...years].sort().reverse().forEach(y=>option("year",y,y));
-  by("subtitle").textContent=number(papers.length)+" papers with more than 100 likes, grouped into "+number(data.cluster_count)+" research topics.";
+  by("subtitle").textContent=number(papers.length)+" papers with more than 100 likes on alphaXiv. Explore "+number(data.cluster_count)+" topic clusters.";
   by("stamp").textContent="Snapshot · "+data.date;
   by("footnote").textContent=number(data.unassigned)+" papers appear in gray without a cluster assignment.";
   const deep=new URLSearchParams(location.hash.slice(1)).get("paper");
