@@ -119,7 +119,7 @@ def run_seed(folder, vectors, indices, distances, seed):
 def prepare_seed(folder,seed):
     """Workers share the read-only vector file and commit only their own seed checkpoint."""
     vectors=np.load(folder/"embeddings.npy",mmap_mode="r",allow_pickle=False)
-    with np.load(folder/"geometry.npz",allow_pickle=False) as archive,threadpool_limits(limits=1):
+    with np.load(folder/"geometry.npz",allow_pickle=False) as archive,threadpool_limits(limits=4):
         run_seed(folder,vectors,archive["knn"],archive["knn_dist"],seed)
 
 
