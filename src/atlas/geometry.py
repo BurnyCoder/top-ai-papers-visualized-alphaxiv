@@ -65,34 +65,41 @@ def neighborhood(vectors, count=30):
 
 def exact_graph(vectors,count,progress=None):
     """Rank every eligible group in float64; append explicit self and cast only selected distances."""
-    unit=np.array(vectors,dtype=np.float64,copy=True)
-    unit/=np.sqrt(np.einsum("ij,ij->i",unit,unit))[:,None]
-    gpu=None
-    if len(unit)>15000:
+    def normalized(rows):
+        x=np.array(rows,dtype=np.float64,copy=True)
+        x/=np.sqrt(np.einsum("ij,ij->i",x,x))[:,None]
+        return x
+    n=len(vectors);gpu=None
+    if n>15000:
         # Optional FP64 cuBLAS multiplication; the independent CPU audit checks every rank.
         try:
             import cupy
-            if cupy.cuda.runtime.memGetInfo()[0]>unit.nbytes+256*1024**2:
-                gpu=cupy.asarray(unit)
+            if cupy.cuda.runtime.memGetInfo()[0]>vectors.size*8+256*1024**2:
+                # Normalize host tiles identically to CPU retrieval, then retain only the device copy.
+                gpu=cupy.empty(vectors.shape,dtype=cupy.float64)
+                for start in range(0,n,1024):
+                    stop=min(start+1024,n)
+                    gpu[start:stop].set(normalized(vectors[start:stop]))
                 cupy.asnumpy(gpu[:1] @ gpu[:1].T)
                 LOG.info("Using local CUDA FP64 for exhaustive original-space similarities")
-        except (ImportError,OSError,RuntimeError) as error:
+        except (ImportError,OSError,RuntimeError,MemoryError) as error:
             gpu=None
             LOG.info("Using CPU BLAS for exhaustive original-space similarities (%s)",type(error).__name__)
-    ids=np.empty((len(unit),count),dtype=np.int32)
+    unit=normalized(vectors) if gpu is None else None
+    ids=np.empty((n,count),dtype=np.int32)
     distances=np.zeros(ids.shape,dtype=np.float32)
-    ids[:,0]=np.arange(len(unit))
-    block=128 if len(unit)>60000 else 256
-    for start in range(0,len(unit),block):
-        stop=min(start+block,len(unit))
+    ids[:,0]=np.arange(n)
+    block=128 if n>60000 else 256
+    for start in range(0,n,block):
+        stop=min(start+block,n)
         similarity=(unit[start:stop] @ unit.T if gpu is None else cupy.asnumpy(gpu[start:stop] @ gpu.T))
         np.negative(similarity,out=similarity)
         similarity[np.arange(stop-start),np.arange(start,stop)]=np.inf
         ranked=lowest(similarity,count-1)
         ids[start:stop,1:]=ranked
         distances[start:stop,1:]=np.clip(1+np.take_along_axis(similarity,ranked,axis=1),0,2)
-        if progress and (start%(block*32)==0 or stop==len(unit)):
-            progress("Exact cosine neighbors",stop,len(unit),device="CUDA" if gpu is not None else "CPU")
+        if progress and (start%(block*32)==0 or stop==n):
+            progress("Exact cosine neighbors",stop,n,device="CUDA" if gpu is not None else "CPU")
     return ids,distances
 
 
