@@ -1,0 +1,23 @@
+{
+  "checked_at": "2026-11-26T15:45:30+00:00",
+  "snapshot": "2026-11-26-over-10",
+  "release_tag": "atlas-2026-11-26-over-10",
+  "git_commit": "157fdc794e2593ac084aed26c64c2c00f9ef1e8e",
+  "hub_commit": "23c05068784e9fa565344d5b7304c4d6dda32c4a",
+  "published_site_files_verified_by_sha256": 314,
+  "hub_artifacts_verified_by_sha256": 18,
+  "checked_by": "scripts/verify_public.py over the public GitHub Pages and pinned Hugging Face HTTPS endpoints",
+  "public_desktop_and_mobile_smoke_test": "passed",
+  "offline_command": "uv run --offline --frozen atlas build --snapshot 2026-11-26-over-10",
+  "local_env_file_present": false,
+  "openai_and_alphaxiv_keys_removed_from_process": true,
+  "tracked_differences_after_rebuild": [
+    "reports/progress.md",
+    "results/progress.json"
+  ],
+  "differing_release_artifacts": [],
+  "site_files_compared_after_rebuild": 314,
+  "report_and_result_files_compared_after_rebuild": 11,
+  "sha256_manifest": "8910de452a25e55ea527c963fa04183d6d6fe7db93c07ef90b2cc49132c1068c",
+  "sha256_paper": "e5a400ed974834d4cb878c5a69cb1e5dd9909633a9b9afa718e9de91cbdb3808"
+}

@@ -17,6 +17,8 @@ uv run python -m http.server 8000 --bind 127.0.0.1 --directory docs
 
 Open `http://127.0.0.1:8000/over-10/`. To collect new observations, use `uv run atlas refresh --threshold 10 --max-api-usd 50` with the local OpenAI key. A named snapshot resumes its durable spending ledger on restart. The authenticated-key option remains available on the earlier studies. The low-cutoff census uses the public metadata endpoint and incurs zero API credit charges. For optional CUDA acceleration of exact FP64 similarities, install `uv sync --frozen --extra cuda` and use the same extra when invoking uv. [Protocol](../reports/over-10/preregistration.md) · [Collection evidence](../reports/over-10/collection-amendment.md) · [API pricing](https://developers.openai.com/api/docs/pricing)
 
+To verify the live Pages files and every checksummed dataset artifact, run `uv run python scripts/verify_public.py 2026-11-26-over-10 --restore-arrays .` in the tagged checkout. It writes the three numerical arrays after checking their SHA-256 digests. With dependencies installed, `uv run --offline --frozen atlas build --snapshot 2026-11-26-over-10` rebuilds the edition without credentials. [Tagged source](https://github.com/BurnyCoder/top-ai-papers-visualized-alphaxiv/tree/atlas-2026-11-26-over-10)
+
 ### Over 20 likes
 
 The three numerical arrays are on the tagged Hugging Face dataset. Git contains the matching census, rank certificates, labels, usage receipts and budget ledger. Rebuilding the site reads only local files.
@@ -66,7 +68,7 @@ The same files are available by direct HTTPS. Save them under `results/2026-11-2
 
 ## Fetch a fresh collection
 
-Copy `.env.example` to an ignored `.env` and set your own alphaXiv and OpenAI keys. Run `uv run atlas refresh`. The console prints the snapshot name. For an explicit repeatable run use a new name, such as `uv run atlas refresh --snapshot my-census`. Resume with the identical name. Each verified census is frozen, and completed embedding batches, individual cluster names and seed results are checkpointed. A new named snapshot rechecks live membership. Input hashes allow unchanged papers to reuse the local embedding cache.
+Copy `.env.example` to an ignored `.env` and set `OPENAI_API_KEY`. The default over-10 census reads the public alphaXiv feed and caps spending at USD 50. The 50- and 100-like editions also read `ALPHAXIV_API_KEY`. Run `uv run atlas refresh`. The console prints the snapshot name. To choose the name, use a command such as `uv run atlas refresh --snapshot my-census`. Resume with the identical name. Each verified census is frozen, and completed embedding batches, individual cluster names and seed results are checkpointed. A new named snapshot rechecks live membership. Input hashes allow unchanged papers to reuse the local embedding cache.
 
 In a second terminal run `uv run atlas monitor --port 0` and open the loopback URL it prints. Port zero selects an available port. Use `--port 8765` for a fixed address. The dashboard displays stage, counts, elapsed time, API usage during embedding, and measured recall as seeds finish. The site’s Run details link displays the final release status. Full timestamped Luna prompts and responses go to the terminal and local `logs/`. Numeric embedding outputs are preserved losslessly in the published array. The static site never needs keys.
 
