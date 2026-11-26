@@ -16,9 +16,11 @@ def main():
     target=root/".atlas-cache"/"hub-release"/args.snapshot
     out=target/"results"/args.snapshot
     out.mkdir(parents=True,exist_ok=True)
-    for name in ("manifest.json","papers.jsonl","embeddings.npy","embedding-info.json","geometry.npz",
+    for name in ("manifest.json","papers.jsonl","embeddings.npy","embedding-info.json","geometry.npz","seed-layouts.npz",
                  "labels.json","label-traces.jsonl","api-usage.jsonl","evaluation.json","papers.parquet","checksums.json","audit.json"):
         if (source/name).is_file():shutil.copyfile(source/name,out/name)
+    if (source/"precision-check").exists():
+        shutil.copytree(source/"precision-check",out/"precision-check",dirs_exist_ok=True)
     if (source/"evaluation.json").exists() and (source/"papers.parquet").exists():
         ev=json.loads((source/"evaluation.json").read_text(encoding="utf-8"))
         r=ev["seeds"][0]

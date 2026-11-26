@@ -48,13 +48,22 @@ def audit(snapshot):
     x=independently_measure(geo["xy"]);baseline=independently_measure(geo["pca"][:,:2])
     control=independently_measure(geo["xy"][np.random.default_rng(42).permutation(len(papers))])
     assert np.allclose([x,baseline,control],[r["umap_recall"],r["pca_recall"],r["shuffled_recall"]],atol=1e-10)
+    with np.load(folder/"seed-layouts.npz",allow_pickle=False) as layouts:
+        assert str(layouts["paper_sha256"])==manifest["content_sha256"]
+        for row in ev["seeds"]:
+            seed=row["seed"]
+            points=layouts[f"seed_{seed}_xy"]
+            perm=np.random.default_rng(seed).permutation(len(papers))
+            assert independently_measure(points)==row["umap_recall"]
+            assert independently_measure(points[perm])==row["shuffled_recall"]
+            assert int((layouts[f"seed_{seed}_labels"]<0).sum())==row["unassigned"]
     d=np.array([v["umap_recall"]-v["pca_recall"] for v in ev["seeds"]])
     interval=stats.t.interval(.95,df=len(d)-1,loc=d.mean(),scale=stats.sem(d))
     assert np.allclose(interval,ev["primary"]["ci95"])
     same_names=len(labels)-len({g["name"].casefold() for g in labels.values()})
     result=dict(paper_ids=len(ids),independent_neighbor_overlap=neighbor_agreement,independent_seed42_recall=x,
                 independent_pca_recall=baseline,independent_shuffled_recall=control,independent_ci95=list(interval),
-                clusters_with_validated_evidence=len(labels),extra_duplicate_names=same_names,
+                seed_layouts_rechecked=len(ev["seeds"]),clusters_with_validated_evidence=len(labels),extra_duplicate_names=same_names,
                 embedding_requests=sum(x["phase"]=="embeddings" for x in api),label_requests=sum(x["phase"]=="labels" for x in api),
                 complete_label_responses=len(traces),vector_norm_max_abs_error=float(abs(np.linalg.norm(vectors,axis=1)-1).max()))
     save_json(folder/"audit.json",result)
@@ -64,7 +73,7 @@ def audit(snapshot):
 
 Two complete feed passes agreed on all {len(ids):,} research-paper group IDs. Both crossed the strict boundary, with no observed inversion. The JSONL, static map and CSV contain those IDs in the same order. The build independently round-trips the Parquet IDs too. All archived SHA-256 digests verified.
 
-Recomputing all nearest neighbors with scikit-learn in float64 recovered {neighbor_agreement:.6%} of the published top-ten entries. The archived vectors are float32 and the ranking uses float64 arithmetic. The maximum absolute vector-norm error was {result['vector_norm_max_abs_error']:.3g}. A separate kd-tree implementation reproduced the display-seed UMAP, PCA and shuffled recall values ({x:.6f}, {baseline:.6f}, {control:.6f}). An independent Student t calculation reproduced the registered interval. All {len(labels)} assigned groups have valid evidence from their own members.
+Recomputing all nearest neighbors with scikit-learn in float64 recovered {neighbor_agreement:.6%} of the published top-ten entries. The archived vectors are float32 and the ranking uses float64 arithmetic. The maximum absolute vector-norm error was {result['vector_norm_max_abs_error']:.3g}. A separate kd-tree implementation reproduced the display-seed UMAP, PCA and shuffled recall values ({x:.6f}, {baseline:.6f}, {control:.6f}), plus UMAP and shuffled recall for all {len(ev['seeds'])} archived layouts. An independent Student t calculation reproduced the registered interval. All {len(labels)} assigned groups have valid evidence from their own members.
 
 ## Interpretation and limitations
 

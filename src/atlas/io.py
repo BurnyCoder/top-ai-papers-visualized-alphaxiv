@@ -101,5 +101,6 @@ class Progress:
             notes.parent.mkdir(parents=True,exist_ok=True)
             with notes.open("a",encoding="utf-8") as file:
                 details=", ".join(f"{k}={v}" for k,v in extra.items())
-                file.write(f"\n- {state['updated_at']} · {self.snapshot} · {stage} · {done}/{total if total is not None else '?'} {details}\n")
+                line=f"- {state['updated_at']} · {self.snapshot} · {stage} · {done}/{total if total is not None else '?'} {details}"
+                file.write("\n"+line.rstrip()+"\n")
         LOG.info("%s %s/%s %s", stage, done, total if total is not None else "?", extra or "")
