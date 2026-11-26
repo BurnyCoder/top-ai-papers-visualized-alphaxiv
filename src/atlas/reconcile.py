@@ -7,11 +7,41 @@ use different page sizes and separate local caches.
 import gzip
 import hashlib
 import json
-from collections import Counter
+from collections import Counter, defaultdict, deque
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from .collect import CATEGORIES, paper_record, scan
-from .io import now, save_bytes, save_json
+from .io import RESULTS, now, papers_at, save_bytes, save_json
+
+
+def assign_observed_scores(canonical,alternates,expected):
+    """Match group IDs to rank capacities using only scores observed for that same ID.
+
+    Most groups have one score and need no matching. Augmenting paths move groups with
+    documented vote changes to an alternative observation, preserving their identities.
+    """
+    counts=Counter(canonical.values());assigned={};moves=defaultdict(set)
+    for key,options in alternates.items():
+        if key in canonical:
+            for other in options-{canonical[key]}:moves[canonical[key]].add((key,other))
+    for start in list(counts-expected):
+        while counts[start]>expected[start]:
+            queue=deque([start]);via={start:None};end=None
+            while queue and end is None:
+                at=queue.popleft()
+                for key,dest in sorted(moves[at]):
+                    if dest in via or assigned.get(key,canonical[key])!=at:continue
+                    via[dest]=(at,key)
+                    if counts[dest]<expected[dest]:end=dest;break
+                    queue.append(dest)
+            if end is None:break
+            counts[start]-=1;counts[end]+=1
+            while end!=start:
+                previous,key=via[end];assigned[key]=end
+                for other in (alternates[key]|{canonical[key]})-{end}:moves[end].add((key,other))
+                end=previous
+    changes=[dict(id=k,displayed=canonical[k],rank_score=s) for k,s in sorted(assigned.items()) if canonical[k]!=s]
+    return counts,changes
 
 
 def census_pass(folder,fetch,size,threshold,progress):
@@ -44,12 +74,27 @@ def census_pass(folder,fetch,size,threshold,progress):
     if audit["inversions"]:raise RuntimeError("The reference feed changed order across vote strata")
     expected=Counter(audit["vote_counts"])
     external={e["id"]:e for e in audit["external_entries"]}
-    def observed():
-        return Counter(p["likes"] for p in papers.values())+Counter(e["likes"] for e in external.values())
+    historical=RESULTS/"2026-11-26-over-50"
+    prior={p["id"]:p["likes"] for p in papers_at(historical)} if (historical/"papers.jsonl").exists() else {}
+    alternates=defaultdict(set);sources={}
+    def observe_score(key,likes,canonical):
+        if likes!=canonical:
+            alternates[key].add(likes)
+            sources[key,likes]="additional public feed observation"
+        if key in prior and prior[key]!=canonical and prior[key]>threshold:
+            alternates[key].add(prior[key])
+            sources.setdefault((key,prior[key]),"previous dated over-50 census")
+    for key,paper in papers.items():observe_score(key,paper["likes"],paper["likes"])
+    def proof():
+        canonical={k:p["likes"] for k,p in papers.items()}
+        if papers.keys() & external.keys():raise RuntimeError("Group changed between external and paper types")
+        canonical.update({k:p["likes"] for k,p in external.items()})
+        counts,changes=assign_observed_scores(canonical,alternates,expected)
+        for move in changes:move["source"]=sources.get((move["id"],move["rank_score"]),"primary feed")
+        return Counter(canonical.values()),counts,changes
     def missing():
-        counts=observed()
-        if counts-expected:raise RuntimeError(f"Observed more group IDs than ranks at scores {dict(counts-expected)}")
-        return expected-counts
+        _,counts,_=proof()
+        return (expected-counts)+(counts-expected)
     supplements=[]
     audit["global_unique_papers"]=len(papers)
     audit["global_external_occurrences"]=audit["excluded_blogs"]
@@ -60,13 +105,16 @@ def census_pass(folder,fetch,size,threshold,progress):
             key=r["paper_group_id"]
             if r.get("external_blog") is not None:
                 external.setdefault(key,dict(id=key,likes=likes,topic=topic))
-            else:papers.setdefault(key,paper_record(r))
+                observe_score(key,likes,external[key]["likes"])
+            else:
+                if key not in papers:papers[key]=paper_record(r)
+                observe_score(key,likes,papers[key]["likes"])
     def topic_pages(topic):
         # A filtered pass only needs to cover score strata with outstanding global ranks.
         page=0;rows=[]
         while True:
             batch=cached(page,size,topic);page+=1
-            rows.extend(r for r in batch if r["metrics"]["public_total_votes"] in wanted)
+            rows.extend(r for r in batch if r["metrics"]["public_total_votes"]>threshold)
             if len(batch)<size or batch[-1]["metrics"]["public_total_votes"]<min(wanted):break
         return topic,page,rows
     # Narrow subject feeds have fewer pagination ties. Attend first to the tags most
@@ -100,7 +148,9 @@ def census_pass(folder,fetch,size,threshold,progress):
                 wanted=set(missing())
                 if not wanted:break
     remaining=missing()
-    certificate=dict(expected_by_score=dict(expected),observed_by_score=dict(observed()),
+    actual,matched,changes=proof()
+    certificate=dict(expected_by_score=dict(expected),observed_by_score=dict(actual),
+                     matched_by_score=dict(matched),score_observations_used=changes,
                      initial_missing=dict(initial),remaining=dict(remaining),supplements=supplements)
     save_json(folder/f"rank-certificate-{size}.json",certificate)
     if remaining:raise RuntimeError(f"Unresolved global ranks at page size {size}: {dict(remaining)}")

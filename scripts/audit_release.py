@@ -34,9 +34,12 @@ def audit(snapshot):
     for p in passes:
         if "rank_certificate" in p:
             proof=read_json(folder/p["rank_certificate"])
-            assert not proof["remaining"] and proof["expected_by_score"]==proof["observed_by_score"]
+            assert not proof["remaining"] and proof["expected_by_score"]==proof["matched_by_score"]
             canonical=Counter(str(row["likes"]) for row in papers)
             canonical.update(str(row["likes"]) for row in p["external_entries"])
+            assert canonical==proof["observed_by_score"]
+            for move in proof["score_observations_used"]:
+                canonical[str(move["displayed"])]-=1;canonical[str(move["rank_score"])]+=1
             assert canonical==proof["expected_by_score"]
         if "boundary" in p:
             last=p["boundary"]["last_above"];lower=p["boundary"]["first_at_or_below"]

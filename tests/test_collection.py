@@ -55,3 +55,10 @@ def test_twenty_reconstructs_overlapping_ties_by_score(tmp_path):
     assert set(papers)==set("abcde") and audit["global_unique_papers"]==3
     assert audit["boundary"]["first_at_or_below"]["likes"]==20 and audit["excluded_blogs"]==1
     assert audit["repeated_pages"]==[1]
+
+
+def test_score_changes_cannot_add_an_unobserved_id():
+    from collections import Counter
+    from atlas.reconcile import assign_observed_scores
+    counts,changed=assign_observed_scores({"a":66,"b":66},{"b":{65},"old-only":{64}},Counter({65:1,66:1}))
+    assert counts=={65:1,66:1} and changed==[{"id":"b","displayed":66,"rank_score":65}]
