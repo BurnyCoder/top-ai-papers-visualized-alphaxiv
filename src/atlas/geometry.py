@@ -44,7 +44,7 @@ def projection(vectors, indices, distances, dim, seed):
     """The precomputed exact graph is shared, but each dimension and seed gets its own optimizer."""
     from umap import UMAP
     reducer = UMAP(n_components=dim,n_neighbors=indices.shape[1],metric="cosine",min_dist=.1 if dim==2 else 0.,
-                   random_state=seed,n_jobs=1,force_approximation_algorithm=True,
+                   random_state=seed,n_jobs=1,force_approximation_algorithm=True,compatibility_layout=True,
                    precomputed_knn=(indices.copy(), distances.copy(), None))
     with warnings.catch_warnings():
         # This atlas embeds a closed corpus and never calls UMAP.transform() for future points.
@@ -53,7 +53,7 @@ def projection(vectors, indices, distances, dim, seed):
 
 
 def membership(coords):
-    model = HDBSCAN(min_cluster_size=20,min_samples=5,cluster_selection_method="eom",metric="euclidean",n_jobs=1)
+    model = HDBSCAN(min_cluster_size=20,min_samples=5,cluster_selection_method="eom",metric="euclidean",n_jobs=1,copy=False)
     return model.fit_predict(coords), model.probabilities_
 
 

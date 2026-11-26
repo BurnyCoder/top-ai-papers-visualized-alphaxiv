@@ -29,11 +29,20 @@ def save_bytes(path, value):
     """Replace only after the entire new file has reached disk, including on Windows."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
+    if path.is_file() and path.stat().st_size==len(value) and path.read_bytes()==value:
+        return
     with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as handle:
         temp = Path(handle.name)
         handle.write(value)
     try:
-        os.replace(temp, path)
+        for attempt in range(7):
+            try:
+                os.replace(temp, path)
+                break
+            except PermissionError:
+                if attempt==6:
+                    raise
+                time.sleep(.1*2**attempt)
     finally:
         temp.unlink(missing_ok=True)
 
