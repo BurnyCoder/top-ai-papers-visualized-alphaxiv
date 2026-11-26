@@ -75,6 +75,8 @@ def audit(snapshot):
         return sum(len(set(x).intersection(y)) for x,y in zip(a,b,strict=True))/(10*len(a))
     neighbor_agreement=overlap(reference,geo["neighbors"])
     if neighbor_agreement!=1:raise AssertionError(f"Original-space cross-check {neighbor_agreement}")
+    ordered_agreement=float(np.all(reference==geo["neighbors"],axis=1).mean())
+    if ordered_agreement!=1:raise AssertionError(f"Original-space rank order agreement {ordered_agreement}")
     reference=geo["neighbors"]
     def independently_measure(points):
         ds,all_near=NearestNeighbors(n_neighbors=11,algorithm="kd_tree").fit(points).kneighbors()
@@ -101,7 +103,7 @@ def audit(snapshot):
     interval=stats.t.interval(.95,df=len(d)-1,loc=d.mean(),scale=stats.sem(d))
     assert np.allclose(interval,ev["primary"]["ci95"])
     same_names=len(labels)-len({g["name"].casefold() for g in labels.values()})
-    result=dict(paper_ids=len(ids),independent_neighbor_overlap=neighbor_agreement,independent_seed42_recall=x,
+    result=dict(paper_ids=len(ids),independent_neighbor_overlap=neighbor_agreement,independent_neighbor_order_agreement=ordered_agreement,independent_seed42_recall=x,
                 independent_pca_recall=baseline,independent_shuffled_recall=control,independent_ci95=list(interval),
                 seed_layouts_rechecked=len(ev["seeds"]),clusters_with_validated_evidence=len(labels),extra_duplicate_names=same_names,
                 embedding_requests=sum(x["phase"]=="embeddings" for x in api),label_requests=sum(x["phase"]=="labels" for x in api),
@@ -113,7 +115,7 @@ def audit(snapshot):
 
 Two complete feed passes agreed on all {len(ids):,} research-paper group IDs. Both crossed the strict boundary, with no observed inversion. The JSONL, static map and CSV contain those IDs in the same order. The build independently round-trips the Parquet IDs too. All archived SHA-256 digests verified.
 
-Recomputing all nearest neighbors with scikit-learn in float64 recovered {neighbor_agreement:.6%} of the published top-ten entries. The archived vectors are float32 and the ranking uses float64 arithmetic. The maximum absolute vector-norm error was {result['vector_norm_max_abs_error']:.3g}. A separate kd-tree implementation reproduced the display-seed UMAP, PCA and shuffled recall values ({x:.6f}, {baseline:.6f}, {control:.6f}), plus UMAP and shuffled recall for all {len(ev['seeds'])} archived layouts. An independent Student t calculation reproduced the registered interval. All {len(labels)} assigned groups have valid evidence from their own members.
+Recomputing all nearest neighbors with scikit-learn in float64 recovered {neighbor_agreement:.6%} of the published top-ten entries. The complete ordered neighbor lists matched for {ordered_agreement:.6%} of papers. The archived vectors are float32 and the ranking uses float64 arithmetic. The maximum absolute vector-norm error was {result['vector_norm_max_abs_error']:.3g}. A separate kd-tree implementation reproduced the display-seed UMAP, PCA and shuffled recall values ({x:.6f}, {baseline:.6f}, {control:.6f}), plus UMAP and shuffled recall for all {len(ev['seeds'])} archived layouts. An independent Student t calculation reproduced the registered interval. All {len(labels)} assigned groups have valid evidence from their own members.
 
 ## Interpretation and limitations
 
