@@ -1,0 +1,8 @@
+{
+  "distinct_inputs": 100941,
+  "cached_inputs": 36275,
+  "new_inputs": 64666,
+  "new_tokens": 16839007,
+  "estimated_embedding_usd": 2.1890709100000003,
+  "basis": "No retries, standard endpoint. Cluster label costs are metered separately."
+}

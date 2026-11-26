@@ -175,3 +175,39 @@ The literature review, state-of-the-art review, preregistration and run matrix a
 - 2026-11-26T13:37:18+00:00 · 2026-11-26-over-20 · Complete · 4/4 papers=36276, clusters=313, recall_at_10=0.12868011908699967, coverage=verified
 
 - 2026-11-26T13:42:01+00:00 · over-20 release review · Desktop and mobile Chrome checks passed. The independent audit matched every ordered neighbor list for 36,276 papers, verified all 10 saved seed layouts and repriced 519 receipts to USD 0.9687. All four PDF pages were rendered for inspection.
+
+- 2026-11-26T14:00:16+00:00 · 2026-11-26-over-10 · Collect global pages · 100 · 24/1011
+
+- 2026-11-26T14:01:20+00:00 · 2026-11-26-over-10 · Collect global pages · 100 · 240/1011
+
+- 2026-11-26T14:02:25+00:00 · 2026-11-26-over-10 · Collect global pages · 100 · 504/1011
+
+- 2026-11-26T14:03:28+00:00 · 2026-11-26-over-10 · Collect global pages · 100 · 720/1011
+
+- 2026-11-26T14:04:08+00:00 · 2026-11-26-over-10 · Collect global pages · 125 · 24/810
+
+- 2026-11-26T14:05:13+00:00 · 2026-11-26-over-10 · Collect global pages · 125 · 288/810
+
+- 2026-11-26T14:06:14+00:00 · 2026-11-26-over-10 · Collect global pages · 125 · 504/810
+
+- 2026-11-26T14:07:21+00:00 · 2026-11-26-over-10 · Collect global pages · 125 · 696/810
+
+- 2026-11-26T14:08:00+00:00 · 2026-11-26-over-10 · Collect global pages · 125 · 810/810
+
+- 2026-11-26T14:08:00+00:00 · 2026-11-26-over-10 · Crawl · pages of 125 · 1/? eligible=124, lowest=701
+
+- 2026-11-26T14:12:35+00:00 · 2026-11-26-over-10 · Verify tied ranks · pages of 125 · 87200/101003 outstanding=13803, scores_remaining=[11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45], sources_checked=4
+
+- 2026-11-26T14:13:46+00:00 · 2026-11-26-over-10 · Verify tied ranks · pages of 125 · 90792/101003 outstanding=10211, scores_remaining=[11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45], sources_checked=12
+
+- 2026-11-26T14:16:51+00:00 · 2026-11-26-over-10 · Verify tied ranks · pages of 125 · 97593/101003 width=151, scores_remaining=[11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 36, 37, 38, 39, 40, 42]
+
+- 2026-11-26T14:20:00+00:00 · 2026-11-26-over-10 · Verify tied ranks · pages of 125 · 99735/101003 width=127, scores_remaining=[11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 23, 24, 25, 26, 27, 29, 30, 32, 33, 36, 37, 38]
+
+- 2026-11-26T14:22:19+00:00 · 2026-11-26-over-10 · Verify tied ranks · pages of 125 · 100547/101003 width=181, scores_remaining=[11, 12, 13, 14, 15, 16, 17, 18, 19, 23, 24, 26, 27, 30, 36, 37]
+
+- 2026-11-26T14:25:06+00:00 · 2026-11-26-over-10 · Verify tied ranks · pages of 125 · 100909/101003 width=199, scores_remaining=[11, 12, 13, 15, 16, 17, 18, 27, 30, 37]
+
+- 2026-11-26T14:26:40+00:00 · 2026-11-26-over-10 · Verify tied ranks · pages of 125 · 100980/101003 width=191, scores_remaining=[13, 16, 17]
+
+- 2026-11-26T14:27:25+00:00 · 2026-11-26-over-10 · Verify tied ranks · pages of 125 · 101003/101003 width=157, scores_remaining=[]

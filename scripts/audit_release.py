@@ -127,6 +127,19 @@ def audit(snapshot):
     csv.field_size_limit(2**30)
     with (gzip.open if csvname.endswith(".gz") else open)(docs/csvname,"rt",encoding="utf-8-sig",newline="") as stream:
         assert ids==[p["id"] for p in csv.DictReader(stream)]==[p["id"] for p in public["papers"]]
+    if threshold==10:
+        import pyarrow.parquet as pq
+        mapped=public["papers"]
+        assert np.array_equal([[p["x"],p["y"]] for p in mapped],geo["xy"])
+        assert np.array_equal([p["cluster"] for p in mapped],geo["labels"])
+        assert np.array_equal([p["neighbors"] for p in mapped],geo["neighbors"])
+        offset=0
+        for batch in pq.ParquetFile(folder/"papers.parquet").iter_batches(columns=["id","neighbors"]):
+            for record in batch.to_pylist():
+                assert record["id"]==ids[offset]
+                assert record["neighbors"]==[papers[j]["paper_id"] for j in geo["neighbors"][offset]]
+                offset+=1
+        assert offset==len(ids)
     for g,record in labels.items():
         assert 2<=len(record["evidence"])<=4 and set(record["evidence"])<=set(record["representatives"])
         assert all(geo["labels"][by_public[i]]==int(g) for i in record["evidence"])
