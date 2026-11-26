@@ -1,0 +1,983 @@
+{
+  "snapshot": "2026-11-26",
+  "feed": "https://api.alphaxiv.org/papers/v3/feed",
+  "query": {
+    "sort": "Likes",
+    "interval": "All time",
+    "includeExternalBlogs": "false",
+    "linkBlogs": "false"
+  },
+  "threshold_exclusive": 100,
+  "started_at": "2026-11-26T11:13:01+00:00",
+  "ended_at": "2026-11-26T11:14:03+00:00",
+  "count": 3703,
+  "content_sha256": "e31299e113b9302bca48919354c11963a4d8eaaf9bdf2cba2226cd93b6c20491",
+  "passes": [
+    {
+      "page_size": 100,
+      "started_at": "2026-11-26T11:13:01+00:00",
+      "ended_at": "2026-11-26T11:13:28+00:00",
+      "pages": [
+        {
+          "page": 0,
+          "size": 100,
+          "max_likes": 3395,
+          "min_likes": 776,
+          "above_100": 100,
+          "group_sequence_sha256": "8833b7ba1c3b25b220fa1e2d141a3eaa8d9a711504aa9d42cc117055b5141dd0"
+        },
+        {
+          "page": 1,
+          "size": 100,
+          "max_likes": 774,
+          "min_likes": 575,
+          "above_100": 100,
+          "group_sequence_sha256": "601777233889027fff9e31e0469145a77b13a44bfa5e84fa5db9ab1148324dfd"
+        },
+        {
+          "page": 2,
+          "size": 100,
+          "max_likes": 573,
+          "min_likes": 463,
+          "above_100": 100,
+          "group_sequence_sha256": "a4c10974f4b3ecc2bfaca450036c3ae3d4d5a06e18f571e6787d5abe772de3fc"
+        },
+        {
+          "page": 3,
+          "size": 100,
+          "max_likes": 463,
+          "min_likes": 402,
+          "above_100": 100,
+          "group_sequence_sha256": "4804f697a1f51925343005a86d8f80cda193d360634ac8f9cc63df541a37c980"
+        },
+        {
+          "page": 4,
+          "size": 100,
+          "max_likes": 402,
+          "min_likes": 359,
+          "above_100": 100,
+          "group_sequence_sha256": "631748b7ed907f9b16b85143f29ebf236491e8109fc9f1b613add4bb157e3558"
+        },
+        {
+          "page": 5,
+          "size": 100,
+          "max_likes": 359,
+          "min_likes": 322,
+          "above_100": 100,
+          "group_sequence_sha256": "71bc5d59f73395102c76cbe297af33bcdc03d8aac29dea672cd7670fda9b037d"
+        },
+        {
+          "page": 6,
+          "size": 100,
+          "max_likes": 322,
+          "min_likes": 297,
+          "above_100": 100,
+          "group_sequence_sha256": "eda8e6638cab4eb9755f730b6e6eba0724684fdce456e8c862cdc1cd6ca82419"
+        },
+        {
+          "page": 7,
+          "size": 100,
+          "max_likes": 297,
+          "min_likes": 275,
+          "above_100": 100,
+          "group_sequence_sha256": "aa7eab438ec4f6902c6a955d80a87f2f256a0551247021f4d0e5a4adf58409f6"
+        },
+        {
+          "page": 8,
+          "size": 100,
+          "max_likes": 274,
+          "min_likes": 256,
+          "above_100": 100,
+          "group_sequence_sha256": "cd3e10eee61473695fc651f934346f9f43fef729cd1a40a5883ca053723e1e29"
+        },
+        {
+          "page": 9,
+          "size": 100,
+          "max_likes": 255,
+          "min_likes": 237,
+          "above_100": 100,
+          "group_sequence_sha256": "8ae8b8a8c04b734b3e74fa1d7b07b6419bed091c428a1aa9a067236d14a07797"
+        },
+        {
+          "page": 10,
+          "size": 100,
+          "max_likes": 237,
+          "min_likes": 224,
+          "above_100": 100,
+          "group_sequence_sha256": "299ff8132a37f302d3f4b929707c2d4116d8573c3987fb26bed57b8210883a56"
+        },
+        {
+          "page": 11,
+          "size": 100,
+          "max_likes": 224,
+          "min_likes": 213,
+          "above_100": 100,
+          "group_sequence_sha256": "4b81b1960f00fe5be0eb11ff3eba8178eb858f8f99d742e760f0905aefad3188"
+        },
+        {
+          "page": 12,
+          "size": 100,
+          "max_likes": 213,
+          "min_likes": 203,
+          "above_100": 100,
+          "group_sequence_sha256": "de7f9b00e6c589d9e8466ae2d9863a512d275413897018bb187832bf646dea5f"
+        },
+        {
+          "page": 13,
+          "size": 100,
+          "max_likes": 203,
+          "min_likes": 192,
+          "above_100": 100,
+          "group_sequence_sha256": "facb84201f44845daf8e42988a9e67deb17d64556bbbd01647c739ad215d95de"
+        },
+        {
+          "page": 14,
+          "size": 100,
+          "max_likes": 192,
+          "min_likes": 184,
+          "above_100": 100,
+          "group_sequence_sha256": "588dd4d4ece3efa0e0acfa58e208fcc292efb410eead41209054c252e7cc2abe"
+        },
+        {
+          "page": 15,
+          "size": 100,
+          "max_likes": 183,
+          "min_likes": 176,
+          "above_100": 100,
+          "group_sequence_sha256": "76626db7938ed50fd951ec5d301e0804ed412be31ff609c45e9c4910c624ee6c"
+        },
+        {
+          "page": 16,
+          "size": 100,
+          "max_likes": 176,
+          "min_likes": 170,
+          "above_100": 100,
+          "group_sequence_sha256": "c97e8698b356982a84ecda28bbe77d839bd302d1dbb9e44718f7a6e0fa05c0fc"
+        },
+        {
+          "page": 17,
+          "size": 100,
+          "max_likes": 169,
+          "min_likes": 164,
+          "above_100": 100,
+          "group_sequence_sha256": "80ac4ca9fab7407fa51868620187d0c80d70e38dae4e971e26731933f60adc78"
+        },
+        {
+          "page": 18,
+          "size": 100,
+          "max_likes": 164,
+          "min_likes": 158,
+          "above_100": 100,
+          "group_sequence_sha256": "d725539d4a98b8164e27d6d6d357f01d3229971aa0ddf6e3f24bb49539bdeacc"
+        },
+        {
+          "page": 19,
+          "size": 100,
+          "max_likes": 158,
+          "min_likes": 152,
+          "above_100": 100,
+          "group_sequence_sha256": "442ab41cb3bf3912ec4f139e62da3bf13f9bd02fcf81f2aa0d9751b655e36c5c"
+        },
+        {
+          "page": 20,
+          "size": 100,
+          "max_likes": 152,
+          "min_likes": 147,
+          "above_100": 100,
+          "group_sequence_sha256": "afaaccfa070dc24fb7facd492e91da18fb1c67e67b8b8b8c902c7faa105a7a6a"
+        },
+        {
+          "page": 21,
+          "size": 100,
+          "max_likes": 147,
+          "min_likes": 143,
+          "above_100": 100,
+          "group_sequence_sha256": "7c2417fe1fd51efa26f4dc862a686965694f4e4b20d63c9952e37f2ad8e461d0"
+        },
+        {
+          "page": 22,
+          "size": 100,
+          "max_likes": 143,
+          "min_likes": 139,
+          "above_100": 100,
+          "group_sequence_sha256": "938546f55bcb162c5519b409b128fdedface35258ba9ce9754512e73811a4544"
+        },
+        {
+          "page": 23,
+          "size": 100,
+          "max_likes": 139,
+          "min_likes": 136,
+          "above_100": 100,
+          "group_sequence_sha256": "a7147ef6b05edcf7af0db235477fafdebda1b1a9ef63530a8c291e995adbd804"
+        },
+        {
+          "page": 24,
+          "size": 100,
+          "max_likes": 136,
+          "min_likes": 133,
+          "above_100": 100,
+          "group_sequence_sha256": "fcfe2816674aa0a7c771494f4fe662f184693bdddfd1ea4c34e26a42d98c0119"
+        },
+        {
+          "page": 25,
+          "size": 100,
+          "max_likes": 133,
+          "min_likes": 129,
+          "above_100": 100,
+          "group_sequence_sha256": "53f1e071aedd329e6fd4933d42a2020d394fbcd53890fbde95523af022883a19"
+        },
+        {
+          "page": 26,
+          "size": 100,
+          "max_likes": 129,
+          "min_likes": 126,
+          "above_100": 100,
+          "group_sequence_sha256": "1f8d0ed5a8aaffbbf4b1d3d7a44f65dcbddde75f6b0bf8a5336836abd559ce0a"
+        },
+        {
+          "page": 27,
+          "size": 100,
+          "max_likes": 126,
+          "min_likes": 123,
+          "above_100": 100,
+          "group_sequence_sha256": "e275c4196c905a91066be1d26db0eb07440bb92f37cd3552f2679de6ce70e5c9"
+        },
+        {
+          "page": 28,
+          "size": 100,
+          "max_likes": 123,
+          "min_likes": 120,
+          "above_100": 100,
+          "group_sequence_sha256": "bfd2218ef46a86ffb4bf87ee118cb79cfde7e743b5ecb3e37cec4eb523fda226"
+        },
+        {
+          "page": 29,
+          "size": 100,
+          "max_likes": 120,
+          "min_likes": 117,
+          "above_100": 100,
+          "group_sequence_sha256": "8aef316dc7058616f9b706134eb0a27a5e7498bc7eb4bbd86474739c52a07f46"
+        },
+        {
+          "page": 30,
+          "size": 100,
+          "max_likes": 117,
+          "min_likes": 114,
+          "above_100": 100,
+          "group_sequence_sha256": "673bfbdab62a60f17da758254bdef8d6df1f8748efe2597aa710cc6869287266"
+        },
+        {
+          "page": 31,
+          "size": 100,
+          "max_likes": 114,
+          "min_likes": 112,
+          "above_100": 100,
+          "group_sequence_sha256": "c70e0d411be03ac060650f58c3346ca156ad58675410208e77b4284c634a3172"
+        },
+        {
+          "page": 32,
+          "size": 100,
+          "max_likes": 112,
+          "min_likes": 109,
+          "above_100": 100,
+          "group_sequence_sha256": "f9ed07d05b5446f488f605e3cfde3e269023f94f042b0de0261a6d7ca885ccca"
+        },
+        {
+          "page": 33,
+          "size": 100,
+          "max_likes": 109,
+          "min_likes": 106,
+          "above_100": 100,
+          "group_sequence_sha256": "16246ae03336a47d88bb73ba5592a4dc231cb0aa3c92336b5de7ed1d9616804c"
+        },
+        {
+          "page": 34,
+          "size": 100,
+          "max_likes": 106,
+          "min_likes": 105,
+          "above_100": 100,
+          "group_sequence_sha256": "45ad366c02ac7db6e7b079430f53233990bd23b7e684de759a896d27988bec3c"
+        },
+        {
+          "page": 35,
+          "size": 100,
+          "max_likes": 105,
+          "min_likes": 103,
+          "above_100": 100,
+          "group_sequence_sha256": "90f7522c112d4dc0e28bd16dfe1cbf026a14dbcaec9250d7b9d6628a48061d07"
+        },
+        {
+          "page": 36,
+          "size": 100,
+          "max_likes": 103,
+          "min_likes": 101,
+          "above_100": 100,
+          "group_sequence_sha256": "d44e183b70c4e24523b4ec21ab204e80a278eb749428864dc3f72ccdefb7c67f"
+        },
+        {
+          "page": 37,
+          "size": 100,
+          "max_likes": 101,
+          "min_likes": 99,
+          "above_100": 23,
+          "group_sequence_sha256": "f68cb4a0e23bd34f689f12ef2a2ce726705d1703a72ad8234dcf6ef8aff7d84a"
+        },
+        {
+          "page": 38,
+          "size": 100,
+          "max_likes": 99,
+          "min_likes": 97,
+          "above_100": 0,
+          "group_sequence_sha256": "fcac40c48918ed358caaa5089d5dd759480310aac445a2b1b3c5b3385b811474"
+        }
+      ],
+      "last_page": {
+        "page": 38,
+        "size": 100,
+        "max_likes": 99,
+        "min_likes": 97,
+        "above_100": 0,
+        "group_sequence_sha256": "fcac40c48918ed358caaa5089d5dd759480310aac445a2b1b3c5b3385b811474"
+      },
+      "eligible": 3703,
+      "duplicates": 0,
+      "excluded_blogs": 20,
+      "inversions": 0
+    },
+    {
+      "page_size": 50,
+      "started_at": "2026-11-26T11:13:28+00:00",
+      "ended_at": "2026-11-26T11:14:03+00:00",
+      "pages": [
+        {
+          "page": 0,
+          "size": 50,
+          "max_likes": 3395,
+          "min_likes": 1157,
+          "above_100": 50,
+          "group_sequence_sha256": "a10fc291dee882dd5cca11616288b3462b19c30e6b10292560eaa366c772bb3c"
+        },
+        {
+          "page": 1,
+          "size": 50,
+          "max_likes": 1121,
+          "min_likes": 776,
+          "above_100": 50,
+          "group_sequence_sha256": "b8f48feb8bc24f25b11c76043de56f985ab77fad943885aeb9a3c8df54549f61"
+        },
+        {
+          "page": 2,
+          "size": 50,
+          "max_likes": 774,
+          "min_likes": 655,
+          "above_100": 50,
+          "group_sequence_sha256": "f7c4af027765313dffe6d4a68131a7bf16e6f1b3de5f2aa8bbbd5477700097ad"
+        },
+        {
+          "page": 3,
+          "size": 50,
+          "max_likes": 654,
+          "min_likes": 575,
+          "above_100": 50,
+          "group_sequence_sha256": "d2a87546ac7b378892a0183d3b97a12121126f6a8390c6432ae50204452282c0"
+        },
+        {
+          "page": 4,
+          "size": 50,
+          "max_likes": 573,
+          "min_likes": 520,
+          "above_100": 50,
+          "group_sequence_sha256": "37725a9476261e68cfa047af67e1a60af015d518423ae1e74ce4f59550cfa359"
+        },
+        {
+          "page": 5,
+          "size": 50,
+          "max_likes": 515,
+          "min_likes": 463,
+          "above_100": 50,
+          "group_sequence_sha256": "d25f05d690f13ef5b5ef37da9a58d65f443ad6642adc8fab104dba1947fe294f"
+        },
+        {
+          "page": 6,
+          "size": 50,
+          "max_likes": 463,
+          "min_likes": 431,
+          "above_100": 50,
+          "group_sequence_sha256": "56b28519c6cf6470a558eba4f7ca52d43e96d43a00ce1a7729162d7d4eff4464"
+        },
+        {
+          "page": 7,
+          "size": 50,
+          "max_likes": 431,
+          "min_likes": 402,
+          "above_100": 50,
+          "group_sequence_sha256": "09577e2b1082b8013e4d1f217791df6ef237cf89ae310811425b3554b0a550dd"
+        },
+        {
+          "page": 8,
+          "size": 50,
+          "max_likes": 402,
+          "min_likes": 377,
+          "above_100": 50,
+          "group_sequence_sha256": "7e34beb842ce841e946527fc5bd4fd20ad069cc2daa080a2cc1acdda85c7e0da"
+        },
+        {
+          "page": 9,
+          "size": 50,
+          "max_likes": 377,
+          "min_likes": 359,
+          "above_100": 50,
+          "group_sequence_sha256": "939cc04b6956f08b7e61527214e3b274c1a016c08f35b411f87ee5f2cda85f4d"
+        },
+        {
+          "page": 10,
+          "size": 50,
+          "max_likes": 359,
+          "min_likes": 342,
+          "above_100": 50,
+          "group_sequence_sha256": "a6355d6e821808436394c377e19d4d864a633b88f11c519063390ad555998984"
+        },
+        {
+          "page": 11,
+          "size": 50,
+          "max_likes": 342,
+          "min_likes": 322,
+          "above_100": 50,
+          "group_sequence_sha256": "615f306c0a0b914c296a672afdf41a10b2b415824e52aab33b2e48d0ec21fafd"
+        },
+        {
+          "page": 12,
+          "size": 50,
+          "max_likes": 322,
+          "min_likes": 310,
+          "above_100": 50,
+          "group_sequence_sha256": "31ec14bdc7a2e6f330005d6cc2168f74f92f2a0ba3a71080a36501b1931bf839"
+        },
+        {
+          "page": 13,
+          "size": 50,
+          "max_likes": 310,
+          "min_likes": 297,
+          "above_100": 50,
+          "group_sequence_sha256": "9e6b2617ed3daf3585ff8384cf661b398b3c4bcc470af86298dc550c408b6663"
+        },
+        {
+          "page": 14,
+          "size": 50,
+          "max_likes": 297,
+          "min_likes": 284,
+          "above_100": 50,
+          "group_sequence_sha256": "c6db874986b72bb2fff0c9c555a354ca7799c010cdb2909e845c1d338d6c657e"
+        },
+        {
+          "page": 15,
+          "size": 50,
+          "max_likes": 284,
+          "min_likes": 275,
+          "above_100": 50,
+          "group_sequence_sha256": "e4e210691afb19143759a694bfedd6a2ccc5743b332ff0b0b171bd9104251bc9"
+        },
+        {
+          "page": 16,
+          "size": 50,
+          "max_likes": 274,
+          "min_likes": 266,
+          "above_100": 50,
+          "group_sequence_sha256": "946acb486d5b079eac390dda97c272a135c41e5275f323be5afa0457b0172539"
+        },
+        {
+          "page": 17,
+          "size": 50,
+          "max_likes": 265,
+          "min_likes": 256,
+          "above_100": 50,
+          "group_sequence_sha256": "be4b00df9b05d80e6a1b207639f43e2f9b5872fa0d99b87d07e841e49137b40d"
+        },
+        {
+          "page": 18,
+          "size": 50,
+          "max_likes": 255,
+          "min_likes": 245,
+          "above_100": 50,
+          "group_sequence_sha256": "afa01043bbf6e61acef299af5d1a53ad77e562cf723947ef594a1450aeeafcf2"
+        },
+        {
+          "page": 19,
+          "size": 50,
+          "max_likes": 245,
+          "min_likes": 237,
+          "above_100": 50,
+          "group_sequence_sha256": "6fe8213b3fc01e2a66b46b0932e422f650877c316895ab32ff9de32431fda9e1"
+        },
+        {
+          "page": 20,
+          "size": 50,
+          "max_likes": 237,
+          "min_likes": 230,
+          "above_100": 50,
+          "group_sequence_sha256": "b2b3be3c561c1e0806f3fd1d6df6dd5a6ec07e0c4946fccf2a53686212a074d0"
+        },
+        {
+          "page": 21,
+          "size": 50,
+          "max_likes": 230,
+          "min_likes": 224,
+          "above_100": 50,
+          "group_sequence_sha256": "9fbb2861be2193ce941fd144309461c20e87bd255307238ff7893bc722fec256"
+        },
+        {
+          "page": 22,
+          "size": 50,
+          "max_likes": 224,
+          "min_likes": 218,
+          "above_100": 50,
+          "group_sequence_sha256": "ff55c372c2f5776f121d33aad323b7dceee10ecdc37779efdb32b34c171e0569"
+        },
+        {
+          "page": 23,
+          "size": 50,
+          "max_likes": 218,
+          "min_likes": 213,
+          "above_100": 50,
+          "group_sequence_sha256": "eeddb65a5834f17bb73f9195d0cb8f9aa1937282844ccc867f3c75e158f9fe1a"
+        },
+        {
+          "page": 24,
+          "size": 50,
+          "max_likes": 213,
+          "min_likes": 208,
+          "above_100": 50,
+          "group_sequence_sha256": "5d818a85420c224c50af92cf8d56fa8103e104060b6bb5bfddba69af0a2b3576"
+        },
+        {
+          "page": 25,
+          "size": 50,
+          "max_likes": 208,
+          "min_likes": 203,
+          "above_100": 50,
+          "group_sequence_sha256": "557c26701ea8c626013767ef79fde2002a607cb4e106fafe07ef2655d33bc1f8"
+        },
+        {
+          "page": 26,
+          "size": 50,
+          "max_likes": 203,
+          "min_likes": 197,
+          "above_100": 50,
+          "group_sequence_sha256": "90f56caf3234c35791c3cccee197c0b248ef5a57efd62e805a7120ffa4ffac89"
+        },
+        {
+          "page": 27,
+          "size": 50,
+          "max_likes": 197,
+          "min_likes": 192,
+          "above_100": 50,
+          "group_sequence_sha256": "de86f4868181b35ba809a393de422c811502ebe957afcfee287c92a68614531b"
+        },
+        {
+          "page": 28,
+          "size": 50,
+          "max_likes": 192,
+          "min_likes": 188,
+          "above_100": 50,
+          "group_sequence_sha256": "1a273c42617ca67d709e254f7b2147d9db542360580bc7b9a7b2753dd734444c"
+        },
+        {
+          "page": 29,
+          "size": 50,
+          "max_likes": 187,
+          "min_likes": 184,
+          "above_100": 50,
+          "group_sequence_sha256": "fca356098fe12b23caed00727eb4e132cc7850b78469a2f08e8b3d422259fbdb"
+        },
+        {
+          "page": 30,
+          "size": 50,
+          "max_likes": 183,
+          "min_likes": 180,
+          "above_100": 50,
+          "group_sequence_sha256": "19226e3ff25d933614aba72c1d2d5295d905bdee3a4579bb3641d191d76c4681"
+        },
+        {
+          "page": 31,
+          "size": 50,
+          "max_likes": 179,
+          "min_likes": 176,
+          "above_100": 50,
+          "group_sequence_sha256": "392381b2c712819d3e95c4dadee1a1c25364b06d0ced8cb74bc4d5e698614f4d"
+        },
+        {
+          "page": 32,
+          "size": 50,
+          "max_likes": 176,
+          "min_likes": 172,
+          "above_100": 50,
+          "group_sequence_sha256": "343d0132b2d22ec03473236a15b72f0c34a1beb2cbe6f5df85fd66e7bef63f33"
+        },
+        {
+          "page": 33,
+          "size": 50,
+          "max_likes": 172,
+          "min_likes": 170,
+          "above_100": 50,
+          "group_sequence_sha256": "154a60e9fa3653bab3ed0ca262d38774ae6a3cdd019e5c6b738fa0673f0fda95"
+        },
+        {
+          "page": 34,
+          "size": 50,
+          "max_likes": 169,
+          "min_likes": 166,
+          "above_100": 50,
+          "group_sequence_sha256": "1320833ef48928d706cd3d3672e5d73da59c2ab767352c027c953b04f939307d"
+        },
+        {
+          "page": 35,
+          "size": 50,
+          "max_likes": 166,
+          "min_likes": 164,
+          "above_100": 50,
+          "group_sequence_sha256": "a6b7a810c4eef439c90071217450ab2834b4f3fcc6976e193ce537673d8dbbde"
+        },
+        {
+          "page": 36,
+          "size": 50,
+          "max_likes": 164,
+          "min_likes": 161,
+          "above_100": 50,
+          "group_sequence_sha256": "de52999374788b393ef9870610550ed1598d46588d9f7b655dbbd6dbb233e6ef"
+        },
+        {
+          "page": 37,
+          "size": 50,
+          "max_likes": 161,
+          "min_likes": 158,
+          "above_100": 50,
+          "group_sequence_sha256": "65861807bab889c0679939ad80c148f6f9040adcfd8b8f16cb98fa04e27a09fa"
+        },
+        {
+          "page": 38,
+          "size": 50,
+          "max_likes": 158,
+          "min_likes": 156,
+          "above_100": 50,
+          "group_sequence_sha256": "0dce805cf619696132c5d3a1c7af0279de33f215998d3a17a08c3a255f0ea813"
+        },
+        {
+          "page": 39,
+          "size": 50,
+          "max_likes": 155,
+          "min_likes": 152,
+          "above_100": 50,
+          "group_sequence_sha256": "48651bbd5a78eed7df89db4a62b098e8733fbad6593e60a894df245d86d2a90f"
+        },
+        {
+          "page": 40,
+          "size": 50,
+          "max_likes": 152,
+          "min_likes": 150,
+          "above_100": 50,
+          "group_sequence_sha256": "7f4bf1bfb97f68b5b7123562aae62c1a63a36b3b7cd29da3cd62974eb9bf2931"
+        },
+        {
+          "page": 41,
+          "size": 50,
+          "max_likes": 150,
+          "min_likes": 147,
+          "above_100": 50,
+          "group_sequence_sha256": "b491b49ca58ebf36424ad3540abd51cba77bde78471406da3016c7cf0440fd32"
+        },
+        {
+          "page": 42,
+          "size": 50,
+          "max_likes": 147,
+          "min_likes": 145,
+          "above_100": 50,
+          "group_sequence_sha256": "59fbbc5f93138db9140ed26a29e008bb63bcf01fcffa83c100fc560d8a084d3c"
+        },
+        {
+          "page": 43,
+          "size": 50,
+          "max_likes": 145,
+          "min_likes": 143,
+          "above_100": 50,
+          "group_sequence_sha256": "96e86760c4b8770deb5d9aeb74fc498aa5afbc0704739c8d1d2e8ab5b6947535"
+        },
+        {
+          "page": 44,
+          "size": 50,
+          "max_likes": 143,
+          "min_likes": 141,
+          "above_100": 50,
+          "group_sequence_sha256": "a671685d74bc227333f125dec2d505e155cacf38f69de31d90a1f9e604cc0312"
+        },
+        {
+          "page": 45,
+          "size": 50,
+          "max_likes": 141,
+          "min_likes": 139,
+          "above_100": 50,
+          "group_sequence_sha256": "382d509d58cfcecdbc454b600bc43cc6671a2b7179381767dc9904db12b38c83"
+        },
+        {
+          "page": 46,
+          "size": 50,
+          "max_likes": 139,
+          "min_likes": 137,
+          "above_100": 50,
+          "group_sequence_sha256": "edab1757d94e5aa97815b3d937c3e7a0e91f07889b691274b25f65278382781e"
+        },
+        {
+          "page": 47,
+          "size": 50,
+          "max_likes": 137,
+          "min_likes": 136,
+          "above_100": 50,
+          "group_sequence_sha256": "74dceb74268a86339b1c3232ccf788ae976af4d57f1021951a313f25a5bc32c6"
+        },
+        {
+          "page": 48,
+          "size": 50,
+          "max_likes": 136,
+          "min_likes": 134,
+          "above_100": 50,
+          "group_sequence_sha256": "f608fb70454b8dbbf0dc2ffe502a844ca7ecefc0eaf450a9bd68662d8aed7b9b"
+        },
+        {
+          "page": 49,
+          "size": 50,
+          "max_likes": 134,
+          "min_likes": 133,
+          "above_100": 50,
+          "group_sequence_sha256": "0db5ad74e040fb1d80811c8c1184d2e334d587617e26c29ba8492ca460ba5ccb"
+        },
+        {
+          "page": 50,
+          "size": 50,
+          "max_likes": 133,
+          "min_likes": 131,
+          "above_100": 50,
+          "group_sequence_sha256": "2cf689a6c9d82736f99b891367f5f93af0d980533af76c05aff0c2e2410ef57d"
+        },
+        {
+          "page": 51,
+          "size": 50,
+          "max_likes": 131,
+          "min_likes": 129,
+          "above_100": 50,
+          "group_sequence_sha256": "d5a3877bf3ae7752b59b78067725a01fcb8ee44696a439e0f1eabadca06445e5"
+        },
+        {
+          "page": 52,
+          "size": 50,
+          "max_likes": 129,
+          "min_likes": 127,
+          "above_100": 50,
+          "group_sequence_sha256": "d401d5f5e768b620e44869bec0375c0092f2abb100c17c6a70cbd5bc778110e6"
+        },
+        {
+          "page": 53,
+          "size": 50,
+          "max_likes": 127,
+          "min_likes": 126,
+          "above_100": 50,
+          "group_sequence_sha256": "489e227990eccdf95c83014164c0e40838413e8a5d1ffdb73cdfcb3fa5d3aaf8"
+        },
+        {
+          "page": 54,
+          "size": 50,
+          "max_likes": 126,
+          "min_likes": 125,
+          "above_100": 50,
+          "group_sequence_sha256": "22fa513b9d5666dae39ac2a5c4dc8de6de88f09f81dc55262f863d77b4c6d906"
+        },
+        {
+          "page": 55,
+          "size": 50,
+          "max_likes": 125,
+          "min_likes": 123,
+          "above_100": 50,
+          "group_sequence_sha256": "a28c48369a47c65e78426dddddb62691e3e6e9fafe8d3d121b1094c5f38bc6bd"
+        },
+        {
+          "page": 56,
+          "size": 50,
+          "max_likes": 123,
+          "min_likes": 122,
+          "above_100": 50,
+          "group_sequence_sha256": "30930336be34ffe599fc014ca03702cfc32cce07582936fe3614f8a00f185b23"
+        },
+        {
+          "page": 57,
+          "size": 50,
+          "max_likes": 122,
+          "min_likes": 120,
+          "above_100": 50,
+          "group_sequence_sha256": "657deab4dc9c0d85b36541ca1cfa5d923e97eb02fab7e2a9c3e0f0a8c8720053"
+        },
+        {
+          "page": 58,
+          "size": 50,
+          "max_likes": 120,
+          "min_likes": 119,
+          "above_100": 50,
+          "group_sequence_sha256": "1ae49b4900664a67e97328c54c55a9c4be438770fd54b7a21e83ebddbabbe78f"
+        },
+        {
+          "page": 59,
+          "size": 50,
+          "max_likes": 119,
+          "min_likes": 117,
+          "above_100": 50,
+          "group_sequence_sha256": "6291a0e6a873074e94bb5b916592a53f0457d65fd4cce9dc2542c08e3e4972ea"
+        },
+        {
+          "page": 60,
+          "size": 50,
+          "max_likes": 117,
+          "min_likes": 116,
+          "above_100": 50,
+          "group_sequence_sha256": "37e14b52cd81d6b277ac6417bd18541154856dd285afb4507ddc2f59d00553af"
+        },
+        {
+          "page": 61,
+          "size": 50,
+          "max_likes": 116,
+          "min_likes": 114,
+          "above_100": 50,
+          "group_sequence_sha256": "e4c6a033ac2d04e1d48e304507f880b0ff72460c2ba5e982a241478dc6a79c13"
+        },
+        {
+          "page": 62,
+          "size": 50,
+          "max_likes": 114,
+          "min_likes": 113,
+          "above_100": 50,
+          "group_sequence_sha256": "2f94111ddfca558a9a2544aa16a76b5b7559bd851b3b6d6c67f71d472b45e637"
+        },
+        {
+          "page": 63,
+          "size": 50,
+          "max_likes": 113,
+          "min_likes": 112,
+          "above_100": 50,
+          "group_sequence_sha256": "6f961e018aa3ddb18c4700bf9c7be37d8ab40cbf6c627ddadf411b5be25894cc"
+        },
+        {
+          "page": 64,
+          "size": 50,
+          "max_likes": 112,
+          "min_likes": 110,
+          "above_100": 50,
+          "group_sequence_sha256": "658f5c7873a60f58e5eeb104033de2205534f68f341064e58b0017b1add70097"
+        },
+        {
+          "page": 65,
+          "size": 50,
+          "max_likes": 110,
+          "min_likes": 109,
+          "above_100": 50,
+          "group_sequence_sha256": "beb9f6d55356b8a1a0e262602c771adb91ba7bd5790e64c44262e203c1f84c5d"
+        },
+        {
+          "page": 66,
+          "size": 50,
+          "max_likes": 109,
+          "min_likes": 108,
+          "above_100": 50,
+          "group_sequence_sha256": "da5d99608b7adc31d233228aa0c9f322359444ee2c63384c26731f0c4a850efb"
+        },
+        {
+          "page": 67,
+          "size": 50,
+          "max_likes": 108,
+          "min_likes": 106,
+          "above_100": 50,
+          "group_sequence_sha256": "3a468621228e874a1e90fd21609af0bb253ba6ae3a95ab75d26d872ab0455640"
+        },
+        {
+          "page": 68,
+          "size": 50,
+          "max_likes": 106,
+          "min_likes": 106,
+          "above_100": 50,
+          "group_sequence_sha256": "dd9f8c6bd552b80284e8a1ef395e8ad63045d155dc49602980abc11203cd6a62"
+        },
+        {
+          "page": 69,
+          "size": 50,
+          "max_likes": 106,
+          "min_likes": 105,
+          "above_100": 50,
+          "group_sequence_sha256": "3171a604ac5e6c69d477c8ab8ef16a4ec168d34dc94b5cdb8d53ce67c9640ba3"
+        },
+        {
+          "page": 70,
+          "size": 50,
+          "max_likes": 105,
+          "min_likes": 104,
+          "above_100": 50,
+          "group_sequence_sha256": "7d0be9cc836c5fba65c7ff60ea86391514f10e6d32adc7bc2bb033a3b98cdf5c"
+        },
+        {
+          "page": 71,
+          "size": 50,
+          "max_likes": 104,
+          "min_likes": 103,
+          "above_100": 50,
+          "group_sequence_sha256": "2298d7ebd950459ec9d106b89d82ccbc5ed7b179cc2bce72d9642de8a974d7f4"
+        },
+        {
+          "page": 72,
+          "size": 50,
+          "max_likes": 103,
+          "min_likes": 102,
+          "above_100": 50,
+          "group_sequence_sha256": "74630b48eab3fc1dd70923b001ed1437a9b3dfe7a446becaa0f3ef21a37ea6f9"
+        },
+        {
+          "page": 73,
+          "size": 50,
+          "max_likes": 102,
+          "min_likes": 101,
+          "above_100": 50,
+          "group_sequence_sha256": "b6c5dc5734400aa4ed66074fee9f8c364d0aef21dc4975f65e52dd6cd9988355"
+        },
+        {
+          "page": 74,
+          "size": 50,
+          "max_likes": 101,
+          "min_likes": 100,
+          "above_100": 23,
+          "group_sequence_sha256": "e880891d73315ef89d82795d1cc9f2e26f9bb19e062f88e91412a3624d123663"
+        },
+        {
+          "page": 75,
+          "size": 50,
+          "max_likes": 100,
+          "min_likes": 99,
+          "above_100": 0,
+          "group_sequence_sha256": "f9dc905ae87814d9c8b8320ae36d5170d5e99e0c66e72c3788b3b55bcfeb2719"
+        }
+      ],
+      "last_page": {
+        "page": 75,
+        "size": 50,
+        "max_likes": 100,
+        "min_likes": 99,
+        "above_100": 0,
+        "group_sequence_sha256": "f9dc905ae87814d9c8b8320ae36d5170d5e99e0c66e72c3788b3b55bcfeb2719"
+      },
+      "eligible": 3703,
+      "duplicates": 0,
+      "excluded_blogs": 20,
+      "inversions": 0
+    }
+  ],
+  "differences": [
+    {
+      "added": [],
+      "removed": []
+    }
+  ],
+  "coverage": "verified",
+  "title_only": 0
+}
