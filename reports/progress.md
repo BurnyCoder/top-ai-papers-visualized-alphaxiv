@@ -95,3 +95,45 @@ The literature review, state-of-the-art review, preregistration and run matrix a
 - 2026-11-26T12:20:56+00:00 · 2026-11-26-over-50 · Offline build · 0/4
 
 - 2026-11-26T12:21:16+00:00 · 2026-11-26-over-50 · Complete · 4/4 papers=10140, clusters=115, recall_at_10=0.18739644970414202, coverage=verified
+
+- 2026-11-26T12:41:32+00:00 · 2026-11-26-over-20 · Crawl · pages of 100 · 1/? eligible=99, lowest=776
+
+- 2026-11-26T12:42:33+00:00 · 2026-11-26-over-20 · Crawl · pages of 100 · 89/? eligible=8863, lowest=55
+
+- 2026-11-26T12:43:34+00:00 · 2026-11-26-over-20 · Crawl · pages of 100 · 174/? eligible=16019, lowest=35
+
+- 2026-11-26T12:43:51+00:00 · 2026-11-26-over-20 · Stopped · 0/? error=API repeated an entire page at offset 20300
+
+- 2026-11-26T12:51:03+00:00 · 2026-11-26-over-20 · Crawl · pages of 100 · 1/? eligible=99, lowest=776
+
+- 2026-11-26T12:52:03+00:00 · 2026-11-26-over-20 · Crawl · pages of 100 · 121/? eligible=12055, lowest=45
+
+- 2026-11-26T12:53:04+00:00 · 2026-11-26-over-20 · Crawl · pages of 100 · 232/? eligible=20211, lowest=28
+
+- 2026-11-26T12:54:04+00:00 · 2026-11-26-over-20 · Crawl · pages of 100 · 318/? eligible=26003, lowest=23
+
+- 2026-11-26T12:56:17+00:00 · 2026-11-26-over-20 · Verify tied ranks · pages of 100 · 33737/36329 outstanding=2592, subjects_checked=4
+
+- 2026-11-26T12:57:53+00:00 · 2026-11-26-over-20 · Stopped · 0/? error=Observed more group IDs than ranks at scores {66: 1}
+
+- 2026-11-26T13:01:15+00:00 · 2026-11-26-over-20 · Crawl · pages of 100 · 1/? eligible=99, lowest=776
+
+- 2026-11-26T13:01:28+00:00 · 2026-11-26-over-20 · Verify tied ranks · pages of 100 · 33738/36329 outstanding=2591, subjects_checked=4
+
+- 2026-11-26T13:02:29+00:00 · 2026-11-26-over-20 · Verify tied ranks · pages of 100 · 36318/36329 outstanding=11, subjects_checked=95
+
+- 2026-11-26T13:04:49+00:00 · 2026-11-26-over-20 · Crawl · pages of 100 · 1/? eligible=99, lowest=776
+
+- 2026-11-26T13:05:02+00:00 · 2026-11-26-over-20 · Verify tied ranks · pages of 100 · 33738/36329 outstanding=2591, scores_remaining=[21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 72], sources_checked=4
+
+- 2026-11-26T13:05:25+00:00 · 2026-11-26-over-20 · Verify tied ranks · pages of 100 · 36329/36329 width=191, scores_remaining=[]
+
+- 2026-11-26T13:05:25+00:00 · 2026-11-26-over-20 · Crawl · pages of 200 · 1/? eligible=199, lowest=575
+
+- 2026-11-26T13:06:44+00:00 · 2026-11-26-over-20 · Verify tied ranks · pages of 200 · 33746/36329 outstanding=2583, scores_remaining=[21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 43, 44, 45], sources_checked=4
+
+- 2026-11-26T13:07:46+00:00 · 2026-11-26-over-20 · Verify tied ranks · pages of 200 · 35857/36329 width=137, scores_remaining=[21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 37, 38, 40, 45]
+
+- 2026-11-26T13:08:46+00:00 · 2026-11-26-over-20 · Verify tied ranks · pages of 200 · 36262/36329 outstanding=67, scores_remaining=[21, 22, 23, 24, 25, 26, 28], sources_checked=35
+
+- 2026-11-26T13:09:14+00:00 · 2026-11-26-over-20 · Verify tied ranks · pages of 200 · 36329/36329 width=173, scores_remaining=[]
