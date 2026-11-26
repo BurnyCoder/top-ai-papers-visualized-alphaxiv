@@ -1,5 +1,9 @@
 # Progress
 
+The dated atlas is published. Desktop and mobile tests passed on GitHub Pages. A fresh public checkout with the numerical artifacts downloaded from Hugging Face and both API keys absent reproduced the map JSON, CSV, Parquet, paper, figures, summary and published dashboard data byte for byte. [Public atlas](https://burnycoder.github.io/top-ai-papers-visualized-alphaxiv/) · [Dated dataset](https://huggingface.co/datasets/BurnyCoder/alphaxiv-paper-atlas/tree/atlas-2026-11-26) · [Independent numerical audit](reviews/release.md)
+
+## Run history
+
 The literature review, state-of-the-art review, preregistration and run matrix are ready for publication. The production API, cutoff semantics and hosted model identifiers were checked before implementation. The live run dashboard will report stage, samples completed and elapsed time.
 
 - 2026-11-26T11:14:03+00:00 · Two census passes agreed on 3,703 papers.
