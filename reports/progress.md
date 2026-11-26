@@ -231,3 +231,25 @@ The literature review, state-of-the-art review, preregistration and run matrix a
 - 2026-11-26T14:38:09+00:00 · 2026-11-26-over-10 · OpenAI embeddings · 96307/100941 request_tokens=34257, cache_hits=36275, api_reserved_usd=3.881218, api_limit_usd=50.0
 
 - 2026-11-26T14:38:46+00:00 · 2026-11-26-over-10 · OpenAI embeddings · 100941/100941 request_tokens=7982, cache_hits=36275, api_reserved_usd=4.209947, api_limit_usd=50.0
+
+- 2026-11-26T14:41:38+00:00 · 2026-11-26-over-10 · Exact cosine neighbors · 128/100942 device=CUDA
+
+- 2026-11-26T14:42:40+00:00 · 2026-11-26-over-10 · Exact cosine neighbors · 16512/100942 device=CUDA
+
+- 2026-11-26T14:43:41+00:00 · 2026-11-26-over-10 · Exact cosine neighbors · 32896/100942 device=CUDA
+
+- 2026-11-26T14:44:50+00:00 · 2026-11-26-over-10 · Exact cosine neighbors · 49280/100942 device=CUDA
+
+- 2026-11-26T14:46:01+00:00 · 2026-11-26-over-10 · Exact cosine neighbors · 65664/100942 device=CUDA
+
+- 2026-11-26T14:47:11+00:00 · 2026-11-26-over-10 · Exact cosine neighbors · 82048/100942 device=CUDA
+
+- 2026-11-26T14:48:23+00:00 · 2026-11-26-over-10 · Exact cosine neighbors · 98432/100942 device=CUDA
+
+- 2026-11-26T14:48:35+00:00 · 2026-11-26-over-10 · Exact cosine neighbors · 100942/100942 device=CUDA
+
+- 2026-11-26T14:48:59+00:00 · 2026-11-26-over-10 · Original neighbors and PCA · 0/2
+
+- 2026-11-26T14:52:54+00:00 · 2026-11-26-over-10 · Primary UMAP and HDBSCAN · 1/2 seed=42
+
+- 2026-11-26T15:01:23+00:00 · 2026-11-26-over-10 · Display seed and controls · 1/1 seed=42, clusters=725, unassigned=42441, umap_recall=0.0896187909888847, pca_recall=0.002074458599988112, shuffled_recall=0.00010104812664698539, verified_neighbor_entries=1009420, geometry_sha256=cf9c3381592ee4cc8e523c1c1fb9591095e8e228e56fcb5fcfb237650b70e267
