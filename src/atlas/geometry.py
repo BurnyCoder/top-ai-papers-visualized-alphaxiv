@@ -81,7 +81,9 @@ def geometry(folder, vectors, progress):
         pca_labels, _ = membership(pca)
         progress("Primary UMAP and HDBSCAN",1,2,seed=42)
         main = run_seed(folder,vectors,indices,distances,42)
-    main.update(knn=indices,knn_dist=distances,pca=pca,pca_labels=pca_labels)
+    main.update(knn=indices,knn_dist=distances,pca=pca,pca_labels=pca_labels,
+                paper_sha256=np.array(read_json(folder/"manifest.json")["content_sha256"]),
+                vector_sha256=np.array(read_json(folder/"embedding-info.json")["vectors_sha256"]))
     save_arrays(path,**main)
     return main
 

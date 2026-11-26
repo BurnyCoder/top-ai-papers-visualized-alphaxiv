@@ -143,6 +143,10 @@ def build(folder,progress):
         raise ValueError("Snapshot membership or checksum failed verification")
     A=load_arrays(folder/"geometry.npz");labels=read_json(folder/"labels.json")
     evaluation=read_json(folder/"evaluation.json");embedding=read_json(folder/"embedding-info.json")
+    if str(A["paper_sha256"])!=manifest["content_sha256"] or str(A["vector_sha256"])!=embedding["vectors_sha256"]:
+        raise ValueError("Geometry was fitted to a different paper order or vector matrix")
+    if (folder/"embeddings.npy").exists() and hashlib.sha256((folder/"embeddings.npy").read_bytes()).hexdigest()!=embedding["vectors_sha256"]:
+        raise ValueError("The frozen embedding matrix failed its SHA-256 integrity check")
     progress("Offline build",0,4)
     clusters=export_data(folder,docs,manifest,papers,A,labels)
     for path in (PACKAGE/"web").iterdir():shutil.copyfile(path,docs/path.name)
