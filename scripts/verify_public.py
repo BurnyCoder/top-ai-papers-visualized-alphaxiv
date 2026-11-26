@@ -49,11 +49,14 @@ def main():
     edition=edition_path(manifest["threshold_exclusive"])
     url=PAGES if not edition.parts else PAGES+edition.as_posix()+"/"
     public=read_json(ROOT/"docs"/edition/"atlas.json")
-    assets=["atlas.json",public.get("csv","papers.csv"),"paper.pdf","progress.json"]
+    assets=["index.html","atlas.js","atlas.css","atlas.json",public.get("csv","papers.csv"),"paper.pdf",
+            "progress.html","progress.json",*public.get("paper_parts",[])]
+    if "controls" in public:assets.append(public["controls"]["file"])
     if (ROOT/"docs"/edition/"walkthrough.mp4").exists():assets.append("walkthrough.mp4")
     if "abstract_chunk_size" in public:
         size=public["abstract_chunk_size"]
-        assets.extend(f"abstracts/{i//size}.json" for i in range(0,len(public["papers"]),size))
+        count=public.get("paper_count") or len(public["papers"])
+        assets.extend(f"abstracts/{i//size}.json" for i in range(0,count,size))
     def pages_asset(name):
         with (ROOT/"docs"/edition/name).open("rb") as stream:
             local=hashlib.file_digest(stream,"sha256").hexdigest()

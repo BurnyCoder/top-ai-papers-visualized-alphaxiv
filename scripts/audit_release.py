@@ -11,9 +11,79 @@ import numpy as np
 from scipy import stats
 from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import normalize
+from sklearn.preprocessing import MultiLabelBinarizer
 from threadpoolctl import threadpool_limits
 from atlas.io import ROOT, file_hash, papers_at, read_json, save_json
-from atlas.editions import edition_path
+from atlas.editions import CAPPED, edition_path
+from atlas.catalog import local_catalog
+
+
+def contingency_ari(first,second):
+    """Reconstruct adjusted Rand agreement from integer pair counts."""
+    pairs=lambda counts:sum(n*(n-1)//2 for n in counts)
+    a=pairs(Counter(map(int,first)).values());b=pairs(Counter(map(int,second)).values())
+    both=pairs(Counter(zip(first.tolist(),second.tolist(),strict=True)).values())
+    total=len(first)*(len(first)-1)//2
+    denominator=(a+b)*total-2*a*b
+    return 2*(both*total-a*b)/denominator if denominator else 1.
+
+
+def incidence_pairs(labels,tags):
+    """Count unordered pairs sharing any subject through sparse incidence products."""
+    tagged=np.diff(tags.indptr)>0
+    shared=pairs=0
+    for group in np.unique(labels[labels>=0]):
+        mat=tags[(labels==group)&tagged]
+        n=mat.shape[0]
+        if n<2:continue
+        directed=sum((mat[start:start+256]@mat.T).nnz for start in range(0,n,256))
+        shared+=(directed-n)//2
+        pairs+=n*(n-1)//2
+    return shared,pairs
+
+
+def verify_clustering(labels,base,tags,seed,row):
+    assigned=labels>=0;joint=assigned&(base>=0)
+    assert len(set(labels[assigned]))==row["clusters"]
+    assert np.isclose(joint.mean(),row["jointly_assigned_fraction"])
+    assert np.isclose(contingency_ari(base,labels),row["ari_all"])
+    if row["ari_joint"] is not None:
+        assert np.isclose(contingency_ari(base[joint],labels[joint]),row["ari_joint"])
+    order=np.arange(len(labels))
+    tagged=np.diff(tags.indptr)>0
+    order[tagged]=np.random.default_rng(seed).permutation(order[tagged])
+    for table,key in [(tags,"tag_agreement"),(tags[order],"shuffled_tag_agreement")]:
+        assert incidence_pairs(labels,table)==(row[key]["shared"],row[key]["pairs"])
+
+
+def independent_neighbors(folder):
+    """Audit the original vectors by CPU BLAS, preserving completed row blocks across restarts."""
+    digest=read_json(folder/"embedding-info.json")["vectors_sha256"]
+    vectors=np.load(folder/"embeddings.npy",mmap_mode="r")
+    if file_hash(folder/"embeddings.npy")!=digest:raise ValueError("Vector hash differs from the frozen source")
+    work=folder/"work"/"independent-cosine"
+    work.mkdir(parents=True,exist_ok=True)
+    state=work/"progress.json";path=work/"ranks.npy"
+    metadata=read_json(state) if state.exists() else {}
+    resume=path.exists() and metadata.get("source_sha256")==digest
+    done=metadata["rows"] if resume else 0
+    rank=np.lib.format.open_memmap(path,mode="r+" if resume else "w+",dtype="<i4",shape=(len(vectors),10))
+    if done<len(vectors):
+        with threadpool_limits(limits=4):
+            v=normalize(vectors.astype("float64"),copy=False)
+            for start in range(done,len(v),128):
+                stop=min(start+128,len(v))
+                dist=-(v[start:stop] @ v.T)
+                dist[np.arange(stop-start),np.arange(start,stop)]=np.inf
+                for i,row in enumerate(dist):
+                    cutoff=np.partition(row,9)[9]
+                    candidates=np.flatnonzero(row<=cutoff)
+                    rank[start+i]=candidates[np.argsort(row[candidates],kind="stable")[:10]]
+                if stop==len(v) or stop%2048==0:
+                    rank.flush()
+                    save_json(state,dict(source_sha256=digest,rows=stop))
+                    print(f"Independent cosine ranks {stop:,}/{len(v):,}",flush=True)
+    return rank
 
 
 def independent_credit_check(folder,receipts):
@@ -36,7 +106,13 @@ def independent_credit_check(folder,receipts):
     assert len(set(tickets))==len(tickets) and set(tickets)<={a["id"] for a in attempts}
     total=sum(a["reserved_micro_usd"] for a in attempts)
     assert total<=header["cap_micro_usd"]
-    if read_json(folder/"manifest.json")["threshold_exclusive"]==20:assert header["cap_micro_usd"]<=50*10**6
+    if read_json(folder/"manifest.json")["threshold_exclusive"] in CAPPED:assert header["cap_micro_usd"]<=50*10**6
+    rates=header.get("rate_numerators",{"embeddings":[1,0],"labels":[2,3]});divisor=header.get("rate_divisor",1)
+    running=0
+    for i,a in enumerate(attempts,1):
+        ir,orr=rates[a["phase"]]
+        running+=(ir*a["input_bound"]+orr*a["output_bound"]+divisor-1)//divisor
+        assert a["id"]==i and running==a["total_micro_usd"]
     assert D(total)/10**6==D(str(report["reserved_usd"]))
     assert abs(dollars-D(str(report["estimated_usd"])))<=D(".0000000005")
     return dict(independent_receipt_cost_usd=float(dollars),api_attempts=len(attempts),api_receipts=len(receipts))
@@ -50,7 +126,8 @@ def audit(snapshot):
     review=ROOT/"reports"/edition_path(threshold)/"reviews"
     review.mkdir(parents=True,exist_ok=True)
     ev=read_json(folder/"evaluation.json");labels=read_json(folder/"labels.json")
-    geo=np.load(folder/"geometry.npz",allow_pickle=False)
+    with np.load(folder/"geometry.npz",allow_pickle=False) as archive:
+        geo={key:archive[key] for key in ("labels","neighbors","pca","xy")}
     vectors=np.load(folder/"embeddings.npy",allow_pickle=False,mmap_mode="r")
     api=list(map(json.loads,(folder/"api-usage.jsonl").read_text(encoding="utf-8").splitlines()))
     traces=list(map(json.loads,(folder/"label-traces.jsonl").read_text(encoding="utf-8").splitlines()))
@@ -74,30 +151,51 @@ def audit(snapshot):
             assert last["likes"]>threshold and (lower is None or lower["likes"]<=threshold and lower["rank"]==last["rank"]+1)
     ids=[p["id"] for p in papers];by_public={p["paper_id"]:i for i,p in enumerate(papers)}
     assert ids==sorted(set(ids))
-    public=read_json(docs/"atlas.json")
+    public=local_catalog(docs)
     assert public.get("threshold_exclusive",100)==threshold
+    if "controls" in public:
+        controls=read_json(docs/public["controls"]["file"])
+        assert np.array_equal(controls["pca"],geo["pca"][:,:2])
+        assert np.array_equal(controls["shuffled"],np.random.default_rng(42).permutation(len(papers)))
+        assert all(public["controls"]["recall"][k]==ev["seeds"][0][k+"_recall"] for k in ("umap","pca","shuffled"))
     csvname=public.get("csv","papers.csv")
     if "abstract_chunk_size" in public:
         size=public["abstract_chunk_size"]
         for i in range(0,len(ids),size):
             assert read_json(docs/"abstracts"/f"{i//size}.json")==[p["abstract"] for p in papers[i:i+size]]
+    csv.field_size_limit(2**30)
     with (gzip.open if csvname.endswith(".gz") else open)(docs/csvname,"rt",encoding="utf-8-sig",newline="") as stream:
         assert ids==[p["id"] for p in csv.DictReader(stream)]==[p["id"] for p in public["papers"]]
+    if threshold==10:
+        import pyarrow.parquet as pq
+        mapped=public["papers"]
+        assert np.array_equal([[p["x"],p["y"]] for p in mapped],geo["xy"])
+        assert np.array_equal([p["cluster"] for p in mapped],geo["labels"])
+        assert np.array_equal([p["neighbors"] for p in mapped],geo["neighbors"])
+        offset=0
+        for batch in pq.ParquetFile(folder/"papers.parquet").iter_batches(columns=["id","neighbors"]):
+            for record in batch.to_pylist():
+                assert record["id"]==ids[offset]
+                assert record["neighbors"]==[papers[j]["paper_id"] for j in geo["neighbors"][offset]]
+                offset+=1
+        assert offset==len(ids)
     for g,record in labels.items():
         assert 2<=len(record["evidence"])<=4 and set(record["evidence"])<=set(record["representatives"])
         assert all(geo["labels"][by_public[i]]==int(g) for i in record["evidence"])
     for filename,digest in read_json(folder/"checksums.json").items():
         assert file_hash(folder/filename)==digest,filename
     # Compute all cosine ranks in float64 using an independent sklearn retrieval implementation.
-    with threadpool_limits(limits=4):
-        v=normalize(vectors.astype("float64"),copy=False)
-        reference=np.empty((len(v),10),dtype=np.int32)
-        for start in range(0,len(v),256):
-            stop=min(start+256,len(v))
-            dist=1-v[start:stop] @ v.T
-            dist[np.arange(stop-start),np.arange(start,stop)]=np.inf
-            reference[start:stop]=np.argsort(dist,axis=1,kind="stable")[:,:10]
-        del v
+    if threshold==10:reference=independent_neighbors(folder)
+    else:
+        with threadpool_limits(limits=4):
+            v=normalize(vectors.astype("float64"),copy=False)
+            reference=np.empty((len(v),10),dtype=np.int32)
+            for start in range(0,len(v),256):
+                stop=min(start+256,len(v))
+                dist=1-v[start:stop] @ v.T
+                dist[np.arange(stop-start),np.arange(start,stop)]=np.inf
+                reference[start:stop]=np.argsort(dist,axis=1,kind="stable")[:,:10]
+            del v
     def overlap(a,b):
         return sum(len(set(x).intersection(y)) for x,y in zip(a,b,strict=True))/(10*len(a))
     neighbor_agreement=overlap(reference,geo["neighbors"])
@@ -119,13 +217,16 @@ def audit(snapshot):
     assert np.allclose([x,baseline,control],[r["umap_recall"],r["pca_recall"],r["shuffled_recall"]],atol=1e-10)
     with np.load(folder/"seed-layouts.npz",allow_pickle=False) as layouts:
         assert str(layouts["paper_sha256"])==manifest["content_sha256"]
+        if threshold==10:tags=MultiLabelBinarizer(sparse_output=True).fit_transform(p["subjects"] for p in papers).tocsr()
         for row in ev["seeds"]:
             seed=row["seed"]
             points=layouts[f"seed_{seed}_xy"]
             perm=np.random.default_rng(seed).permutation(len(papers))
             assert independently_measure(points)==row["umap_recall"]
             assert independently_measure(points[perm])==row["shuffled_recall"]
-            assert int((layouts[f"seed_{seed}_labels"]<0).sum())==row["unassigned"]
+            assigned=layouts[f"seed_{seed}_labels"]
+            assert int((assigned<0).sum())==row["unassigned"]
+            if threshold==10:verify_clustering(assigned,geo["labels"],tags,seed,row)
     d=np.array([v["umap_recall"]-v["pca_recall"] for v in ev["seeds"]])
     interval=stats.t.interval(.95,df=len(d)-1,loc=d.mean(),scale=stats.sem(d))
     assert np.allclose(interval,ev["primary"]["ci95"])
@@ -136,9 +237,13 @@ def audit(snapshot):
                 embedding_requests=sum(x["phase"]=="embeddings" for x in api),label_requests=sum(x["phase"]=="labels" for x in api),
                 complete_label_responses=len(traces),vector_norm_max_abs_error=float(abs(np.linalg.norm(vectors,axis=1)-1).max()))
     credit_note=""
+    if threshold==10:
+        result["independent_stability_and_subject_checks"]=len(ev["seeds"])
+        credit_note=(f" Pair counts from sparse subject incidence matrices and an independent adjusted Rand calculation "
+                     f"reproduced the real and shuffled subject counts and cluster stability for all {len(ev['seeds'])} seeds.")
     if (folder/"budget.json").exists():
         result.update(independent_credit_check(folder,api))
-        credit_note=(f" Decimal repricing of {result['api_receipts']} usage receipts reproduced USD {result['independent_receipt_cost_usd']:.4f}. "
+        credit_note+=(f" Decimal repricing of {result['api_receipts']} usage receipts reproduced USD {result['independent_receipt_cost_usd']:.4f}. "
                      f"The independent sum of all {result['api_attempts']} pre-transmission reservations stayed under the registered cap. "
                      "[OpenAI standard rates](https://developers.openai.com/api/docs/pricing)")
     save_json(folder/"audit.json",result)
@@ -167,4 +272,5 @@ API keys are read in the local pipeline. Model instructions and paper text remai
 
 
 if __name__=="__main__":
-    audit(sys.argv[1])
+    if "--neighbors-only" in sys.argv[2:]:independent_neighbors(ROOT/"results"/sys.argv[1])
+    else:audit(sys.argv[1])

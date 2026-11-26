@@ -2,6 +2,8 @@
 // The published explorer runs entirely on frozen artifacts. Canvas uses an equal scale on both axes.
 const by = id => document.getElementById(id);
 const canvas = by("canvas"), plot = by("plot"), ctx = canvas.getContext("2d");
+const pointLayer=document.createElement("canvas");
+let paintedView=[];
 const ids = new Map(), filters = ["cluster", "subject", "year", "likes"];
 let papers = [], clusters = {}, filtered = [], filteredSet = new Set(), selected = -1;
 let tab = "topics", rowsShown = 35, hovered = -1, scale = 1, cx = 0, cy = 0;
@@ -55,7 +57,32 @@ function queueDraw() {
   drawing = true;
   requestAnimationFrame(() => { drawing=false; draw(); });
 }
-function draw() {
+function enableProjectionControls(config){
+  const menu=by("projection"),score=by("layoutScore");
+  const umap=papers.map(p=>[p.x,p.y]);
+  let pending=null,shown="umap",sequence=0;
+  const caption=key=>"Full corpus · seed "+config.seed+" · "+(100*config.recall[key]).toFixed(2)+"% of original ten neighbors retained";
+  by("mapLabel").textContent="Projection";menu.hidden=false;score.hidden=false;score.textContent=caption(shown);
+  menu.onchange=async()=>{
+    const serial=++sequence, key=menu.value;
+    try{
+      let coords=umap,permutation=null;
+      if(key!=="umap"){
+        score.textContent="Loading comparison coordinates…";
+        if(!pending)pending=fetch(config.file).then(r=>{if(!r.ok)throw Error(r.status);return r.json();});
+        const controls=await pending;
+        if(key==="pca")coords=controls.pca;else permutation=controls.shuffled;
+      }
+      if(serial!==sequence)return;
+      for(let i=0;i<papers.length;i++)[papers[i].x,papers[i].y]=coords[permutation?permutation[i]:i];
+      shown=key;paintedView=[];score.textContent=caption(key);hideTip();fitTo(filtered);
+    }catch{
+      pending=null;if(serial!==sequence)return;
+      menu.value=shown;score.textContent="Comparison could not be loaded. Select the projection to retry.";
+    }
+  };
+}
+function drawPoints(ctx) {
   ctx.clearRect(0,0,width,height);
   ctx.fillStyle="#ccd5c4";
   for(let x=14;x<width;x+=26) for(let y=14;y<height;y+=26) ctx.fillRect(x,y,1,1);
@@ -84,6 +111,16 @@ function draw() {
     ctx.fillStyle="rgba(251,252,245,.89)"; ctx.fillRect(bounds[0],bounds[1],w,18);
     ctx.fillStyle="#224035"; ctx.fillText(name,x,y);
   }
+}
+function draw(){
+  const view=[filtered,cx,cy,scale,width,height,canvas.width,canvas.height];
+  if(view.some((v,i)=>v!==paintedView[i])){
+    pointLayer.width=canvas.width;pointLayer.height=canvas.height;
+    const layer=pointLayer.getContext("2d");
+    layer.setTransform(canvas.width/width,0,0,canvas.height/height,0,0);
+    drawPoints(layer);paintedView=view;
+  }
+  ctx.clearRect(0,0,width,height);ctx.drawImage(pointLayer,0,0,width,height);
   for(const i of [hovered,selected]){
     if(i<0 || !filteredSet.has(i)) continue;
     const [x,y]=toScreen(papers[i]);
@@ -218,15 +255,31 @@ by("paperTab").onclick=()=>{clearSelection();tab="papers";renderSide();queueDraw
 new ResizeObserver(resize).observe(plot);
 async function load(){
   const response=await fetch("atlas.json");if(!response.ok)throw Error(response.status);
-  const data=await response.json();papers=data.papers;clusters=data.clusters;
+  const data=await response.json();clusters=data.clusters;
+  if(data.paper_parts){
+    const parts=data.paper_parts, blocks=new Array(parts.length);
+    let next=0,loaded=0;
+    async function readParts(){
+      while(next<parts.length){
+        const i=next++, response=await fetch(parts[i]);
+        if(!response.ok)throw Error(response.status);
+        blocks[i]=await response.json();loaded+=blocks[i].length;
+        by("subtitle").textContent="Loading "+number(loaded)+" of "+number(data.paper_count)+" papers…";
+      }
+    }
+    await Promise.all(Array.from({length:Math.min(5,parts.length)},readParts));
+    papers=blocks.flat();
+    if(papers.length!==data.paper_count)throw Error("Incomplete index");
+  }else papers=data.papers;
   by("datasetLink").href="https://huggingface.co/datasets/BurnyCoder/alphaxiv-paper-atlas/tree/atlas-"+encodeURIComponent(data.snapshot);
   abstractChunkSize=data.abstract_chunk_size||0;
   if(data.csv){by("csvDownload").href=data.csv;by("csvDownload").textContent="Download CSV (.gz) ↓";}
   // The original, tagged atlas predates the threshold field and used a strict cutoff of 100.
   const threshold=data.threshold_exclusive??100;
+  if(data.controls)enableProjectionControls(data.controls);
   by("likes").min=String(threshold+1);by("likes").value=by("likes").min;
   const root=threshold===100?"./":"../";
-  for(const n of [20,50,100])option("edition",n,"Over "+n+" likes");
+  for(const n of [10,20,50,100])option("edition",n,"Over "+n+" likes");
   by("edition").value=String(threshold);by("edition").hidden=false;
   by("edition").onchange=e=>{const n=Number(e.target.value);location.href=root+(n===100?"":"over-"+n+"/");};
   const subjects=new Set(),years=new Set();

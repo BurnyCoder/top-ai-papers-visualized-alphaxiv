@@ -11,7 +11,8 @@ from collections import Counter, defaultdict, deque
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from .collect import CATEGORIES, paper_record, scan
-from .io import RESULTS, now, papers_at, save_bytes, save_json
+from .io import RESULTS, census_path, now, papers_at, save_bytes, save_json
+from .editions import PREVIOUS
 
 
 def assign_observed_scores(canonical,alternates,expected):
@@ -70,12 +71,32 @@ def census_pass(folder,fetch,size,threshold,progress):
         save_bytes(path,gzip.compress(json.dumps(compact,ensure_ascii=False,separators=(",",":")).encode(),compresslevel=1,mtime=0))
         return compact
 
-    papers,audit=scan(cached,size,progress,threshold=threshold,reconcile_ties=True)
+    last=None
+    if threshold==10:
+        # Bracket a real stopping page before allowing arbitrarily long runs of tied rows.
+        def below(page):
+            batch=cached(page,size)
+            return not batch or max(r["metrics"]["public_total_votes"] for r in batch)<=threshold
+        lo,hi=-1,1
+        while not below(hi):
+            lo,hi=hi,hi*2
+            if hi>2**20:raise RuntimeError("Could not locate a cutoff on the public feed")
+        while hi-lo>1:
+            mid=(hi+lo)//2
+            if below(mid):hi=mid
+            else:lo=mid
+        last=hi
+        with ThreadPoolExecutor(4) as pool:
+            for start in range(0,last+1,24):
+                pages=range(start,min(start+24,last+1))
+                for _ in pool.map(lambda page:len(cached(page,size)),pages):pass
+                progress(f"Collect global pages · {size}",pages.stop,last+1)
+    papers,audit=scan(cached,size,progress,threshold=threshold,reconcile_ties=True,final_page=last)
     if audit["inversions"]:raise RuntimeError("The reference feed changed order across vote strata")
     expected=Counter(audit["vote_counts"])
     external={e["id"]:e for e in audit["external_entries"]}
-    historical=RESULTS/"2026-11-26-over-50"
-    prior={p["id"]:p["likes"] for p in papers_at(historical)} if (historical/"papers.jsonl").exists() else {}
+    historical=RESULTS/PREVIOUS[threshold][0]
+    prior={p["id"]:p["likes"] for p in papers_at(historical)} if census_path(historical).exists() else {}
     alternates=defaultdict(set);sources={}
     def observe_score(key,likes,canonical):
         if likes!=canonical:
@@ -83,7 +104,7 @@ def census_pass(folder,fetch,size,threshold,progress):
             sources[key,likes]="additional public feed observation"
         if key in prior and prior[key]!=canonical and prior[key]>threshold:
             alternates[key].add(prior[key])
-            sources.setdefault((key,prior[key]),"previous dated over-50 census")
+            sources.setdefault((key,prior[key]),f"previous dated over-{PREVIOUS[threshold][1]} census")
     for key,paper in papers.items():observe_score(key,paper["likes"],paper["likes"])
     def proof():
         canonical={k:p["likes"] for k,p in papers.items()}
@@ -136,7 +157,7 @@ def census_pass(folder,fetch,size,threshold,progress):
                  sum(expected.values()),outstanding=sum(needed.values()),scores_remaining=sorted(needed),sources_checked=len(supplements))
         # Use other independent page widths on the remaining global strata before scanning rare tags.
         if offset in (12,40,96) and wanted:
-            widths=({12:(151,127,181),40:(199,191,179,157,139,109),96:(189,177,153,129,111)} if size==100 else
+            widths=({12:(151,127,181),40:(199,191,179,157,139,109),96:(189,177,153,129,111)} if size in (100,125) else
                     {12:(137,113,167),40:(197,193,173,163,131,107),96:(187,169,159,141,103)})
             for width in widths[offset]:
                 high=0;page_ids=set()

@@ -6,12 +6,12 @@ from pathlib import Path
 from urllib.parse import urljoin
 from urllib.request import urlopen
 from playwright.sync_api import sync_playwright, expect
+from atlas.catalog import remote_catalog
 
 
 def run(url,channel,shots):
     url=url.rstrip("/")+"/"
-    with urlopen(urljoin(url,"atlas.json")) as r:
-        data=json.load(r)
+    data=remote_catalog(url)
     papers=data["papers"]
     leading=max(papers,key=lambda p:p["likes"])
     abstract=leading.get("abstract")
@@ -29,6 +29,11 @@ def run(url,channel,shots):
         threshold=data.get("threshold_exclusive",100)
         expect(page.locator("#likes")).to_have_value(str(threshold+1))
         expect(page.locator("#subtitle")).to_contain_text(f"more than {threshold} likes")
+        if data.get("controls"):
+            for mode in ("pca","shuffled","umap"):
+                page.get_by_role("combobox",name="Map projection").select_option(mode)
+                pct=100*data["controls"]["recall"][mode]
+                expect(page.locator("#layoutScore")).to_contain_text(f"{pct:.2f}%",timeout=90000)
         page.screenshot(path=str(shots/"atlas-desktop.png"),full_page=True)
         search=page.get_by_role("searchbox")
         for value in (leading["title"],leading["authors"][0],leading["paper_id"]):
@@ -67,8 +72,8 @@ def run(url,channel,shots):
         with page.expect_download() as downloaded:page.get_by_role("link",name="Download CSV").click()
         assert downloaded.value.suggested_filename==data.get("csv","papers.csv")
         expect(page.get_by_role("combobox",name="Atlas edition")).to_have_value(str(threshold))
-        if threshold==20:
-            for other in (50,100,20):
+        if threshold in (10,20):
+            for other in ((20,50,100,10) if threshold==10 else (50,100,20)):
                 page.get_by_role("combobox",name="Atlas edition").select_option(str(other))
                 expect(page.locator("#subtitle")).to_contain_text(f"more than {other} likes",timeout=90000)
                 expect(page.locator("#likes")).to_have_value(str(other+1))

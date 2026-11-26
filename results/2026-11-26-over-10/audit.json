@@ -1,0 +1,23 @@
+{
+  "paper_ids": 100942,
+  "independent_neighbor_overlap": 1.0,
+  "independent_neighbor_order_agreement": 1.0,
+  "independent_seed42_recall": 0.0896187909888847,
+  "independent_pca_recall": 0.002074458599988112,
+  "independent_shuffled_recall": 0.00010104812664698539,
+  "independent_ci95": [
+    0.08700483900900234,
+    0.08862076777509147
+  ],
+  "seed_layouts_rechecked": 10,
+  "clusters_with_validated_evidence": 725,
+  "extra_duplicate_names": 0,
+  "embedding_requests": 506,
+  "label_requests": 727,
+  "complete_label_responses": 727,
+  "vector_norm_max_abs_error": 1.7881393432617188e-07,
+  "independent_stability_and_subject_checks": 10,
+  "independent_receipt_cost_usd": 2.32265826,
+  "api_attempts": 1233,
+  "api_receipts": 1233
+}

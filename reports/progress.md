@@ -175,3 +175,107 @@ The literature review, state-of-the-art review, preregistration and run matrix a
 - 2026-11-26T13:37:18+00:00 · 2026-11-26-over-20 · Complete · 4/4 papers=36276, clusters=313, recall_at_10=0.12868011908699967, coverage=verified
 
 - 2026-11-26T13:42:01+00:00 · over-20 release review · Desktop and mobile Chrome checks passed. The independent audit matched every ordered neighbor list for 36,276 papers, verified all 10 saved seed layouts and repriced 519 receipts to USD 0.9687. All four PDF pages were rendered for inspection.
+
+- 2026-11-26T14:00:16+00:00 · 2026-11-26-over-10 · Collect global pages · 100 · 24/1011
+
+- 2026-11-26T14:01:20+00:00 · 2026-11-26-over-10 · Collect global pages · 100 · 240/1011
+
+- 2026-11-26T14:02:25+00:00 · 2026-11-26-over-10 · Collect global pages · 100 · 504/1011
+
+- 2026-11-26T14:03:28+00:00 · 2026-11-26-over-10 · Collect global pages · 100 · 720/1011
+
+- 2026-11-26T14:04:08+00:00 · 2026-11-26-over-10 · Collect global pages · 125 · 24/810
+
+- 2026-11-26T14:05:13+00:00 · 2026-11-26-over-10 · Collect global pages · 125 · 288/810
+
+- 2026-11-26T14:06:14+00:00 · 2026-11-26-over-10 · Collect global pages · 125 · 504/810
+
+- 2026-11-26T14:07:21+00:00 · 2026-11-26-over-10 · Collect global pages · 125 · 696/810
+
+- 2026-11-26T14:08:00+00:00 · 2026-11-26-over-10 · Collect global pages · 125 · 810/810
+
+- 2026-11-26T14:08:00+00:00 · 2026-11-26-over-10 · Crawl · pages of 125 · 1/? eligible=124, lowest=701
+
+- 2026-11-26T14:12:35+00:00 · 2026-11-26-over-10 · Verify tied ranks · pages of 125 · 87200/101003 outstanding=13803, scores_remaining=[11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45], sources_checked=4
+
+- 2026-11-26T14:13:46+00:00 · 2026-11-26-over-10 · Verify tied ranks · pages of 125 · 90792/101003 outstanding=10211, scores_remaining=[11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45], sources_checked=12
+
+- 2026-11-26T14:16:51+00:00 · 2026-11-26-over-10 · Verify tied ranks · pages of 125 · 97593/101003 width=151, scores_remaining=[11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 36, 37, 38, 39, 40, 42]
+
+- 2026-11-26T14:20:00+00:00 · 2026-11-26-over-10 · Verify tied ranks · pages of 125 · 99735/101003 width=127, scores_remaining=[11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 23, 24, 25, 26, 27, 29, 30, 32, 33, 36, 37, 38]
+
+- 2026-11-26T14:22:19+00:00 · 2026-11-26-over-10 · Verify tied ranks · pages of 125 · 100547/101003 width=181, scores_remaining=[11, 12, 13, 14, 15, 16, 17, 18, 19, 23, 24, 26, 27, 30, 36, 37]
+
+- 2026-11-26T14:25:06+00:00 · 2026-11-26-over-10 · Verify tied ranks · pages of 125 · 100909/101003 width=199, scores_remaining=[11, 12, 13, 15, 16, 17, 18, 27, 30, 37]
+
+- 2026-11-26T14:26:40+00:00 · 2026-11-26-over-10 · Verify tied ranks · pages of 125 · 100980/101003 width=191, scores_remaining=[13, 16, 17]
+
+- 2026-11-26T14:27:25+00:00 · 2026-11-26-over-10 · Verify tied ranks · pages of 125 · 101003/101003 width=157, scores_remaining=[]
+
+- 2026-11-26T14:30:04+00:00 · 2026-11-26-over-10 · OpenAI embeddings · 36275/100941 model=text-embedding-3-large, cache_hits=36275
+
+- 2026-11-26T14:31:05+00:00 · 2026-11-26-over-10 · OpenAI embeddings · 42291/100941 request_tokens=31760, cache_hits=36275, api_reserved_usd=0.352521, api_limit_usd=50.0
+
+- 2026-11-26T14:32:05+00:00 · 2026-11-26-over-10 · OpenAI embeddings · 49971/100941 request_tokens=33964, cache_hits=36275, api_reserved_usd=0.846203, api_limit_usd=50.0
+
+- 2026-11-26T14:33:06+00:00 · 2026-11-26-over-10 · OpenAI embeddings · 57523/100941 request_tokens=34302, cache_hits=36275, api_reserved_usd=1.340239, api_limit_usd=50.0
+
+- 2026-11-26T14:34:06+00:00 · 2026-11-26-over-10 · OpenAI embeddings · 65331/100941 request_tokens=32940, cache_hits=36275, api_reserved_usd=1.842617, api_limit_usd=50.0
+
+- 2026-11-26T14:35:07+00:00 · 2026-11-26-over-10 · OpenAI embeddings · 73011/100941 request_tokens=33180, cache_hits=36275, api_reserved_usd=2.337181, api_limit_usd=50.0
+
+- 2026-11-26T14:36:07+00:00 · 2026-11-26-over-10 · OpenAI embeddings · 80819/100941 request_tokens=33109, cache_hits=36275, api_reserved_usd=2.848093, api_limit_usd=50.0
+
+- 2026-11-26T14:37:08+00:00 · 2026-11-26-over-10 · OpenAI embeddings · 88627/100941 request_tokens=33950, cache_hits=36275, api_reserved_usd=3.357978, api_limit_usd=50.0
+
+- 2026-11-26T14:38:09+00:00 · 2026-11-26-over-10 · OpenAI embeddings · 96307/100941 request_tokens=34257, cache_hits=36275, api_reserved_usd=3.881218, api_limit_usd=50.0
+
+- 2026-11-26T14:38:46+00:00 · 2026-11-26-over-10 · OpenAI embeddings · 100941/100941 request_tokens=7982, cache_hits=36275, api_reserved_usd=4.209947, api_limit_usd=50.0
+
+- 2026-11-26T14:41:38+00:00 · 2026-11-26-over-10 · Exact cosine neighbors · 128/100942 device=CUDA
+
+- 2026-11-26T14:42:40+00:00 · 2026-11-26-over-10 · Exact cosine neighbors · 16512/100942 device=CUDA
+
+- 2026-11-26T14:43:41+00:00 · 2026-11-26-over-10 · Exact cosine neighbors · 32896/100942 device=CUDA
+
+- 2026-11-26T14:44:50+00:00 · 2026-11-26-over-10 · Exact cosine neighbors · 49280/100942 device=CUDA
+
+- 2026-11-26T14:46:01+00:00 · 2026-11-26-over-10 · Exact cosine neighbors · 65664/100942 device=CUDA
+
+- 2026-11-26T14:47:11+00:00 · 2026-11-26-over-10 · Exact cosine neighbors · 82048/100942 device=CUDA
+
+- 2026-11-26T14:48:23+00:00 · 2026-11-26-over-10 · Exact cosine neighbors · 98432/100942 device=CUDA
+
+- 2026-11-26T14:48:35+00:00 · 2026-11-26-over-10 · Exact cosine neighbors · 100942/100942 device=CUDA
+
+- 2026-11-26T14:48:59+00:00 · 2026-11-26-over-10 · Original neighbors and PCA · 0/2
+
+- 2026-11-26T14:52:54+00:00 · 2026-11-26-over-10 · Primary UMAP and HDBSCAN · 1/2 seed=42
+
+- 2026-11-26T15:01:23+00:00 · 2026-11-26-over-10 · Display seed and controls · 1/1 seed=42, clusters=725, unassigned=42441, umap_recall=0.0896187909888847, pca_recall=0.002074458599988112, shuffled_recall=0.00010104812664698539, verified_neighbor_entries=1009420, geometry_sha256=cf9c3381592ee4cc8e523c1c1fb9591095e8e228e56fcb5fcfb237650b70e267
+
+- 2026-11-26T15:03:29+00:00 · 2026-11-26-over-10 · Luna cluster names · 0/725
+
+- 2026-11-26T15:04:30+00:00 · 2026-11-26-over-10 · Luna cluster names · 155/725 name=Optical control in plasmonic nanophotonics, api_reserved_usd=5.223835, api_limit_usd=50.0
+
+- 2026-11-26T15:05:30+00:00 · 2026-11-26-over-10 · Luna cluster names · 330/725 name=Open large language model development, api_reserved_usd=6.304614, api_limit_usd=50.0
+
+- 2026-11-26T15:06:31+00:00 · 2026-11-26-over-10 · Luna cluster names · 510/725 name=Test-time adaptation of vision-language models, api_reserved_usd=7.428923, api_limit_usd=50.0
+
+- 2026-11-26T15:07:32+00:00 · 2026-11-26-over-10 · Luna cluster names · 687/725 name=Test-time compute scaling for large language models, api_reserved_usd=8.532928, api_limit_usd=50.0
+
+- 2026-11-26T15:07:45+00:00 · 2026-11-26-over-10 · Luna cluster names · 725/725 name=Vision-language-action models for robotic manipulation, api_reserved_usd=8.751246, api_limit_usd=50.0
+
+- 2026-11-26T15:09:00+00:00 · 2026-11-26-over-10 · Seed evaluation · 1/10 seed=42, recall_at_10=0.0896
+
+- 2026-11-26T15:17:13+00:00 · 2026-11-26-over-10 · Seed evaluation · 2/10 seed=43, recall_at_10=0.0888
+
+- 2026-11-26T15:24:36+00:00 · 2026-11-26-over-10 · Seed evaluation · 5/10 seed=46, recall_at_10=0.0894
+
+- 2026-11-26T15:31:53+00:00 · 2026-11-26-over-10 · Seed evaluation · 8/10 seed=49, recall_at_10=0.089
+
+- 2026-11-26T15:31:58+00:00 · 2026-11-26-over-10 · Seed evaluation · 10/10 seed=51, recall_at_10=0.0912
+
+- 2026-11-26T15:32:24+00:00 · 2026-11-26-over-10 · Offline build · 0/4
+
+- 2026-11-26T15:33:19+00:00 · 2026-11-26-over-10 · Complete · 4/4 papers=100942, clusters=725, recall_at_10=0.0896187909888847, coverage=verified

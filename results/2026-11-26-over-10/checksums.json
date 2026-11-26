@@ -1,0 +1,20 @@
+{
+  "manifest.json": "7ebb0e0ba9e28d7e61c6787646695a88f54dd20897e2d877f04b6cbcefe70a5d",
+  "papers.jsonl.gz": "f0f9ee630e6c8617655d3311a4451df49441e4032827711401a95f69d64f7852",
+  "embedding-info.json": "fb5802687b2a8fc0e0134312198abc0fe6f6583ae24a332f6d1493826117980c",
+  "embeddings.npy": "714a20cfa667810d0dbd4b0ea073e31825be9c506ce986d90ba56f6ea55f5f5b",
+  "geometry.npz": "cf9c3381592ee4cc8e523c1c1fb9591095e8e228e56fcb5fcfb237650b70e267",
+  "seed-layouts.npz": "e0a5eac7afd77593cc4b5cb26ff4a9642150ac91b3b31012a886acb67e79186f",
+  "labels.json": "7fa1b7c5a54472d6acded30ec32f3ac959273cf54b891c8426ac68e8d02f7022",
+  "evaluation.json": "1572da0216e7c60a0e32de4c3ae8448fb987d81f9b39f1d2498b252fa1b47062",
+  "papers.parquet": "29b9c12f094a10161842be904dc180905b7ec999545337e9dec5b56e8fc8b608",
+  "comparison.json": "6398bb0d11e7d8e37bee5f1334b64deb4b2ba1a1cbca3d5eefe9f50ca06a2fd5",
+  "boundary-probes.json": "faf896e6f1c752657ed42dcd17004f22019d270585cd351e48b8a73885d11873",
+  "budget.json": "7c4660f65b2c6f05b9cf98d8199ab7cca852d44198bd33e1156044ebfc278b78",
+  "budget-preflight.json": "01f4b2926473325f4b5539dea7cb46859a33445813413cdaa37151f4fd96b7e4",
+  "budget-reservations.jsonl": "d4ecdf03c7fa65fd589a7f5ccfeec0cbd3dc1ada094cf1584ddc09d3f22ed951",
+  "api-usage.jsonl": "9a739d4801ab2a2d822b68efddd6764ac616e578bba5f8bc0c929625094738c9",
+  "label-traces.jsonl": "7d7fe17ae7d28f2a0833326c1429d4f4c2091c21c048f6dd8c66c6063fbaa32d",
+  "rank-certificate-125.json": "cbc4624c3f6dfd91c181b8f4a19961948d06792d247b6c67e471a8dbb73437ce",
+  "rank-certificate-175.json": "e6ac0fdc5d05687ebe2f3d8021f13a718ccb7df29c81d8848eaf2a79101e3737"
+}

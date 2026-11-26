@@ -17,10 +17,14 @@ def main():
     target=root/".atlas-cache"/"hub-release"/args.snapshot
     out=target/"results"/args.snapshot
     out.mkdir(parents=True,exist_ok=True)
-    for name in ("manifest.json","papers.jsonl","embeddings.npy","embedding-info.json","geometry.npz","seed-layouts.npz",
+    for name in ("manifest.json","papers.jsonl","papers.jsonl.gz","boundary-probes.json","embeddings.npy","embedding-info.json","geometry.npz","seed-layouts.npz",
                  "labels.json","label-traces.jsonl","api-usage.jsonl","evaluation.json","papers.parquet","checksums.json","audit.json","comparison.json",
                  "budget.json","budget-preflight.json","budget-reservations.jsonl",*(f.name for f in source.glob("rank-certificate-*.json"))):
-        if (source/name).is_file():shutil.copyfile(source/name,out/name)
+        path=source/name
+        if path.is_file():
+            dest=out/name
+            if not dest.exists() or (path.stat().st_size,path.stat().st_mtime_ns)!=(dest.stat().st_size,dest.stat().st_mtime_ns):
+                shutil.copy2(path,dest)
     if (source/"precision-check").exists():
         shutil.copytree(source/"precision-check",out/"precision-check",dirs_exist_ok=True)
     if (source/"evaluation.json").exists() and (source/"papers.parquet").exists():
@@ -74,7 +78,8 @@ Install uv and clone the GitHub project. Download this dated results folder into
         (target/"README.md").write_text(card,encoding="utf-8")
         shutil.copytree(root/"reports",target/"reports",dirs_exist_ok=True)
         project=target/"project";project.mkdir(exist_ok=True)
-        subprocess.run(["git","archive","--format=zip","-o",str(project/"release-source.zip"),"HEAD"],check=True)
+        paths=["--","src","scripts","tests","reports","docs/reproduce.md","README.md","AGENTS.md","uv.lock","pyproject.toml",".python-version",".gitignore",".gitattributes",".env.example"] if threshold==10 else []
+        subprocess.run(["git","archive","--format=zip","-o",str(project/"release-source.zip"),"HEAD",*paths],check=True)
     print(target)
 
 

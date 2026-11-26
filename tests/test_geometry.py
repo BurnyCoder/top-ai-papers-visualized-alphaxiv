@@ -18,6 +18,30 @@ def test_original_neighbors_resolve_the_tenth_place_in_double_precision():
     assert all(i not in row for i,row in enumerate(ranked))
 
 
+def test_umap_graph_and_recommendations_use_the_same_double_precision_ranks():
+    from atlas.geometry import exact_graph
+    vec=np.random.default_rng(42).standard_normal((35,8)).astype("float32")
+    vec[4]=vec[2]
+    ids,dist=exact_graph(vec,30)
+    assert ids[:,0].tolist()==list(range(35)) and np.all(dist[:,0]==0)
+    assert np.array_equal(ids[:,1:11],original_neighbors(vec))
+    assert np.all(np.diff(dist,axis=1)>=0)
+
+
+def test_independent_cpu_audit_preserves_order_at_a_tie_and_resumes(tmp_path):
+    import runpy
+    from atlas.io import file_hash, save_json
+    from atlas.geometry import exact_graph
+    vectors=np.ones((35,8),dtype=np.float32)
+    vectors[17,3]+=2**-18
+    path=tmp_path/"embeddings.npy";np.save(path,vectors)
+    save_json(tmp_path/"embedding-info.json",{"vectors_sha256":file_hash(path)})
+    audit=runpy.run_path("scripts/audit_release.py")["independent_neighbors"]
+    expected=exact_graph(vectors,30)[0][:,1:11]
+    np.testing.assert_array_equal(audit(tmp_path),expected)
+    np.testing.assert_array_equal(audit(tmp_path),expected)
+
+
 def test_reference_recall_and_multitag_pairs():
     xy = np.column_stack((np.arange(14),np.zeros(14)))
     d = abs(xy[:,0,None]-xy[:,0])
@@ -25,6 +49,15 @@ def test_reference_recall_and_multitag_pairs():
     ref = np.argsort(d,axis=1,kind="stable")[:,:10]
     assert recall_at_ten(xy,ref) == 1
     assert tag_overlap(np.array([0,0,0,-1]),np.array([1,3,2,1])) == {"shared":2,"pairs":3,"fraction":2/3}
+
+
+def test_independent_contingency_and_incidence_audit():
+    import runpy
+    from scipy.sparse import csr_matrix
+    audit=runpy.run_path("scripts/audit_release.py")
+    assert audit["contingency_ari"](np.array([0,0,1,1]),np.array([0,1,0,1]))==-.5
+    tags=csr_matrix([[1,0],[1,1],[0,1],[1,0],[0,0]])
+    assert audit["incidence_pairs"](np.array([0,0,0,-1,0]),tags)==(2,3)
 
 
 def test_tree_retrieval_handles_many_coincident_points():

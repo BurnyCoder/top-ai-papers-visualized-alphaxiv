@@ -132,8 +132,11 @@ def cluster_inputs(papers, vectors, labels):
     counter = CountVectorizer(ngram_range=(1,2), stop_words=sorted(set(ENGLISH_STOP_WORDS).union(generic)),
                               max_features=35000, min_df=2)
     counts = counter.fit_transform(paper_text(p) for p in papers)
-    cluster_counts = csr_matrix(np.vstack([np.asarray(counts[members[g]].sum(axis=0)).ravel() for g in groups]))
-    weights = TfidfTransformer().fit_transform(cluster_counts).toarray()
+    # Sparse group-by membership sums the original vocabulary without a dense groups × terms array.
+    assigned=np.flatnonzero(labels>=0)
+    membership=csr_matrix((np.ones(len(assigned),dtype=np.int32),(np.searchsorted(groups,labels[assigned]),assigned)),
+                          shape=(len(groups),len(papers)))
+    weights = TfidfTransformer().fit_transform(membership @ counts)
     terms = counter.get_feature_names_out()
     result = {}
     for j,g in enumerate(groups):
@@ -141,7 +144,8 @@ def cluster_inputs(papers, vectors, labels):
         center = vectors[indices].mean(axis=0)
         nearest = indices[np.argsort(-(vectors[indices] @ center), kind="stable")[:7]]
         examples = [dict(id=papers[i]["paper_id"], title=papers[i]["title"], excerpt=papers[i]["abstract"][:600]) for i in nearest]
-        result[g] = dict(terms=terms[np.argsort(-weights[j], kind="stable")[:12]].tolist(), examples=examples)
+        row=weights[j].toarray().ravel()
+        result[g] = dict(terms=terms[np.argsort(-row, kind="stable")[:12]].tolist(), examples=examples)
     return result
 
 

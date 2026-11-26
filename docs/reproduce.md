@@ -4,6 +4,19 @@ Install [uv](https://docs.astral.sh/uv/getting-started/installation/), clone the
 
 ## Rebuild a published snapshot
 
+### Over 10 likes
+
+The dated census uses a gzip-compressed JSONL. Its manifest hashes the uncompressed rows. The site loads the point index in parts and reads an abstract only when a visitor opens it. The original matrix row order indexes every map point and all ten recommendations. The projection selector switches between UMAP, PCA and the registered shuffled-position control. Its recall statistic always describes the full corpus at the display seed.
+
+```sh
+hf download BurnyCoder/alphaxiv-paper-atlas results/2026-11-26-over-10/geometry.npz results/2026-11-26-over-10/embeddings.npy results/2026-11-26-over-10/seed-layouts.npz --type dataset --revision atlas-2026-11-26-over-10 --local-dir .
+uv run atlas build --snapshot 2026-11-26-over-10
+uv run python scripts/audit_release.py 2026-11-26-over-10
+uv run python -m http.server 8000 --bind 127.0.0.1 --directory docs
+```
+
+Open `http://127.0.0.1:8000/over-10/`. To collect new observations, use `uv run atlas refresh --threshold 10 --max-api-usd 50` with the local OpenAI key. A named snapshot resumes its durable spending ledger on restart. The authenticated-key option remains available on the earlier studies. The low-cutoff census uses the public metadata endpoint and incurs zero API credit charges. For optional CUDA acceleration of exact FP64 similarities, install `uv sync --frozen --extra cuda` and use the same extra when invoking uv. [Protocol](../reports/over-10/preregistration.md) · [Collection evidence](../reports/over-10/collection-amendment.md) · [API pricing](https://developers.openai.com/api/docs/pricing)
+
 ### Over 20 likes
 
 The three numerical arrays are on the tagged Hugging Face dataset. Git contains the matching census, rank certificates, labels, usage receipts and budget ledger. Rebuilding the site reads only local files.

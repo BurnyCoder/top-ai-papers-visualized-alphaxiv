@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from dotenv import load_dotenv
 from filelock import FileLock
 from .io import LOG, RESULTS, ROOT, Progress, papers_at, start_log
+from .editions import CAPPED, CURRENT_THRESHOLD
 
 STAGES = ("collect", "embed", "main", "label", "evaluate", "build")
 
@@ -15,20 +16,20 @@ STAGES = ("collect", "embed", "main", "label", "evaluate", "build")
 def refresh(folder, through, progress, threshold=None, max_api_usd=None):
     """Stop only at complete, reusable stage boundaries."""
     from .collect import collect
-    if threshold is None and not (folder/"manifest.json").exists():threshold=20
-    manifest=collect(folder, progress, threshold, anonymous=threshold==20 or max_api_usd is not None)
+    if threshold is None and not (folder/"manifest.json").exists():threshold=CURRENT_THRESHOLD
+    manifest=collect(folder, progress, threshold, anonymous=threshold in CAPPED or max_api_usd is not None)
     if through == "collect":
         return
     from .inference import embed, name_clusters
     from .budget import CreditBudget, JOURNAL, cost_report
     budget=None
     ledger=folder/JOURNAL
-    if manifest["threshold_exclusive"]==20 or max_api_usd is not None or ledger.exists():
+    if manifest["threshold_exclusive"] in CAPPED or max_api_usd is not None or ledger.exists():
         if max_api_usd is None and ledger.exists():
             with ledger.open("rb") as f:max_api_usd=Decimal(json.loads(f.readline())["cap_micro_usd"])/1000000
         limit=max_api_usd if max_api_usd is not None else Decimal(50)
-        if manifest["threshold_exclusive"]==20 and limit>50:raise ValueError("The over-20 study has a USD 50 ceiling")
-        budget=CreditBudget(folder,limit)
+        if manifest["threshold_exclusive"] in CAPPED and limit>50:raise ValueError("This study has a USD 50 ceiling")
+        budget=CreditBudget(folder,limit,fractional=manifest["threshold_exclusive"]==10)
     papers = papers_at(folder)
     vectors = embed(folder, papers, progress,budget=budget)
     if budget:cost_report(folder)
@@ -54,7 +55,7 @@ def main():
     update = commands.add_parser("refresh", help="Collect a new snapshot or resume a named one")
     update.add_argument("--snapshot", default=datetime.now(timezone.utc).strftime("%Y-%m-%dT%H%M%SZ"))
     update.add_argument("--through", choices=STAGES, default="build")
-    update.add_argument("--threshold", type=int, help="Exclusive public-like cutoff (new snapshots default to 20)")
+    update.add_argument("--threshold", type=int, help=f"Exclusive public-like cutoff (new snapshots default to {CURRENT_THRESHOLD})")
     update.add_argument("--max-api-usd",type=Decimal,help="Hard cumulative reservation ceiling for this snapshot")
     rebuild = commands.add_parser("build", help="Rebuild static outputs from the frozen files without API calls")
     rebuild.add_argument("--snapshot", required=True)

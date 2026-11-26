@@ -10,4 +10,6 @@
 
 The contribution is a dated, auditable atlas of alphaXiv's highly liked papers with inspectable supporting examples, downloadable vectors and a quantified fidelity comparison. We use established algorithms and make no claim of algorithmic novelty.
 
+The over-10 extension supplies the same ordered cosine graph to both UMAP fits through `precomputed_knn`. The graph puts the paper itself first. Its next ten entries give the source-space retrieval target. An independent CPU calculation ranks every other paper, including all candidates tied at the tenth position. This makes the benchmark and map graph traceable to the frozen vectors as the corpus grows. [UMAP precomputed neighbors](https://umap-learn.readthedocs.io/en/latest/precomputed_k-nn.html) · [Over-10 preregistration](over-10/preregistration.md)
+
 The expanded census uses exact Euclidean tree queries for two-dimensional recall, with exhaustive stable ordering when distances tie at the inclusion boundary. The original-space calculation still evaluates every cosine similarity. These changes accelerate evaluation while preserving the original metric. [SciPy cKDTree query](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.cKDTree.query.html) · [CuPy matrix multiplication](https://docs.cupy.dev/en/stable/reference/generated/cupy.matmul.html)
