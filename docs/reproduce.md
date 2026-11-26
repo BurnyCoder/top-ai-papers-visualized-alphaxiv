@@ -4,6 +4,18 @@ Install [uv](https://docs.astral.sh/uv/getting-started/installation/), clone the
 
 ## Rebuild a published snapshot
 
+For the edition with more than 50 likes, restore the three numerical arrays, rebuild and open the `/over-50/` route of the local server. The published editions have distinct result directories and fit their own projections and clusters.
+
+```sh
+hf download BurnyCoder/alphaxiv-paper-atlas results/2026-11-26-over-50/geometry.npz results/2026-11-26-over-50/embeddings.npy results/2026-11-26-over-50/seed-layouts.npz --type dataset --revision atlas-2026-11-26-over-50 --local-dir .
+uv run atlas build --snapshot 2026-11-26-over-50
+uv run python -m http.server 8000 --bind 127.0.0.1 --directory docs
+```
+
+For a new census use `uv run atlas refresh --threshold 50`. Reusing a snapshot name resumes its frozen cutoff. Passing a different cutoff with that name reports the mismatch. [Expanded protocol](../reports/over-50/preregistration.md)
+
+### Original 100-like edition
+
 Install the [Hugging Face CLI](https://huggingface.co/docs/huggingface_hub/guides/cli) and download the numerical assets into the checkout. Git includes the dated census, labels, manifest and metrics. Each new date has an independent folder.
 
 ```sh

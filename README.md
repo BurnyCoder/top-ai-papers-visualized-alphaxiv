@@ -1,11 +1,13 @@
 # Paper Atlas
 
-The project also tracks an independently fitted edition for **more than 50 likes**. Both editions use the same search, clustering and evaluation methods. [Expanded census protocol](reports/over-50/preregistration.md) · [Run matrix](reports/over-50/planned-runs.md)
+Explore the independently fitted editions for **more than 50** and **more than 100** public likes. Both use the same search, clustering and evaluation methods. [Over 50 map](https://burnycoder.github.io/top-ai-papers-visualized-alphaxiv/over-50/) · [Over 100 map](https://burnycoder.github.io/top-ai-papers-visualized-alphaxiv/) · [Expanded census protocol](reports/over-50/preregistration.md) · [Run matrix](reports/over-50/planned-runs.md)
 
 <!-- results-over-50:start -->
 <!-- results-over-50:end -->
 
-An interactive map of papers with more than 100 public likes on alphaXiv. Every point is a paper. Similar titles and abstracts place papers close together, and selecting a paper reveals its nearest neighbors in the full embedding space. The project includes every subject exposed by the all-time paper feed.
+## Original edition · more than 100 likes
+
+Every point is a paper. Similar titles and abstracts place papers close together, and selecting a paper reveals its nearest neighbors in the full embedding space. The project includes every subject exposed by the all-time paper feed.
 
 The collection uses the public vote count and verifies the boundary in two independent passes. OpenAI embeds the texts, UMAP constructs the display, HDBSCAN groups papers in a separate ten-dimensional representation, and GPT-6 Luna names each group from representative papers. The research question is how often a paper's ten closest semantic neighbors remain close in two dimensions. [alphaXiv API](https://api-dev.alphaxiv.org/api.json) · [OpenAI embeddings](https://developers.openai.com/api/docs/guides/embeddings) · [UMAP clustering](https://umap-learn.readthedocs.io/en/latest/clustering.html)
 

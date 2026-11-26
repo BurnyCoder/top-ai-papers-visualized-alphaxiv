@@ -22,6 +22,9 @@ def run(url,channel,shots):
         page.on("pageerror",lambda e:errors.append(str(e)))
         page.goto(url)
         expect(page.locator("#visible")).to_have_text(f"{len(papers):,} visible", timeout=30000)
+        threshold=data.get("threshold_exclusive",100)
+        expect(page.locator("#likes")).to_have_value(str(threshold+1))
+        expect(page.locator("#subtitle")).to_contain_text(f"more than {threshold} likes")
         page.screenshot(path=str(shots/"atlas-desktop.png"),full_page=True)
         search=page.get_by_role("searchbox")
         for value in (leading["title"],leading["authors"][0],leading["paper_id"]):
@@ -40,6 +43,7 @@ def run(url,channel,shots):
         page.reload()
         expect(page.locator("#sideBody h2")).to_have_text(nb[0])
         page.get_by_role("button",name="Reset",exact=True).click()
+        expect(page.locator("#likes")).to_have_value(str(threshold+1))
         before=hashlib.sha256(page.locator("canvas").screenshot()).digest()
         page.get_by_role("button",name="Zoom in").click()
         assert hashlib.sha256(page.locator("canvas").screenshot()).digest()!=before

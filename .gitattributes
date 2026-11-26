@@ -8,6 +8,7 @@
 *.csv text eol=lf
 # Quoted abstracts in the public table preserve alphaXiv's original line endings and spaces.
 docs/papers.csv whitespace=-trailing-space
+docs/**/papers.csv whitespace=-trailing-space
 *.md text eol=lf
 *.npz binary
 *.pdf binary

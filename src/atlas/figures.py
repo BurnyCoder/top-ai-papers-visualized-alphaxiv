@@ -6,7 +6,7 @@ from matplotlib.lines import Line2D
 import numpy as np
 
 
-def figures(folder, A, clusters, evaluation):
+def figures(folder, A, clusters, evaluation, threshold=100):
     folder.mkdir(parents=True,exist_ok=True)
     plt.rcParams.update({"font.family":"DejaVu Sans","font.size":9,"axes.spines.top":False,
                          "axes.spines.right":False,"figure.facecolor":"white","axes.titlelocation":"left"})
@@ -49,7 +49,7 @@ def figures(folder, A, clusters, evaluation):
     for ax in axs: ax.legend(fontsize=8,frameon=False);ax.set_xlabel("UMAP seed");ax.grid(axis="y",alpha=.18)
     save(fig,"metrics.png")
     fig,ax=plt.subplots(figsize=(10,2.25));ax.axis("off");ax.set_xlim(0,1);ax.set_ylim(0,1)
-    nodes=[(.09,.5,"alphaXiv\nlikes > 100"),(.32,.5,"OpenAI\ntitle + abstract"),(.58,.8,"UMAP 2D\ndisplay"),(.58,.5,"UMAP 10D\nHDBSCAN"),(.58,.2,"Original vectors\n10 neighbors"),(.85,.5,"Luna names\nand evidence")]
+    nodes=[(.09,.5,f"alphaXiv\nlikes > {threshold}"),(.32,.5,"OpenAI\ntitle + abstract"),(.58,.8,"UMAP 2D\ndisplay"),(.58,.5,"UMAP 10D\nHDBSCAN"),(.58,.2,"Original vectors\n10 neighbors"),(.85,.5,"Luna names\nand evidence")]
     for a,b in [(0,1),(1,2),(1,3),(1,4),(3,5)]:
         x,y,_=nodes[a];u,v,_=nodes[b];ax.annotate("",xy=(u-.073,v),xytext=(x+.074,y),arrowprops={"arrowstyle":"->","color":"#578374"})
     for x,y,label in nodes:

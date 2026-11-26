@@ -28,11 +28,13 @@ def paper_record(item):
                 likes=item["metrics"]["public_total_votes"])
 
 
-def scan(fetch, size, report=lambda *_args, **_kw: None):
+def scan(fetch, size, report=lambda *_args, **_kw: None, *, threshold=100):
     """Finish beyond the threshold, checking monotonic ordering over all returned rows."""
     papers, pages = {}, []
     duplicates = excluded_blogs = inversions = 0
     last_votes = None
+    boundary = {"last_above": None, "first_at_or_below": None}
+    external_entries = []
     seen_pages = set()
     started = now()
     while True:
@@ -45,25 +47,31 @@ def scan(fetch, size, report=lambda *_args, **_kw: None):
         if rows and signature in seen_pages:
             raise RuntimeError(f"API repeated an entire page at offset {page * size}")
         seen_pages.add(signature)
-        for row, likes in zip(rows, votes, strict=True):
+        for offset,(row, likes) in enumerate(zip(rows, votes, strict=True)):
             inversions += int(last_votes is not None and likes > last_votes)
             last_votes = likes
-            if likes <= 100:
+            position = dict(rank=page*size+offset+1, likes=likes, id=row["paper_group_id"])
+            if likes <= threshold:
+                if boundary["first_at_or_below"] is None:
+                    boundary["first_at_or_below"] = position
                 continue
+            boundary["last_above"] = position
             if row.get("external_blog") is not None or row.get("external_link") is not None:
                 excluded_blogs += 1
+                external_entries.append(position)
                 continue
             paper = paper_record(row)
             duplicates += int(paper["id"] in papers)
             papers[paper["id"]] = paper
         summary = dict(page=page, size=len(rows), max_likes=max(votes, default=None), min_likes=min(votes, default=None),
-                       above_100=sum(v > 100 for v in votes), group_sequence_sha256=signature)
+                       above_threshold=sum(v > threshold for v in votes), group_sequence_sha256=signature)
         pages.append(summary)
         report(f"Crawl · pages of {size}", page+1, None, eligible=len(papers), lowest=summary["min_likes"])
-        if not rows or max(votes) <= 100:
+        if not rows or max(votes) <= threshold:
             break
     return papers, dict(page_size=size, started_at=started, ended_at=now(), pages=pages, last_page=pages[-1],
-                        eligible=len(papers), duplicates=duplicates, excluded_blogs=excluded_blogs, inversions=inversions)
+                        eligible=len(papers), duplicates=duplicates, excluded_blogs=excluded_blogs, inversions=inversions,
+                        boundary=boundary, external_entries=external_entries)
 
 
 def verify_passes(previous, current):
@@ -71,13 +79,16 @@ def verify_passes(previous, current):
     return dict(added=sorted(current.keys()-previous.keys()), removed=sorted(previous.keys()-current.keys()))
 
 
-def collect(folder, progress):
+def collect(folder, progress, threshold=None):
     """Require matching consecutive independent passes; retain a discrepancy audit on failure."""
     if (folder / "manifest.json").exists() and (folder / "papers.jsonl").exists():
         manifest=read_json(folder / "manifest.json")
+        if threshold is not None and threshold != manifest["threshold_exclusive"]:
+            raise ValueError(f"Snapshot {folder.name} already uses a different threshold. Choose a new snapshot ID.")
         if hashlib.sha256((folder/"papers.jsonl").read_bytes()).hexdigest()!=manifest["content_sha256"]:
             raise RuntimeError("The stored census differs from the frozen manifest")
         return manifest
+    threshold = 50 if threshold is None else threshold
     key = os.environ.get("ALPHAXIV_API_KEY")
     if not key:
         raise ValueError("ALPHAXIV_API_KEY is required for a fresh census")
@@ -101,7 +112,7 @@ def collect(folder, progress):
                     retry = response.headers.get("Retry-After", "") if status is not None else ""
                     time.sleep(int(retry) if retry.isdigit() else 2**attempt)
         for size in (100, 50, 97, 73):
-            current, audit = scan(fetch, size, progress)
+            current, audit = scan(fetch, size, progress, threshold=threshold)
             audits.append(audit)
             if previous is not None:
                 diff = verify_passes(previous, current)
@@ -117,7 +128,7 @@ def collect(folder, progress):
         raise RuntimeError("Empty qualifying feed; refusing to publish an empty census")
     data = "".join(json.dumps(r, ensure_ascii=False, separators=(",",":"))+"\n" for r in rows).encode()
     save_bytes(folder / "papers.jsonl", data)
-    manifest = dict(snapshot=folder.name, feed=FEED, query=QUERY, threshold_exclusive=100,
+    manifest = dict(snapshot=folder.name, feed=FEED, query=QUERY, threshold_exclusive=threshold,
                     started_at=audits[0]["started_at"], ended_at=audits[-1]["ended_at"], count=len(rows),
                     content_sha256=hashlib.sha256(data).hexdigest(), passes=audits, differences=differences,
                     coverage="verified", title_only=sum(r["title_only"] for r in rows))
