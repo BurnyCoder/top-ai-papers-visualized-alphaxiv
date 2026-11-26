@@ -265,3 +265,7 @@ The literature review, state-of-the-art review, preregistration and run matrix a
 - 2026-11-26T15:07:32+00:00 · 2026-11-26-over-10 · Luna cluster names · 687/725 name=Test-time compute scaling for large language models, api_reserved_usd=8.532928, api_limit_usd=50.0
 
 - 2026-11-26T15:07:45+00:00 · 2026-11-26-over-10 · Luna cluster names · 725/725 name=Vision-language-action models for robotic manipulation, api_reserved_usd=8.751246, api_limit_usd=50.0
+
+- 2026-11-26T15:09:00+00:00 · 2026-11-26-over-10 · Seed evaluation · 1/10 seed=42, recall_at_10=0.0896
+
+- 2026-11-26T15:17:13+00:00 · 2026-11-26-over-10 · Seed evaluation · 2/10 seed=43, recall_at_10=0.0888

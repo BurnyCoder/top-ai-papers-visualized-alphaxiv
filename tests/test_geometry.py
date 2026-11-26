@@ -51,6 +51,15 @@ def test_reference_recall_and_multitag_pairs():
     assert tag_overlap(np.array([0,0,0,-1]),np.array([1,3,2,1])) == {"shared":2,"pairs":3,"fraction":2/3}
 
 
+def test_independent_contingency_and_incidence_audit():
+    import runpy
+    from scipy.sparse import csr_matrix
+    audit=runpy.run_path("scripts/audit_release.py")
+    assert audit["contingency_ari"](np.array([0,0,1,1]),np.array([0,1,0,1]))==-.5
+    tags=csr_matrix([[1,0],[1,1],[0,1],[1,0],[0,0]])
+    assert audit["incidence_pairs"](np.array([0,0,0,-1,0]),tags)==(2,3)
+
+
 def test_tree_retrieval_handles_many_coincident_points():
     from scipy.spatial.distance import cdist
     xy=np.random.default_rng(42).integers(0,4,(250,2))

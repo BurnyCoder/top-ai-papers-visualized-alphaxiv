@@ -11,10 +11,49 @@ import numpy as np
 from scipy import stats
 from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import normalize
+from sklearn.preprocessing import MultiLabelBinarizer
 from threadpoolctl import threadpool_limits
 from atlas.io import ROOT, file_hash, papers_at, read_json, save_json
 from atlas.editions import CAPPED, edition_path
 from atlas.catalog import local_catalog
+
+
+def contingency_ari(first,second):
+    """Reconstruct adjusted Rand agreement from integer pair counts."""
+    pairs=lambda counts:sum(n*(n-1)//2 for n in counts)
+    a=pairs(Counter(map(int,first)).values());b=pairs(Counter(map(int,second)).values())
+    both=pairs(Counter(zip(first.tolist(),second.tolist(),strict=True)).values())
+    total=len(first)*(len(first)-1)//2
+    denominator=(a+b)*total-2*a*b
+    return 2*(both*total-a*b)/denominator if denominator else 1.
+
+
+def incidence_pairs(labels,tags):
+    """Count unordered pairs sharing any subject through sparse incidence products."""
+    tagged=np.diff(tags.indptr)>0
+    shared=pairs=0
+    for group in np.unique(labels[labels>=0]):
+        mat=tags[(labels==group)&tagged]
+        n=mat.shape[0]
+        if n<2:continue
+        directed=sum((mat[start:start+256]@mat.T).nnz for start in range(0,n,256))
+        shared+=(directed-n)//2
+        pairs+=n*(n-1)//2
+    return shared,pairs
+
+
+def verify_clustering(labels,base,tags,seed,row):
+    assigned=labels>=0;joint=assigned&(base>=0)
+    assert len(set(labels[assigned]))==row["clusters"]
+    assert np.isclose(joint.mean(),row["jointly_assigned_fraction"])
+    assert np.isclose(contingency_ari(base,labels),row["ari_all"])
+    if row["ari_joint"] is not None:
+        assert np.isclose(contingency_ari(base[joint],labels[joint]),row["ari_joint"])
+    order=np.arange(len(labels))
+    tagged=np.diff(tags.indptr)>0
+    order[tagged]=np.random.default_rng(seed).permutation(order[tagged])
+    for table,key in [(tags,"tag_agreement"),(tags[order],"shuffled_tag_agreement")]:
+        assert incidence_pairs(labels,table)==(row[key]["shared"],row[key]["pairs"])
 
 
 def independent_neighbors(folder):
@@ -178,13 +217,16 @@ def audit(snapshot):
     assert np.allclose([x,baseline,control],[r["umap_recall"],r["pca_recall"],r["shuffled_recall"]],atol=1e-10)
     with np.load(folder/"seed-layouts.npz",allow_pickle=False) as layouts:
         assert str(layouts["paper_sha256"])==manifest["content_sha256"]
+        if threshold==10:tags=MultiLabelBinarizer(sparse_output=True).fit_transform(p["subjects"] for p in papers).tocsr()
         for row in ev["seeds"]:
             seed=row["seed"]
             points=layouts[f"seed_{seed}_xy"]
             perm=np.random.default_rng(seed).permutation(len(papers))
             assert independently_measure(points)==row["umap_recall"]
             assert independently_measure(points[perm])==row["shuffled_recall"]
-            assert int((layouts[f"seed_{seed}_labels"]<0).sum())==row["unassigned"]
+            assigned=layouts[f"seed_{seed}_labels"]
+            assert int((assigned<0).sum())==row["unassigned"]
+            if threshold==10:verify_clustering(assigned,geo["labels"],tags,seed,row)
     d=np.array([v["umap_recall"]-v["pca_recall"] for v in ev["seeds"]])
     interval=stats.t.interval(.95,df=len(d)-1,loc=d.mean(),scale=stats.sem(d))
     assert np.allclose(interval,ev["primary"]["ci95"])
@@ -195,9 +237,13 @@ def audit(snapshot):
                 embedding_requests=sum(x["phase"]=="embeddings" for x in api),label_requests=sum(x["phase"]=="labels" for x in api),
                 complete_label_responses=len(traces),vector_norm_max_abs_error=float(abs(np.linalg.norm(vectors,axis=1)-1).max()))
     credit_note=""
+    if threshold==10:
+        result["independent_stability_and_subject_checks"]=len(ev["seeds"])
+        credit_note=(f" Pair counts from sparse subject incidence matrices and an independent adjusted Rand calculation "
+                     f"reproduced the real and shuffled subject counts and cluster stability for all {len(ev['seeds'])} seeds.")
     if (folder/"budget.json").exists():
         result.update(independent_credit_check(folder,api))
-        credit_note=(f" Decimal repricing of {result['api_receipts']} usage receipts reproduced USD {result['independent_receipt_cost_usd']:.4f}. "
+        credit_note+=(f" Decimal repricing of {result['api_receipts']} usage receipts reproduced USD {result['independent_receipt_cost_usd']:.4f}. "
                      f"The independent sum of all {result['api_attempts']} pre-transmission reservations stayed under the registered cap. "
                      "[OpenAI standard rates](https://developers.openai.com/api/docs/pricing)")
     save_json(folder/"audit.json",result)
