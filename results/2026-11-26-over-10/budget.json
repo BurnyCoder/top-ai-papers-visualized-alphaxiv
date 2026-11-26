@@ -1,13 +1,13 @@
 {
   "cap_usd": 50.0,
-  "estimated_usd": 2.18907091,
+  "estimated_usd": 2.32265826,
   "estimated_by_phase_usd": {
     "embeddings": 2.18907091,
-    "labels": 0.0
+    "labels": 0.13358735
   },
-  "reserved_usd": 4.209947,
-  "attempted_requests": 506,
-  "confirmed_receipts": 506,
+  "reserved_usd": 8.751246,
+  "attempted_requests": 1233,
+  "confirmed_receipts": 1233,
   "unconfirmed_attempts": 0,
   "unconfirmed_bound_usd": 0.0,
   "rate_card_usd_per_million": {

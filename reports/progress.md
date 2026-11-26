@@ -253,3 +253,15 @@ The literature review, state-of-the-art review, preregistration and run matrix a
 - 2026-11-26T14:52:54+00:00 · 2026-11-26-over-10 · Primary UMAP and HDBSCAN · 1/2 seed=42
 
 - 2026-11-26T15:01:23+00:00 · 2026-11-26-over-10 · Display seed and controls · 1/1 seed=42, clusters=725, unassigned=42441, umap_recall=0.0896187909888847, pca_recall=0.002074458599988112, shuffled_recall=0.00010104812664698539, verified_neighbor_entries=1009420, geometry_sha256=cf9c3381592ee4cc8e523c1c1fb9591095e8e228e56fcb5fcfb237650b70e267
+
+- 2026-11-26T15:03:29+00:00 · 2026-11-26-over-10 · Luna cluster names · 0/725
+
+- 2026-11-26T15:04:30+00:00 · 2026-11-26-over-10 · Luna cluster names · 155/725 name=Optical control in plasmonic nanophotonics, api_reserved_usd=5.223835, api_limit_usd=50.0
+
+- 2026-11-26T15:05:30+00:00 · 2026-11-26-over-10 · Luna cluster names · 330/725 name=Open large language model development, api_reserved_usd=6.304614, api_limit_usd=50.0
+
+- 2026-11-26T15:06:31+00:00 · 2026-11-26-over-10 · Luna cluster names · 510/725 name=Test-time adaptation of vision-language models, api_reserved_usd=7.428923, api_limit_usd=50.0
+
+- 2026-11-26T15:07:32+00:00 · 2026-11-26-over-10 · Luna cluster names · 687/725 name=Test-time compute scaling for large language models, api_reserved_usd=8.532928, api_limit_usd=50.0
+
+- 2026-11-26T15:07:45+00:00 · 2026-11-26-over-10 · Luna cluster names · 725/725 name=Vision-language-action models for robotic manipulation, api_reserved_usd=8.751246, api_limit_usd=50.0

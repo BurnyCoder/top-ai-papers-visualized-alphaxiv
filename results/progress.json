@@ -1,16 +1,12 @@
 {
   "snapshot": "2026-11-26-over-10",
-  "stage": "Display seed and controls",
-  "done": 1,
-  "total": 1,
-  "elapsed_seconds": 0.0,
-  "updated_at": "2026-11-26T15:01:23+00:00",
-  "seed": 42,
-  "clusters": 725,
-  "unassigned": 42441,
-  "umap_recall": 0.0896187909888847,
-  "pca_recall": 0.002074458599988112,
-  "shuffled_recall": 0.00010104812664698539,
-  "verified_neighbor_entries": 1009420,
-  "geometry_sha256": "cf9c3381592ee4cc8e523c1c1fb9591095e8e228e56fcb5fcfb237650b70e267"
+  "stage": "Luna cluster names",
+  "done": 725,
+  "total": 725,
+  "elapsed_seconds": 347.6,
+  "updated_at": "2026-11-26T15:07:45+00:00",
+  "name": "Vision-language-action models for robotic manipulation",
+  "api_reserved_usd": 8.751246,
+  "api_limit_usd": 50.0,
+  "estimated_stage_seconds_left": 0
 }
