@@ -34,6 +34,10 @@ def export_data(folder, docs, manifest, papers, A, labels):
     for group,count in groups.items():
         entry=labels[str(group)] if group>=0 else {"name":"Unassigned","evidence":[],"representatives":[],"terms":[]}
         clusters[str(group)]={**entry,"count":count,"color":color_for(group)}
+    repeated=Counter(c["name"].casefold() for c in clusters.values())
+    for group,entry in clusters.items():
+        if repeated[entry["name"].casefold()]>1:
+            entry["display_name"]=entry["name"]+f" · group {group}"
     if set(labels)!=set(str(g) for g in groups if g>=0):
         raise ValueError("Host label IDs and assigned groups differ")
     ids=[p["id"] for p in papers]; public_ids={p["paper_id"] for p in papers}

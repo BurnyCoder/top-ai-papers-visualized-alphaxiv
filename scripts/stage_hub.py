@@ -17,7 +17,7 @@ def main():
     out=target/"results"/args.snapshot
     out.mkdir(parents=True,exist_ok=True)
     for name in ("manifest.json","papers.jsonl","embeddings.npy","embedding-info.json","geometry.npz",
-                 "labels.json","label-traces.jsonl","api-usage.jsonl","evaluation.json","papers.parquet","checksums.json"):
+                 "labels.json","label-traces.jsonl","api-usage.jsonl","evaluation.json","papers.parquet","checksums.json","audit.json"):
         if (source/name).is_file():shutil.copyfile(source/name,out/name)
     if (source/"evaluation.json").exists() and (source/"papers.parquet").exists():
         ev=json.loads((source/"evaluation.json").read_text(encoding="utf-8"))
