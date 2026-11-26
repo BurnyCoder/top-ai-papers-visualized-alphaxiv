@@ -6,6 +6,8 @@ const ids = new Map(), filters = ["cluster", "subject", "year", "likes"];
 let papers = [], clusters = {}, filtered = [], filteredSet = new Set(), selected = -1;
 let tab = "topics", rowsShown = 35, hovered = -1, scale = 1, cx = 0, cy = 0;
 let width = 1, height = 1, ready = false, drawing = false, drag = null;
+let abstractChunkSize=0;
+const abstracts=new Map();
 const number = n => n.toLocaleString("en-US");
 function element(tag, value, cls) {
   const node = document.createElement(tag);
@@ -165,7 +167,21 @@ function renderSide(){
     b.append(element("p",p.authors.join(", ")));
     b.append(button(topicName(p.cluster),"smallbtn detailgroup",()=>chooseCluster(p.cluster)));
     if(p.subjects.length)b.append(element("div",p.subjects.join(" · "),"detailmeta"));
-    const d=element("details");d.append(element("summary","Abstract"),element("p",p.abstract||"Title-only record"));b.append(d);
+    const d=element("details"), body=element("p",p.abstract??(p.title_only?"Title-only record":"Loading abstract…"));
+    if(!p.abstract && p.title_only)body.textContent="Title-only record";
+    if(abstractChunkSize && !p.title_only){
+      const index=selected, part=Math.floor(index/abstractChunkSize);
+      d.addEventListener("toggle",async()=>{
+        if(!d.open)return;
+        try{
+          if(!abstracts.has(part))abstracts.set(part,fetch("abstracts/"+part+".json").then(r=>{
+            if(!r.ok)throw Error(r.status);return r.json();
+          }));
+          const texts=await abstracts.get(part);body.textContent=texts[index%abstractChunkSize];
+        }catch{abstracts.delete(part);body.textContent="The abstract could not be loaded. Close and reopen to retry.";}
+      });
+    }
+    d.append(element("summary","Abstract"),body);b.append(d);
     const link=element("a","Open on alphaXiv ↗","open");link.href=paperURL(p.paper_id);link.target="_blank";link.rel="noopener";b.append(link);
     b.append(element("h3","Closest papers in embedding space","sectitle"));
     for(const n of p.neighbors)b.append(paperRow(n,false));return;
@@ -203,13 +219,16 @@ new ResizeObserver(resize).observe(plot);
 async function load(){
   const response=await fetch("atlas.json");if(!response.ok)throw Error(response.status);
   const data=await response.json();papers=data.papers;clusters=data.clusters;
+  by("datasetLink").href="https://huggingface.co/datasets/BurnyCoder/alphaxiv-paper-atlas/tree/atlas-"+encodeURIComponent(data.snapshot);
+  abstractChunkSize=data.abstract_chunk_size||0;
+  if(data.csv){by("csvDownload").href=data.csv;by("csvDownload").textContent="Download CSV (.gz) ↓";}
   // The original, tagged atlas predates the threshold field and used a strict cutoff of 100.
   const threshold=data.threshold_exclusive??100;
   by("likes").min=String(threshold+1);by("likes").value=by("likes").min;
-  const other=by("editionLink");
-  other.href=threshold===100?"over-50/":"../";
-  other.textContent=threshold===100?"Over 50 likes":"Over 100 likes";
-  other.hidden=false;
+  const root=threshold===100?"./":"../";
+  for(const n of [20,50,100])option("edition",n,"Over "+n+" likes");
+  by("edition").value=String(threshold);by("edition").hidden=false;
+  by("edition").onchange=e=>{const n=Number(e.target.value);location.href=root+(n===100?"":"over-"+n+"/");};
   const subjects=new Set(),years=new Set();
   papers.forEach((p,i)=>{ids.set(p.paper_id,i);p.search=[p.title,p.paper_id,p.id,...p.authors].join(" ").toLocaleLowerCase();
     p.subjects.forEach(t=>subjects.add(t));if(p.date)years.add(p.date.slice(0,4));});
