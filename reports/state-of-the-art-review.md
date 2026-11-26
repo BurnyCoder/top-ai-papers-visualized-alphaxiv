@@ -9,3 +9,5 @@
 | Projection fidelity | [A comparative evaluation](https://www.nature.com/articles/s42003-022-03628-x) measures local neighbor preservation. | Compare UMAP with PCA and shuffled coordinates, using exactly the same collection and reference neighbors. |
 
 The contribution is a dated, auditable atlas of alphaXiv's highly liked papers with inspectable supporting examples, downloadable vectors and a quantified fidelity comparison. We use established algorithms and make no claim of algorithmic novelty.
+
+The expanded census uses exact Euclidean tree queries for two-dimensional recall, with exhaustive stable ordering when distances tie at the inclusion boundary. The original-space calculation still evaluates every cosine similarity. These changes accelerate evaluation while preserving the original metric. [SciPy cKDTree query](https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.cKDTree.query.html) · [CuPy matrix multiplication](https://docs.cupy.dev/en/stable/reference/generated/cupy.matmul.html)

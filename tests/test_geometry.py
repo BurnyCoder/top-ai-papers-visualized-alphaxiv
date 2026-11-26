@@ -25,3 +25,11 @@ def test_reference_recall_and_multitag_pairs():
     ref = np.argsort(d,axis=1,kind="stable")[:,:10]
     assert recall_at_ten(xy,ref) == 1
     assert tag_overlap(np.array([0,0,0,-1]),np.array([1,3,2,1])) == {"shared":2,"pairs":3,"fraction":2/3}
+
+
+def test_tree_retrieval_handles_many_coincident_points():
+    from scipy.spatial.distance import cdist
+    xy=np.random.default_rng(42).integers(0,4,(250,2))
+    dist=cdist(xy,xy,"sqeuclidean");np.fill_diagonal(dist,np.inf)
+    reference=np.argsort(dist,axis=1,kind="stable")[:,:10]
+    assert recall_at_ten(xy,reference)==1

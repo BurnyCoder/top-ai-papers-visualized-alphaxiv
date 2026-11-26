@@ -18,7 +18,7 @@ def pct(v):
     return "n/a" if v is None else f"{100*v:.2f}%"
 
 
-def make_paper(path,manifest,evaluation,clusters,figdir,comparison=None):
+def make_paper(path,manifest,evaluation,clusters,figdir,comparison=None,budget=None):
     """Report reportable units, comparators and uncertainty on fixed-layout pages."""
     path.parent.mkdir(parents=True,exist_ok=True)
     fonts=Path(get_data_path())/"fonts/ttf"
@@ -56,13 +56,16 @@ def make_paper(path,manifest,evaluation,clusters,figdir,comparison=None):
     p("Motivation and contribution","Sub")
     p("A ranked feed answers which papers attracted attention. A researcher looking for related work also needs to know which papers discuss similar ideas and how much a two-dimensional view distorts those relationships. This release combines a verified selection boundary, source-space recommendations and inspectable topic labels in a downloadable atlas. The contribution is the audited collection and evaluation of this map.")
     if comparison:
-        p(f"The two dated editions share {comparison['shared']:,} papers. The expanded corpus includes {comparison['within_added_band']:,} papers with 51–100 likes. "+link(GITHUB+f"/blob/main/results/{manifest['snapshot']}/comparison.json","Group-ID comparison"))
+        p(f"The two dated editions share {comparison['shared']:,} papers. The expanded corpus includes {comparison['within_added_band']:,} papers with {threshold+1}–{comparison.get('previous_threshold',100)} likes. "+link(GITHUB+f"/blob/main/results/{manifest['snapshot']}/comparison.json","Group-ID comparison"))
     image("atlas.png",102)
     p("Figure 1. One point represents one paper. The legend lists the largest assigned groups and the unassigned set. Distances between distant regions have no calibrated interpretation.","CaptionText")
     story.append(PageBreak())
     p("Collection and methods","SectionTitle")
     p("Census","Sub")
-    p(f"The two accepted passes ran between {escape(first['started_at'])} and {escape(manifest['ended_at'])}. We sorted by all-time public votes, disabled both blog flags, and removed records explicitly marked as external posts. The first accepted pass encountered {sum(map(above_threshold,first['pages'])):,} entries above the threshold, excluded {first['excluded_blogs']} marked posts and deduplicated {first['duplicates']} group occurrences. The independent pass reproduced the eligible IDs. {manifest['title_only']} papers used the title-only fallback. "+link("https://api-dev.alphaxiv.org/api.json","alphaXiv API specification"))
+    if "rank_certificate" in first:
+        p(f"The two accepted passes ran from {escape(manifest['started_at'])} to {escape(manifest['ended_at'])}. The global feed contained {sum(map(above_threshold,first['pages'])):,} qualifying ranks, including {first['excluded_blogs']} distinct marked external posts. Pages of {first['page_size']} initially yielded only {first['global_unique_papers']:,} distinct research papers because equal-score pages overlapped. Subject-filtered queries and other page sizes recovered the missing groups. Both independent reconstructions filled the ranks at every score and agreed on all {n:,} eligible paper IDs. {manifest['title_only']} papers needed the title-only fallback. "+link("https://api-dev.alphaxiv.org/api.json","alphaXiv API specification")+" · "+link(f"{GITHUB}/blob/main/{protocol_dir}/collection-amendment.md","Collection amendment"))
+    else:
+        p(f"The two accepted passes ran between {escape(first['started_at'])} and {escape(manifest['ended_at'])}. We sorted by all-time public votes, disabled both blog flags, and removed records explicitly marked as external posts. The first accepted pass encountered {sum(map(above_threshold,first['pages'])):,} entries above the threshold, excluded {first['excluded_blogs']} marked posts and deduplicated {first['duplicates']} group occurrences. The independent pass reproduced the eligible IDs. {manifest['title_only']} papers used the title-only fallback. "+link("https://api-dev.alphaxiv.org/api.json","alphaXiv API specification"))
     p("Representation and algorithms","Sub")
     p("The hosted text-embedding-3-large encoder received the title, a blank line and the abstract. We normalized its vectors and calculated exact cosine neighbors, excluding each paper itself. UMAP used 30 neighbors and cosine distance. Display coordinates used two dimensions and minimum distance 0.1. A separate ten-dimensional fit used minimum distance zero, followed by Euclidean excess-of-mass HDBSCAN with minimum cluster size 20 and minimum samples 5, including the point. Seed 42 determined the public map. "+" · ".join([link("https://developers.openai.com/api/docs/guides/embeddings","OpenAI embeddings"),link("https://umap-learn.readthedocs.io/en/latest/clustering.html","UMAP clustering guide"),link("https://scikit-learn.org/stable/modules/generated/sklearn.cluster.HDBSCAN.html","HDBSCAN implementation")]))
     image("architecture.png",41)
@@ -83,6 +86,7 @@ def make_paper(path,manifest,evaluation,clusters,figdir,comparison=None):
     p("Figure 3. Panels A–C retain topic identity while changing screen coordinates. Panel D shows the assignments recovered by clustering PCA coordinates. Colors in D identify its own groups.","CaptionText")
     p("What the map loses","Sub")
     p(f"Even with the primary projection, a mean of {pct(1-avg('umap_recall'))} of the original ten neighbors fell outside the ten closest displayed points. The neighbor list exposes those relationships directly. The directional primary hypothesis was {primary['conclusion']} under the preregistered criterion.")
+    if threshold==20:p(f"The mean recall under shuffled paper positions was {pct(avg('shuffled_recall'))} across the same seeds.")
     story.append(PageBreak())
     p("Stability, limitations and reproducibility","SectionTitle")
     image("metrics.png",59)
@@ -99,6 +103,8 @@ def make_paper(path,manifest,evaluation,clusters,figdir,comparison=None):
         p("The two threshold editions use independent layouts. UMAP adjusts its default optimization budget to corpus size, so differences between editions can reflect both the population and the optimizer. "+link("https://umap-learn.readthedocs.io/en/latest/_modules/umap/umap_.html#simplicial_set_embedding","UMAP implementation"))
     p("The census represents public feed membership during the recorded window. Likes condition selection on platform attention. Older papers, topic popularity and exposure can affect inclusion. The analysis is descriptive and transductive. The interval quantifies variation from projection seeds conditional on these inputs. It does not estimate uncertainty across future papers. Hosted model revisions may alter a fresh run, so the exact vectors and returned labels accompany the release.")
     p("Reproduction and review","Sub")
+    if budget:
+        p(f"Usage receipts priced at standard rates total USD {budget['estimated_usd']:.4f}. Reservations for all physical attempts total USD {budget['reserved_usd']:.4f} against the USD {budget['cap_usd']:.2f} limit. "+link(f"{GITHUB}/blob/main/results/{manifest['snapshot']}/budget.json","Cost breakdown"))
     p("Restore the dated snapshot and run the offline build to reproduce tables, figures and the website. The archive includes checksums, paper metadata, embeddings, coordinates, supporting label IDs and per-seed scores. "+" · ".join([link(HUB,"Dataset and numerical artifacts"),link(GITHUB,"Code and instructions"),link(f"{GITHUB}/blob/main/{protocol_dir}/planned-runs.md","Run matrix")]))
     p("AI statement","Sub")
     p("A human provided the exact specification. Codex wrote the codebase and this paper to execute it. Human cleanup and rewriting are in progress.","CaptionText")

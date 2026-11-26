@@ -21,6 +21,11 @@ dependencies = [
 [project.scripts]
 atlas = "atlas.cli:main"
 
+[project.optional-dependencies]
+cuda = [
+    "cupy-cuda13x[ctk]>=14.2.0 ; sys_platform == 'linux' or sys_platform == 'win32'",
+]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"

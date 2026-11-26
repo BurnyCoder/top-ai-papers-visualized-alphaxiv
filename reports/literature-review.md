@@ -10,4 +10,6 @@ Huang, Wang, Rudin and Browne benchmarked neighborhood preservation to quantify 
 
 ## Data provenance
 
+For larger editions, the feed specification exposes a JSON-encoded topic filter as well as an unfiltered rank. Topic-restricted queries offer a second path to recover groups omitted by unstable ordering within tied vote totals. Our over-20 amendment checks both reconstructed sets against the number of unfiltered ranks at each score. [alphaXiv specification](https://api-dev.alphaxiv.org/api.json) · [Observed repeated page and reconstruction rule](over-20/collection-amendment.md)
+
 The production REST feed supports a global likes order, pagination, a time interval and blog filters. Its returned public vote field matches the number displayed on the paper page in the initial check. A FreshRSS integration reads the same field but caps requests in its own code. We use the service directly and verify the boundary with two complete passes. This is a census of eligible records exposed by the public feed during a documented window. [API specification](https://api-dev.alphaxiv.org/api.json) · [FreshRSS implementation](https://github.com/shcheglovnd/FreshRSS-xExtension-AlphaXivPapers/blob/main/lib/AlphaXivPapers.php) · [Checked paper](https://www.alphaxiv.org/abs/2504.13181)

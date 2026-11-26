@@ -1,5 +1,32 @@
 # Paper Atlas
 
+Explore all subjects in the **more than 20 likes** edition. Search by title, author or ID, then select a paper to see its ten closest neighbors in the original embedding space. The edition has a USD 50 API credit ceiling. [Interactive atlas](https://burnycoder.github.io/top-ai-papers-visualized-alphaxiv/over-20/) · [Paper](reports/over-20/paper.pdf) · [Registered protocol](reports/over-20/preregistration.md) · [Collection amendment](reports/over-20/collection-amendment.md) · [Run matrix](reports/over-20/planned-runs.md)
+
+[Watch the map walkthrough](https://burnycoder.github.io/top-ai-papers-visualized-alphaxiv/over-20/walkthrough.mp4)
+
+<!-- results-over-20:start -->
+
+The 2026-11-26 snapshot contains **36,276 unique papers** above 20 likes and **313 named clusters**. The two accepted passes found the same papers. Of 36,329 entries above the threshold, 53 were marked as external posts. The public map shows all 13,787 unassigned papers in gray.
+
+Across 10 seeds, UMAP retained **12.81%** of the original ten nearest neighbors, compared with **0.49%** under PCA. The gain was 12.32 percentage points (95% seed interval 12.27 to 12.37). Even with UMAP, 87.19% of those neighbors fell outside a paper’s ten closest screen points. Select a paper to recover its original-space recommendations. Shuffling the paper-to-position assignment retained 0.03% across the same seeds.
+
+Of these papers, **26,136** had 21–50 likes. The two dated editions share 10,140 paper groups. 26,136 groups appear only in the expanded edition and 0 appear only in the earlier one.
+
+OpenAI usage receipts priced at standard rates total **USD 0.9687** for this edition. The ledger reserved USD 14.4372 against the USD 50.00 ceiling. Attempts without a usage receipt: 0. [Credit ledger](https://github.com/BurnyCoder/top-ai-papers-visualized-alphaxiv/blob/main/results/2026-11-26-over-20/budget.json)
+
+![Map and largest topics](reports/over-20/figures/atlas.png)
+
+| Display / assignments | Recall at 10 | Clusters | Unassigned | Shared subject within a cluster |
+|---|---:|---:|---:|---:|
+| UMAP / primary | 12.87% | 313 | 38.01% | 79.95% |
+| PCA / primary | 0.49% | 313 | 38.01% | 79.95% |
+| Shuffled positions / primary | 0.03% | 313 | 38.01% | 79.95% |
+| PCA / PCA-clustering ablation | 0.49% | 21 | 86.65% | 37.19% |
+
+[All seed results and cluster examples](reports/over-20/summary.md) · [Comparison figures](reports/over-20/figures/comparisons.png) · [Seed sensitivity](reports/over-20/figures/metrics.png)
+
+<!-- results-over-20:end -->
+
 Explore the independently fitted editions for **more than 50** and **more than 100** public likes. Both use the same search, clustering and evaluation methods. [Over 50 map](https://burnycoder.github.io/top-ai-papers-visualized-alphaxiv/over-50/) · [Over 100 map](https://burnycoder.github.io/top-ai-papers-visualized-alphaxiv/)
 
 [Expanded research paper](reports/over-50/paper.pdf) · [Expanded dataset](https://huggingface.co/datasets/BurnyCoder/alphaxiv-paper-atlas/tree/atlas-2026-11-26-over-50) · [Preregistration](reports/over-50/preregistration.md) · [Run matrix](reports/over-50/planned-runs.md)
@@ -58,7 +85,7 @@ Across 10 seeds, UMAP retained **26.34%** of the original ten nearest neighbors,
 
 ## Run and explore
 
-Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and run `uv sync --frozen` at the repository root. For a fresh snapshot, copy `.env.example` to `.env`, supply your alphaXiv and OpenAI API keys, and run `uv run atlas refresh --threshold 50`. In another terminal, `uv run atlas monitor --port 0` prints the URL of the live dashboard.
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and run `uv sync --frozen` at the repository root. For a fresh snapshot, copy `.env.example` to `.env`, set your OpenAI key, and run `uv run atlas refresh`. New snapshots default to more than 20 likes, anonymous alphaXiv metadata and a USD 50 ceiling. For an older cutoff, pass `--threshold 50` or `--threshold 100` and supply the alphaXiv key. In another terminal, `uv run atlas monitor --port 0` prints the URL of the live dashboard.
 
 For an offline reproduction, download the dated snapshot and run `uv run atlas build --snapshot 2026-11-26`. This regenerates the website, figures, tables and PDF. Run `uv run pytest` for the regression suite. [Exact installation and rebuild commands](docs/reproduce.md) · [Hugging Face collection](https://huggingface.co/collections/BurnyCoder/alphaxiv-paper-atlas-6b0813ca579f3a0893eb123a)
 

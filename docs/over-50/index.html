@@ -3,7 +3,7 @@
 <meta name="description" content="Explore highly liked alphaXiv research papers by semantic similarity, topic and publication year.">
 <title>Paper Atlas · alphaXiv research map</title><link rel="icon" href="data:,"><link rel="stylesheet" href="atlas.css"><script defer src="atlas.js"></script></head>
 <body><header class="mast"><div class="wrap top"><a class="brand" href="./" aria-label="Paper Atlas home"><span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Paper Atlas</a>
-<nav aria-label="Research resources"><a id="editionLink" hidden></a><a href="paper.pdf">Research paper <span>↗</span></a><a href="https://huggingface.co/datasets/BurnyCoder/alphaxiv-paper-atlas">Dataset <span>↗</span></a></nav></div></header>
+<nav aria-label="Research resources"><select id="edition" aria-label="Atlas edition" hidden></select><a href="paper.pdf">Research paper <span>↗</span></a><a id="datasetLink" href="https://huggingface.co/datasets/BurnyCoder/alphaxiv-paper-atlas">Dataset <span>↗</span></a></nav></div></header>
 <main class="wrap"><div class="heading"><div><p class="kicker">alphaXiv collection</p><h1>Research <em>landscape</em></h1><p id="subtitle">Loading the paper collection…</p></div><div class="snapshot"><span class="light"></span> <span id="stamp">Dated snapshot</span></div></div>
 <section class="toolbar" aria-label="Search and filters"><label class="search"><span class="glass" aria-hidden="true"></span><input id="query" type="search" placeholder="Search title, author or paper ID" aria-label="Search title, author or paper ID"></label>
 <label>Topic<select id="cluster"><option value="">All clusters</option></select></label><label>Subject<select id="subject"><option value="">All subjects</option></select></label>
@@ -14,5 +14,5 @@
 <div id="tip" class="tip" hidden></div><div class="zoom"><button id="plus" aria-label="Zoom in">+</button><button id="minus" aria-label="Zoom out">−</button><button id="fit" aria-label="Fit visible papers">⛶</button></div></div>
 <div class="plotfoot"><span class="dotkey"></span> One dot per paper <span class="sep">/</span> Color shows topic<span class="spacer"></span><span class="gesture">Drag to pan · Scroll to zoom</span></div></section>
 <aside class="side" aria-label="Explore the collection"><div class="tabs" role="group" aria-label="Browse by"><button id="topicTab" aria-pressed="true">Topics</button><button id="paperTab" aria-pressed="false">Papers</button></div><div id="sideBody" class="sidebody"><p>Loading topics…</p></div></aside></div>
-<footer><span id="footnote">Positions reflect title and abstract similarity.</span><div><a href="papers.csv" download>Download CSV ↓</a><a href="progress.html">Run details</a><a href="https://github.com/BurnyCoder/top-ai-papers-visualized-alphaxiv">Source ↗</a></div></footer>
+<footer><span id="footnote">Positions reflect title and abstract similarity.</span><div><a id="csvDownload" href="papers.csv" download>Download CSV ↓</a><a href="progress.html">Run details</a><a href="https://github.com/BurnyCoder/top-ai-papers-visualized-alphaxiv">Source ↗</a></div></footer>
 </main></body></html>

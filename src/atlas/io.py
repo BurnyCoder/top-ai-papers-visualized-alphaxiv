@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import logging
 import os
 import tempfile
@@ -59,7 +60,13 @@ def read_json(path):
 
 
 def papers_at(folder):
-    return [json.loads(line) for line in (folder / "papers.jsonl").read_text(encoding="utf-8").splitlines()]
+    with (folder/"papers.jsonl").open(encoding="utf-8") as source:
+        return [json.loads(line) for line in source]
+
+
+def file_hash(path):
+    """Stream large numeric artifacts without duplicating them in memory."""
+    with path.open("rb") as source:return hashlib.file_digest(source,"sha256").hexdigest()
 
 
 def start_log(snapshot):
@@ -92,7 +99,7 @@ class Progress:
             self.stage,self.stage_start,self.initial_done=stage,clock,done
         state = dict(snapshot=self.snapshot, stage=stage, done=done, total=total,
                      elapsed_seconds=round(clock-self.start, 1), updated_at=now(), **extra)
-        if total is not None and done>self.initial_done:
+        if total is not None and done>self.initial_done and not stage.startswith("Verify tied ranks"):
             state["estimated_stage_seconds_left"]=round((total-done)*(clock-self.stage_start)/(done-self.initial_done))
         save_json(RESULTS / "progress.json", state)
         if changed or clock-self.last_note>=60 or done==total:

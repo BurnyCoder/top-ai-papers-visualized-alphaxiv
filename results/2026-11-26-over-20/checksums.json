@@ -1,0 +1,19 @@
+{
+  "manifest.json": "18948d5e641d8d7d81415fccc9ec48aae330d1b9eb49a97f40313f4f5fa24783",
+  "papers.jsonl": "7972272f06a082cf78bf6b2f7758c2eae36eac4611a64ffc9bf20019c6615983",
+  "embedding-info.json": "11af85f065e43b6dbb399c633311c8c390f15eb366f4d09e2bd0195ecf1fb9a6",
+  "embeddings.npy": "993abbf2c2c766ba15b4bdecc93627d8bdbc95893198d27b1b89f533aa06dacf",
+  "geometry.npz": "3dd0c3ce0c7f529165e926c5841f5cd26cb678d8cbbc3f0d28653206c54f333f",
+  "seed-layouts.npz": "bc306526993e7682527630261396310f7befb62817ad6853e74c7d5eaf0f7459",
+  "labels.json": "339af3b2578356460df34fe19190949330e2c8e6b94d6c1d06f85518d1cc3906",
+  "evaluation.json": "6cbab9b1e0e21c44b0352d1dfcc74ef3aa4fe665edac211c799aa45e3cab194d",
+  "papers.parquet": "2187d51952fef9b7dc19fe48042c3ab417fe8632e94326d5ddf7f67505afac34",
+  "comparison.json": "6972683bd723b8b85359c7312498f6ef1eee087466f40bdd2d0243e0f192f54b",
+  "budget.json": "a47700e74579a375ee5eb4d04df911003d1726986ba4867918d8bf410c5f422a",
+  "budget-preflight.json": "e81c701e888cd8a7000dbb78979e240b0aba98c80b24ee3de19d20ad1741c85b",
+  "budget-reservations.jsonl": "8e6779a5b01bb8ec4558e65213b8aadb9602e294630519f9633e688b0e9661a8",
+  "api-usage.jsonl": "8d8c40aecc20232cdaefc56490448fe22818838a70af86ae68795b9a130cbe00",
+  "label-traces.jsonl": "5cf7ac963ac8f5a620de777e4bca02a75ae4bff20be285fc55623a101f84237b",
+  "rank-certificate-100.json": "bd26c0b05cc0aa47a91ee602fed0a57e916f28d739c5101af3ea6181386b1c4b",
+  "rank-certificate-200.json": "ed563fc4d94bf6e2d8a83270ec4d76d851afeef1192002c6e1fb7c9a87232791"
+}
