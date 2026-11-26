@@ -100,19 +100,22 @@ def reports(folder,manifest,evaluation,clusters,embedding):
           f"compared with **{pct(r['pca_recall'])}** under PCA. The gain was {change}. "
           f"Even with UMAP, {pct(1-mean('umap_recall'))} of those neighbors fell outside a paper’s ten closest screen points. "
           "Select a paper to recover its original-space recommendations.")
+    method_note=""
     if (folder/"comparison.json").exists():
         comparison=read_json(folder/"comparison.json")
         desc+=(f"\n\nOf these papers, **{comparison['within_added_band']:,}** had 51–100 likes. "
                f"The two dated editions share {comparison['shared']:,} paper groups. "
                f"{comparison['new_only']:,} groups appear only in the expanded edition and "
                f"{comparison['prior_only']:,} appear only in the earlier one.")
-    method_note=""
-    if (folder/"comparison.json").exists():
         method_note=(f"UMAP's default optimization budget was {comparison['current_layout_epochs']} epochs here and "
                      f"{comparison['previous_layout_epochs']} in the earlier edition. The rule depends on corpus size. "
                      "Each edition has an independently fitted coordinate system. Cross-edition differences in recall "
                      "can reflect the corpus and the optimization budget. "
                      "[UMAP implementation](https://umap-learn.readthedocs.io/en/latest/_modules/umap/umap_.html#simplicial_set_embedding)")
+    cache_note=""
+    if "cache_hits_at_start" in embedding:
+        cache_note=(f" The embedding cache supplied {embedding['cache_hits_at_start']:,} distinct inputs at the start "
+                    f"of the completed embedding invocation. OpenAI embedded {embedding['new_inputs']:,} other inputs.")
     examples=sorted((c for g,c in clusters.items() if int(g)>=0),key=lambda c:-c["count"])[:4]
     ex="\n".join(f"- **{c['name']}** ({c['count']} papers). "+", ".join("["+i+"](https://www.alphaxiv.org/abs/"+i+")" for i in c["evidence"]) for c in examples)
     full=f"""# Snapshot summary · {folder.name}
@@ -131,7 +134,7 @@ The table describes seed {r['seed']}. The PCA and shuffled projections retain th
 
 ## Coverage and provenance
 
-The collection window was {manifest['started_at']} to {manifest['ended_at']}. The independent page sizes were {first['page_size']} and {last['page_size']}, taking {len(first['pages'])} and {len(last['pages'])} pages. The embedding matrix has {embedding['rows']:,} rows and {embedding['dimensions']:,} columns. The inputs contained {embedding['input_tokens']:,} tokens. {manifest['title_only']} papers used title-only input.
+The collection window was {manifest['started_at']} to {manifest['ended_at']}. The independent page sizes were {first['page_size']} and {last['page_size']}, taking {len(first['pages'])} and {len(last['pages'])} pages. The embedding matrix has {embedding['rows']:,} rows and {embedding['dimensions']:,} columns. The inputs contained {embedding['input_tokens']:,} tokens. {manifest['title_only']} papers used title-only input.{cache_note}
 
 {method_note}
 

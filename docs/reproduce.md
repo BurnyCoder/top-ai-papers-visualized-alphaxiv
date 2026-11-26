@@ -12,7 +12,7 @@ uv run atlas build --snapshot 2026-11-26-over-50
 uv run python -m http.server 8000 --bind 127.0.0.1 --directory docs
 ```
 
-For a new census use `uv run atlas refresh --threshold 50`. Reusing a snapshot name resumes its frozen cutoff. Passing a different cutoff with that name reports the mismatch. [Expanded protocol](../reports/over-50/preregistration.md)
+For a new census use `uv run atlas refresh --threshold 50`. Reusing a snapshot name resumes its frozen cutoff. Passing a different cutoff with that name reports the mismatch. The same three assets are available as direct downloads from the dated release. Save them under `results/2026-11-26-over-50/` before running the build. [Dated files](https://huggingface.co/datasets/BurnyCoder/alphaxiv-paper-atlas/tree/atlas-2026-11-26-over-50/results/2026-11-26-over-50) · [Expanded protocol](../reports/over-50/preregistration.md)
 
 ### Original 100-like edition
 
