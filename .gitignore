@@ -1,0 +1,22 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+.env
+.env.*
+!.env.example
+.atlas-cache/
+.pytest_cache/
+.ruff_cache/
+tmp/
+logs/
+results/*/work/
+results/*/embeddings.npy
+results/*/geometry.npz
+site/
