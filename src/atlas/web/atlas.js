@@ -219,6 +219,7 @@ new ResizeObserver(resize).observe(plot);
 async function load(){
   const response=await fetch("atlas.json");if(!response.ok)throw Error(response.status);
   const data=await response.json();papers=data.papers;clusters=data.clusters;
+  by("datasetLink").href="https://huggingface.co/datasets/BurnyCoder/alphaxiv-paper-atlas/tree/atlas-"+encodeURIComponent(data.snapshot);
   abstractChunkSize=data.abstract_chunk_size||0;
   if(data.csv){by("csvDownload").href=data.csv;by("csvDownload").textContent="Download CSV (.gz) ↓";}
   // The original, tagged atlas predates the threshold field and used a strict cutoff of 100.

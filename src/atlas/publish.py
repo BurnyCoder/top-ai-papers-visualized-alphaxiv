@@ -258,4 +258,5 @@ def build(folder,progress):
     # The published run summary has a stable observation timestamp, unlike the live progress clock.
     save_json(docs/"progress.json",dict(snapshot=folder.name,stage="Complete",done=4,total=4,updated_at=manifest["ended_at"],
               papers=manifest["count"],clusters=evaluation["seeds"][0]["clusters"],seed_42_recall_at_10=evaluation["seeds"][0]["umap_recall"],
+              **({k:read_json(folder/"budget.json")[k] for k in ("estimated_usd","reserved_usd","cap_usd","unconfirmed_attempts")} if (folder/"budget.json").exists() else {}),
               collection_window_end=manifest["ended_at"]))
