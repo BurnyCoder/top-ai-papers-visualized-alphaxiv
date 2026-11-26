@@ -210,7 +210,8 @@ def build(folder,progress):
     save_bytes(docs/".nojekyll",b"");progress("Offline build",1,4)
     figures(figdir,A,clusters,evaluation,threshold);progress("Offline build",2,4)
     reports(folder,manifest,evaluation,clusters,embedding)
-    make_paper(report/"paper.pdf",manifest,evaluation,clusters,figdir)
+    comparison=folder/"comparison.json"
+    make_paper(report/"paper.pdf",manifest,evaluation,clusters,figdir,read_json(comparison) if comparison.exists() else None)
     shutil.copyfile(report/"paper.pdf",docs/"paper.pdf")
     # Publish each fitted layout so readers can recompute seed statistics without rerunning UMAP.
     archive=folder/"seed-layouts.npz"

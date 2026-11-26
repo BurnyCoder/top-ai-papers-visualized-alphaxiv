@@ -18,7 +18,7 @@ def pct(v):
     return "n/a" if v is None else f"{100*v:.2f}%"
 
 
-def make_paper(path,manifest,evaluation,clusters,figdir):
+def make_paper(path,manifest,evaluation,clusters,figdir,comparison=None):
     """Report reportable units, comparators and uncertainty on fixed-layout pages."""
     path.parent.mkdir(parents=True,exist_ok=True)
     fonts=Path(get_data_path())/"fonts/ttf"
@@ -47,12 +47,16 @@ def make_paper(path,manifest,evaluation,clusters,figdir):
     threshold=manifest["threshold_exclusive"]
     protocol_dir=(Path("reports")/edition_path(threshold)).as_posix()
     n=manifest["count"];first=manifest["passes"][-2];date=datetime.fromisoformat(manifest["ended_at"]).strftime("%d %B %Y")
-    p("A semantic atlas of highly liked alphaXiv papers","PaperTitle")
+    title=("A semantic atlas of highly liked alphaXiv papers" if threshold==100 else
+           f"A semantic atlas of alphaXiv papers with more than {threshold} likes")
+    p(title,"PaperTitle")
     p("Libor “Burny” Burian · "+date,"CaptionText")
     p("Abstract","Sub")
     p(f"We collected {n:,} unique research papers with more than {threshold} public likes from alphaXiv. We embedded their titles and abstracts, projected them for display, and grouped them in a separate ten-dimensional space. Across {len(rows)} seeds, two-dimensional UMAP preserved {pct(avg('umap_recall'))} of each paper’s ten original neighbors on average. PCA preserved {pct(r['pca_recall'])}. The paired difference was {pp(primary['mean_difference'])} percentage points, with a 95% seed interval of {pp(primary['ci95'][0])} to {pp(primary['ci95'][1])}. At the display seed, {r['unassigned']:,} papers remained unassigned.")
     p("Motivation and contribution","Sub")
     p("A ranked feed answers which papers attracted attention. A researcher looking for related work also needs to know which papers discuss similar ideas and how much a two-dimensional view distorts those relationships. This release combines a verified selection boundary, source-space recommendations and inspectable topic labels in a downloadable atlas. The contribution is the audited collection and evaluation of this map.")
+    if comparison:
+        p(f"The two dated editions share {comparison['shared']:,} papers. The expanded corpus includes {comparison['within_added_band']:,} papers with 51–100 likes. "+link(GITHUB+f"/blob/main/results/{manifest['snapshot']}/comparison.json","Group-ID comparison"))
     image("atlas.png",102)
     p("Figure 1. One point represents one paper. The legend lists the largest assigned groups and the unassigned set. Distances between distant regions have no calibrated interpretation.","CaptionText")
     story.append(PageBreak())
@@ -103,5 +107,5 @@ def make_paper(path,manifest,evaluation,clusters,figdir):
         canvas.drawString(22*mm,12*mm,"PAPER ATLAS   /   "+manifest["snapshot"])
         canvas.drawRightString(A4[0]-22*mm,12*mm,str(doc.page))
     doc=SimpleDocTemplate(str(path),pagesize=A4,leftMargin=20*mm,rightMargin=20*mm,topMargin=16*mm,bottomMargin=21*mm,
-              title="A semantic atlas of highly liked alphaXiv papers",author="Libor “Burny” Burian",invariant=1)
+              title=title,author="Libor “Burny” Burian",invariant=1)
     doc.build(story,onFirstPage=footer,onLaterPages=footer)

@@ -32,7 +32,7 @@ The same files are available by direct HTTPS. Save them under `results/2026-11-2
 
 Copy `.env.example` to an ignored `.env` and set your own alphaXiv and OpenAI keys. Run `uv run atlas refresh`. The console prints the snapshot name. For an explicit repeatable run use a new name, such as `uv run atlas refresh --snapshot my-census`. Resume with the identical name. Each verified census is frozen, and completed embedding batches, individual cluster names and seed results are checkpointed. A new named snapshot rechecks live membership. Input hashes allow unchanged papers to reuse the local embedding cache.
 
-In a second terminal run `uv run atlas monitor` and open [live run progress](http://127.0.0.1:8765/). The dashboard displays stage, counts, elapsed time, API usage during embedding, and measured recall as seeds finish. The site’s Run details link displays the final release status. Full timestamped Luna prompts and responses go to the terminal and local `logs/`. Numeric embedding outputs are preserved losslessly in the published array. The static site never needs keys.
+In a second terminal run `uv run atlas monitor --port 0` and open the loopback URL it prints. Port zero selects an available port. Use `--port 8765` for a fixed address. The dashboard displays stage, counts, elapsed time, API usage during embedding, and measured recall as seeds finish. The site’s Run details link displays the final release status. Full timestamped Luna prompts and responses go to the terminal and local `logs/`. Numeric embedding outputs are preserved losslessly in the published array. The static site never needs keys.
 
 ## Frozen files
 
