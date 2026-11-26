@@ -147,3 +147,9 @@ The literature review, state-of-the-art review, preregistration and run matrix a
 - 2026-11-26T13:13:18+00:00 · 2026-11-26-over-20 · OpenAI embeddings · 31771/36275 request_tokens=34675, cache_hits=10139, api_reserved_usd=5.718284, api_limit_usd=50.0
 
 - 2026-11-26T13:13:55+00:00 · 2026-11-26-over-20 · OpenAI embeddings · 36275/36275 request_tokens=7391, cache_hits=10139, api_reserved_usd=7.009539, api_limit_usd=50.0
+
+- 2026-11-26T13:17:59+00:00 · 2026-11-26-over-20 · Original neighbors and PCA · 0/2
+
+- 2026-11-26T13:21:30+00:00 · 2026-11-26-over-20 · Primary UMAP and HDBSCAN · 1/2 seed=42
+
+- 2026-11-26T13:24:32+00:00 · 2026-11-26-over-20 · Primary layout complete · 1/1 papers=36276, clusters=313, unassigned=13787
