@@ -173,3 +173,5 @@ The literature review, state-of-the-art review, preregistration and run matrix a
 - 2026-11-26T13:36:47+00:00 · 2026-11-26-over-20 · Offline build · 0/4
 
 - 2026-11-26T13:37:18+00:00 · 2026-11-26-over-20 · Complete · 4/4 papers=36276, clusters=313, recall_at_10=0.12868011908699967, coverage=verified
+
+- 2026-11-26T13:42:01+00:00 · over-20 release review · Desktop and mobile Chrome checks passed. The independent audit matched every ordered neighbor list for 36,276 papers, verified all 10 saved seed layouts and repriced 519 receipts to USD 0.9687. All four PDF pages were rendered for inspection.
