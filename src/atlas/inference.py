@@ -98,7 +98,8 @@ def embed(folder, papers, progress, client=None, budget=None):
                     db.execute("INSERT OR REPLACE INTO embeddings VALUES (?,?,?)", (key, normalized.tobytes(), weight))
                     complete += 1
             db.commit()
-            progress("OpenAI embeddings", complete, len(text_by_key), request_tokens=reply.usage.total_tokens, cache_hits=hits)
+            progress("OpenAI embeddings", complete, len(text_by_key), request_tokens=reply.usage.total_tokens, cache_hits=hits,
+                     **(budget.totals() if budget else {}))
         temporary=output.with_suffix(".partial.npy")
         matrix=np.lib.format.open_memmap(temporary,mode="w+",dtype="<f4",shape=(len(keys),DIM))
         total_tokens = 0
@@ -206,7 +207,8 @@ def name_clusters(folder, papers, vectors, labels, progress, client=None, budget
         for future in as_completed(futures):
             group = futures[future]
             result[str(group)] = future.result()
-            progress("Luna cluster names", len(result), len(inputs), name=result[str(group)]["name"])
+            progress("Luna cluster names", len(result), len(inputs), name=result[str(group)]["name"],
+                     **(budget.totals() if budget else {}))
     result = {k:result[k] for k in sorted(result,key=int)}
     save_json(output, result)
     return result

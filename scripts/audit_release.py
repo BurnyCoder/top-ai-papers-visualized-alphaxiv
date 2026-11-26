@@ -31,11 +31,12 @@ def audit(snapshot):
     assert all(p["inversions"]==0 and p["eligible"]==len(papers) for p in passes)
     assert all(p["last_page"]["max_likes"] is None or p["last_page"]["max_likes"]<=threshold for p in passes)
     assert not any(manifest["differences"][-1].values()) and min(p["likes"] for p in papers)>threshold
-    for p in passes:
+    for pass_index,p in enumerate(passes):
         if "rank_certificate" in p:
             proof=read_json(folder/p["rank_certificate"])
             assert not proof["remaining"] and proof["expected_by_score"]==proof["matched_by_score"]
-            canonical=Counter(str(row["likes"]) for row in papers)
+            first_votes={c["id"]:c["first"] for c in manifest.get("accepted_vote_changes",[])} if pass_index==0 else {}
+            canonical=Counter(str(first_votes.get(row["id"],row["likes"])) for row in papers)
             canonical.update(str(row["likes"]) for row in p["external_entries"])
             assert canonical==proof["observed_by_score"]
             for move in proof["score_observations_used"]:

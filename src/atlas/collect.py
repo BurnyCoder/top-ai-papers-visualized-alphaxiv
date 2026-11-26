@@ -151,6 +151,9 @@ def collect(folder, progress, threshold=None, *, anonymous=False):
                     started_at=audits[0]["started_at"], ended_at=audits[-1]["ended_at"], count=len(rows),
                     content_sha256=hashlib.sha256(data).hexdigest(), passes=audits, differences=differences,
                     coverage="verified", title_only=sum(r["title_only"] for r in rows))
+    if threshold==20:
+        manifest["accepted_vote_changes"]=[dict(id=k,first=previous[k]["likes"],second=current[k]["likes"])
+                    for k in sorted(current) if previous[k]["likes"]!=current[k]["likes"]]
     save_json(folder / "manifest.json", manifest)
     LOG.info("Verified %d unique eligible paper groups", len(rows))
     return manifest

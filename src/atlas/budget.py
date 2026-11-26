@@ -66,6 +66,13 @@ class CreditBudget:
                                 reserved_micro_usd=charge,total_micro_usd=total))
         return ticket
 
+    def totals(self):
+        """Publish the current worst-case spend to the live dashboard."""
+        with self.lock,self.journal.open("rb") as f:
+            end=f.seek(0,os.SEEK_END);f.seek(max(0,end-2048))
+            last=json.loads(f.read().splitlines()[-1])
+        return dict(api_reserved_usd=last["total_micro_usd"]/MILLION,api_limit_usd=self.cap/MILLION)
+
 
 def request(budget,phase,inputs,outputs,send):
     """The capped client disables SDK retries. Each explicit transport retry gets a new ticket."""

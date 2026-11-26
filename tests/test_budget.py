@@ -45,3 +45,17 @@ def test_retry_cannot_transmit_without_another_reservation(tmp_path,monkeypatch)
     assert calls==[True]
     with pytest.raises(BudgetExceeded):request(CreditBudget(tmp_path,"0.001"),"embeddings",600,0,timeout)
     assert calls==[True] and cost_report(tmp_path)["unconfirmed_attempts"]==1
+
+
+def test_cli_forwards_a_lower_credit_limit(tmp_path,monkeypatch):
+    import sys
+    from atlas import cli,io
+    args=[]
+    monkeypatch.setattr(cli,"RESULTS",tmp_path/"results")
+    monkeypatch.setattr(cli,"ROOT",tmp_path)
+    monkeypatch.setattr(io,"CACHE",tmp_path/"cache")
+    monkeypatch.setattr(cli,"start_log",lambda _:None)
+    monkeypatch.setattr(cli,"refresh",lambda *a:args.extend(a))
+    monkeypatch.setattr(sys,"argv",["atlas","refresh","--snapshot","test","--threshold","20","--max-api-usd","0.001"])
+    cli.main()
+    assert args[-2:]==[20,Decimal("0.001")]

@@ -133,10 +133,12 @@ def census_pass(folder,fetch,size,threshold,progress):
                 track(topic,pages,len(external)+len(papers)-before)
         needed=missing();wanted=set(needed)
         progress(f"Verify tied ranks · pages of {size}",sum(expected.values())-sum(needed.values()),
-                 sum(expected.values()),outstanding=sum(needed.values()),subjects_checked=len(supplements))
+                 sum(expected.values()),outstanding=sum(needed.values()),scores_remaining=sorted(needed),sources_checked=len(supplements))
         # Use other independent page widths on the remaining global strata before scanning rare tags.
-        if offset==12 and wanted:
-            for width in ((151,127,181) if size==100 else (137,113,167)):
+        if offset in (12,40,96) and wanted:
+            widths=({12:(151,127,181),40:(199,191,179,157,139,109),96:(189,177,153,129,111)} if size==100 else
+                    {12:(137,113,167),40:(197,193,173,163,131,107),96:(187,169,159,141,103)})
+            for width in widths[offset]:
                 high=0;page_ids=set()
                 for score,n in sorted(expected.items(),reverse=True):
                     if score in wanted:page_ids.update(range(high//width,(high+n-1)//width+1))
@@ -146,6 +148,8 @@ def census_pass(folder,fetch,size,threshold,progress):
                     for batch in pool.map(lambda page:cached(page,width),sorted(page_ids)):merge(batch,None)
                 track(f"global page size {width}",len(page_ids),len(external)+len(papers)-before)
                 wanted=set(missing())
+                progress(f"Verify tied ranks · pages of {size}",sum(expected.values())-sum(missing().values()),
+                         sum(expected.values()),width=width,scores_remaining=sorted(wanted))
                 if not wanted:break
     remaining=missing()
     actual,matched,changes=proof()

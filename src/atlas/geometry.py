@@ -3,8 +3,11 @@ from __future__ import annotations
 
 import io
 import hashlib
+import os
 import warnings
 from collections import Counter
+from concurrent.futures import ProcessPoolExecutor
+from contextlib import ExitStack
 import numpy as np
 from scipy.spatial.distance import cdist
 from scipy.spatial import cKDTree
@@ -113,6 +116,13 @@ def run_seed(folder, vectors, indices, distances, seed):
     return dict(xy=xy,z10=z,labels=labels,strength=strength)
 
 
+def prepare_seed(folder,seed):
+    """Workers share the read-only vector file and commit only their own seed checkpoint."""
+    vectors=np.load(folder/"embeddings.npy",mmap_mode="r",allow_pickle=False)
+    with np.load(folder/"geometry.npz",allow_pickle=False) as archive,threadpool_limits(limits=1):
+        run_seed(folder,vectors,archive["knn"],archive["knn_dist"],seed)
+
+
 def geometry(folder, vectors, progress):
     path = folder / "geometry.npz"
     if path.exists():
@@ -194,12 +204,19 @@ def evaluate(folder,papers,vectors,progress):
     bits = {s:1<<i for i,s in enumerate(subjects)}
     masks = np.array([sum(bits[s] for s in p["subjects"]) for p in papers],dtype=object)
     scores = []
-    with threadpool_limits(limits=4):
+    workers=max(1,min(4,int(os.environ.get("ATLAS_SEED_WORKERS","1"))))
+    with ExitStack() as context:
+        context.enter_context(threadpool_limits(limits=4))
+        jobs={}
+        if workers>1:
+            pool=context.enter_context(ProcessPoolExecutor(max_workers=workers))
+            jobs={s:pool.submit(prepare_seed,folder,s) for s in SEEDS if s!=42 and not (folder/"work"/f"seed-{s}.npz").exists()}
         for seed in SEEDS:
             stage = folder / "work" / f"metric-{seed}.json"
             if stage.exists() and read_json(stage).get("reference_sha256")==reference_hash:
                 row = read_json(stage)
             else:
+                if seed in jobs:jobs[seed].result()
                 geometry_seed = main if seed==42 else run_seed(folder,vectors,main["knn"],main["knn_dist"],seed)
                 xy = geometry_seed["xy"]
                 score = recall_at_ten(xy,reference)
