@@ -15,6 +15,7 @@ STAGES = ("collect", "embed", "main", "label", "evaluate", "build")
 def refresh(folder, through, progress, threshold=None, max_api_usd=None):
     """Stop only at complete, reusable stage boundaries."""
     from .collect import collect
+    if threshold is None and not (folder/"manifest.json").exists():threshold=20
     manifest=collect(folder, progress, threshold, anonymous=threshold==20 or max_api_usd is not None)
     if through == "collect":
         return
@@ -53,7 +54,7 @@ def main():
     update = commands.add_parser("refresh", help="Collect a new snapshot or resume a named one")
     update.add_argument("--snapshot", default=datetime.now(timezone.utc).strftime("%Y-%m-%dT%H%M%SZ"))
     update.add_argument("--through", choices=STAGES, default="build")
-    update.add_argument("--threshold", type=int, help="Exclusive public-like cutoff (new snapshots default to 50)")
+    update.add_argument("--threshold", type=int, help="Exclusive public-like cutoff (new snapshots default to 20)")
     update.add_argument("--max-api-usd",type=Decimal,help="Hard cumulative reservation ceiling for this snapshot")
     rebuild = commands.add_parser("build", help="Rebuild static outputs from the frozen files without API calls")
     rebuild.add_argument("--snapshot", required=True)

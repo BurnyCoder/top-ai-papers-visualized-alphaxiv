@@ -63,7 +63,7 @@ Across 10 seeds, UMAP retained **26.34%** of the original ten nearest neighbors,
 
 ## Run and explore
 
-Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and run `uv sync --frozen` at the repository root. For a fresh snapshot, copy `.env.example` to `.env`, supply your alphaXiv and OpenAI API keys, and run `uv run atlas refresh --threshold 50`. In another terminal, `uv run atlas monitor --port 0` prints the URL of the live dashboard.
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/) and run `uv sync --frozen` at the repository root. For a fresh snapshot, copy `.env.example` to `.env`, set your OpenAI key, and run `uv run atlas refresh`. New snapshots default to more than 20 likes, anonymous alphaXiv metadata and a USD 50 ceiling. For an older cutoff, pass `--threshold 50` or `--threshold 100` and supply the alphaXiv key. In another terminal, `uv run atlas monitor --port 0` prints the URL of the live dashboard.
 
 For an offline reproduction, download the dated snapshot and run `uv run atlas build --snapshot 2026-11-26`. This regenerates the website, figures, tables and PDF. Run `uv run pytest` for the regression suite. [Exact installation and rebuild commands](docs/reproduce.md) · [Hugging Face collection](https://huggingface.co/collections/BurnyCoder/alphaxiv-paper-atlas-6b0813ca579f3a0893eb123a)
 

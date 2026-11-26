@@ -85,6 +85,25 @@ def verify_passes(previous, current):
     return dict(added=sorted(current.keys()-previous.keys()), removed=sorted(previous.keys()-current.keys()))
 
 
+def feed_rows(client,page,size,topic=None):
+    """Fetch one public feed page and honor a transient service retry instruction."""
+    for attempt in range(6):
+        try:
+            params={**QUERY,"pageSize":size,"pageNum":page}
+            if topic:params["topics"]=json.dumps([topic],separators=(",",":"))
+            response=client.get(FEED,params=params)
+            response.raise_for_status()
+            payload=response.json()
+            if payload["page"]!=page or not isinstance(payload["papers"],list):
+                raise RuntimeError(f"Unexpected feed page {page}")
+            return payload["papers"]
+        except (httpx.TransportError,httpx.HTTPStatusError) as error:
+            status=getattr(getattr(error,"response",None),"status_code",None)
+            if attempt==5 or status is not None and status!=429 and status<500:raise
+            retry=response.headers.get("Retry-After","") if status is not None else ""
+            time.sleep(int(retry) if retry.isdigit() else 2**attempt)
+
+
 def collect(folder, progress, threshold=None, *, anonymous=False):
     """Require matching consecutive independent passes; retain a discrepancy audit on failure."""
     if (folder / "manifest.json").exists() and (folder / "papers.jsonl").exists():
@@ -94,7 +113,7 @@ def collect(folder, progress, threshold=None, *, anonymous=False):
         if hashlib.sha256((folder/"papers.jsonl").read_bytes()).hexdigest()!=manifest["content_sha256"]:
             raise RuntimeError("The stored census differs from the frozen manifest")
         return manifest
-    threshold = 50 if threshold is None else threshold
+    threshold = 20 if threshold is None else threshold
     key = os.environ.get("ALPHAXIV_API_KEY")
     if not anonymous and not key:
         raise ValueError("ALPHAXIV_API_KEY is required for a fresh census")
@@ -105,22 +124,7 @@ def collect(folder, progress, threshold=None, *, anonymous=False):
         headers["Authorization"]="Bearer "+key
     with httpx.Client(timeout=75, headers=headers) as client:
         def fetch(page, size, topic=None):
-            for attempt in range(6):
-                try:
-                    params={**QUERY, "pageSize":size, "pageNum":page}
-                    if topic:params["topics"]=json.dumps([topic],separators=(",",":"))
-                    response = client.get(FEED, params=params)
-                    response.raise_for_status()
-                    payload = response.json()
-                    if payload["page"] != page or not isinstance(payload["papers"], list):
-                        raise RuntimeError(f"Unexpected feed page {page}")
-                    return payload["papers"]
-                except (httpx.TransportError, httpx.HTTPStatusError) as error:
-                    status = getattr(getattr(error, "response", None), "status_code", None)
-                    if attempt == 5 or (status is not None and status != 429 and status < 500):
-                        raise
-                    retry = response.headers.get("Retry-After", "") if status is not None else ""
-                    time.sleep(int(retry) if retry.isdigit() else 2**attempt)
+            return feed_rows(client,page,size,topic)
         for size in ((100,200,97,173) if threshold==20 else (100,50,97,73)):
             if threshold==20:
                 from .reconcile import census_pass
