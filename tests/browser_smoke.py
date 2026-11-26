@@ -29,6 +29,11 @@ def run(url,channel,shots):
         threshold=data.get("threshold_exclusive",100)
         expect(page.locator("#likes")).to_have_value(str(threshold+1))
         expect(page.locator("#subtitle")).to_contain_text(f"more than {threshold} likes")
+        if data.get("controls"):
+            for mode in ("pca","shuffled","umap"):
+                page.get_by_role("combobox",name="Map projection").select_option(mode)
+                pct=100*data["controls"]["recall"][mode]
+                expect(page.locator("#layoutScore")).to_contain_text(f"{pct:.2f}%",timeout=90000)
         page.screenshot(path=str(shots/"atlas-desktop.png"),full_page=True)
         search=page.get_by_role("searchbox")
         for value in (leading["title"],leading["authors"][0],leading["paper_id"]):

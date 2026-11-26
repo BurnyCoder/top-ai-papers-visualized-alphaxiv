@@ -6,7 +6,7 @@ Install [uv](https://docs.astral.sh/uv/getting-started/installation/), clone the
 
 ### Over 10 likes
 
-The dated census uses a gzip-compressed JSONL. Its manifest hashes the uncompressed rows. The site loads the point index in parts and reads an abstract only when a visitor opens it. The original matrix row order indexes every map point and all ten recommendations.
+The dated census uses a gzip-compressed JSONL. Its manifest hashes the uncompressed rows. The site loads the point index in parts and reads an abstract only when a visitor opens it. The original matrix row order indexes every map point and all ten recommendations. The projection selector switches between UMAP, PCA and the registered shuffled-position control. Its recall statistic always describes the full corpus at the display seed.
 
 ```sh
 hf download BurnyCoder/alphaxiv-paper-atlas results/2026-11-26-over-10/geometry.npz results/2026-11-26-over-10/embeddings.npy results/2026-11-26-over-10/seed-layouts.npz --type dataset --revision atlas-2026-11-26-over-10 --local-dir .

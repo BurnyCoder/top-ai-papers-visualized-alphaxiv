@@ -32,7 +32,7 @@ def color_for(group):
     return "#{:02x}{:02x}{:02x}".format(round(r*255),round(g*255),round(b*255))
 
 
-def export_data(folder, docs, manifest, papers, A, labels):
+def export_data(folder, docs, manifest, papers, A, labels, evaluation=None):
     """The compact browser neighbor arrays index the unmodified snapshot row order."""
     threshold=manifest["threshold_exclusive"]
     groups=Counter(map(int,A["labels"]))
@@ -84,6 +84,12 @@ def export_data(folder, docs, manifest, papers, A, labels):
                 row.pop("topics",None);row.pop("version",None)
             save_json(docs/name,part,compact=True)
             catalog["paper_parts"].append(name)
+        if evaluation:
+            row=evaluation["seeds"][0]
+            catalog["controls"]=dict(file="projection-controls.json",seed=row["seed"],recall={
+                "umap":row["umap_recall"],"pca":row["pca_recall"],"shuffled":row["shuffled_recall"]})
+            save_json(docs/catalog["controls"]["file"],dict(pca=A["pca"][:,:2].tolist(),
+                shuffled=np.random.default_rng(row["seed"]).permutation(len(papers)).tolist()),compact=True)
     save_json(docs/"atlas.json",catalog,compact=True)
     temp=table_path.with_suffix(".partial")
     with temp.open("wb") as stream:
@@ -103,6 +109,7 @@ def export_data(folder, docs, manifest, papers, A, labels):
                 writer.write_table(pa.Table.from_pylist(table[start:start+4096],schema=first.schema))
         os.replace(target.with_suffix(".partial"),target)
     else:pq.write_table(pa.Table.from_pylist(table), folder/"papers.parquet", compression="zstd")
+    csv.field_size_limit(2**30)
     with (gzip.open if packed else open)(table_path,"rt",encoding="utf-8-sig",newline="") as f:
         csv_ids=[r["id"] for r in csv.DictReader(f)]
     del catalog,atlas_rows,table
@@ -262,7 +269,7 @@ def build(folder,progress):
     if (folder/"embeddings.npy").exists() and file_hash(folder/"embeddings.npy")!=embedding["vectors_sha256"]:
         raise ValueError("The frozen embedding matrix failed its SHA-256 integrity check")
     progress("Offline build",0,4)
-    clusters=export_data(folder,docs,manifest,papers,A,labels)
+    clusters=export_data(folder,docs,manifest,papers,A,labels,evaluation)
     for path in (PACKAGE/"web").iterdir():shutil.copyfile(path,docs/path.name)
     if threshold in PREVIOUS:
         previous_id,previous_threshold=PREVIOUS[threshold]

@@ -87,7 +87,8 @@ def audit(snapshot):
     review=ROOT/"reports"/edition_path(threshold)/"reviews"
     review.mkdir(parents=True,exist_ok=True)
     ev=read_json(folder/"evaluation.json");labels=read_json(folder/"labels.json")
-    geo=np.load(folder/"geometry.npz",allow_pickle=False)
+    with np.load(folder/"geometry.npz",allow_pickle=False) as archive:
+        geo={key:archive[key] for key in ("labels","neighbors","pca","xy")}
     vectors=np.load(folder/"embeddings.npy",allow_pickle=False,mmap_mode="r")
     api=list(map(json.loads,(folder/"api-usage.jsonl").read_text(encoding="utf-8").splitlines()))
     traces=list(map(json.loads,(folder/"label-traces.jsonl").read_text(encoding="utf-8").splitlines()))
@@ -113,11 +114,17 @@ def audit(snapshot):
     assert ids==sorted(set(ids))
     public=local_catalog(docs)
     assert public.get("threshold_exclusive",100)==threshold
+    if "controls" in public:
+        controls=read_json(docs/public["controls"]["file"])
+        assert np.array_equal(controls["pca"],geo["pca"][:,:2])
+        assert np.array_equal(controls["shuffled"],np.random.default_rng(42).permutation(len(papers)))
+        assert all(public["controls"]["recall"][k]==ev["seeds"][0][k+"_recall"] for k in ("umap","pca","shuffled"))
     csvname=public.get("csv","papers.csv")
     if "abstract_chunk_size" in public:
         size=public["abstract_chunk_size"]
         for i in range(0,len(ids),size):
             assert read_json(docs/"abstracts"/f"{i//size}.json")==[p["abstract"] for p in papers[i:i+size]]
+    csv.field_size_limit(2**30)
     with (gzip.open if csvname.endswith(".gz") else open)(docs/csvname,"rt",encoding="utf-8-sig",newline="") as stream:
         assert ids==[p["id"] for p in csv.DictReader(stream)]==[p["id"] for p in public["papers"]]
     for g,record in labels.items():

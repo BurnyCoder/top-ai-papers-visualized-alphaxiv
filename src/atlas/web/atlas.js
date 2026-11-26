@@ -57,6 +57,31 @@ function queueDraw() {
   drawing = true;
   requestAnimationFrame(() => { drawing=false; draw(); });
 }
+function enableProjectionControls(config){
+  const menu=by("projection"),score=by("layoutScore");
+  const umap=papers.map(p=>[p.x,p.y]);
+  let pending=null,shown="umap",sequence=0;
+  const caption=key=>"Full corpus · seed "+config.seed+" · "+(100*config.recall[key]).toFixed(2)+"% of original ten neighbors retained";
+  by("mapLabel").textContent="Projection";menu.hidden=false;score.hidden=false;score.textContent=caption(shown);
+  menu.onchange=async()=>{
+    const serial=++sequence, key=menu.value;
+    try{
+      let coords=umap,permutation=null;
+      if(key!=="umap"){
+        score.textContent="Loading comparison coordinates…";
+        if(!pending)pending=fetch(config.file).then(r=>{if(!r.ok)throw Error(r.status);return r.json();});
+        const controls=await pending;
+        if(key==="pca")coords=controls.pca;else permutation=controls.shuffled;
+      }
+      if(serial!==sequence)return;
+      for(let i=0;i<papers.length;i++)[papers[i].x,papers[i].y]=coords[permutation?permutation[i]:i];
+      shown=key;paintedView=[];score.textContent=caption(key);hideTip();fitTo(filtered);
+    }catch{
+      pending=null;if(serial!==sequence)return;
+      menu.value=shown;score.textContent="Comparison could not be loaded. Select the projection to retry.";
+    }
+  };
+}
 function drawPoints(ctx) {
   ctx.clearRect(0,0,width,height);
   ctx.fillStyle="#ccd5c4";
@@ -251,6 +276,7 @@ async function load(){
   if(data.csv){by("csvDownload").href=data.csv;by("csvDownload").textContent="Download CSV (.gz) ↓";}
   // The original, tagged atlas predates the threshold field and used a strict cutoff of 100.
   const threshold=data.threshold_exclusive??100;
+  if(data.controls)enableProjectionControls(data.controls);
   by("likes").min=String(threshold+1);by("likes").value=by("likes").min;
   const root=threshold===100?"./":"../";
   for(const n of [10,20,50,100])option("edition",n,"Over "+n+" likes");
