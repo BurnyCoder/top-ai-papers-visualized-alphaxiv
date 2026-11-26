@@ -1,0 +1,18 @@
+{
+  "paper_ids": 10140,
+  "independent_neighbor_overlap": 1.0,
+  "independent_seed42_recall": 0.18739644970414202,
+  "independent_pca_recall": 0.014151873767258382,
+  "independent_shuffled_recall": 0.0010650887573964497,
+  "independent_ci95": [
+    0.172288090903941,
+    0.17330756984556592
+  ],
+  "seed_layouts_rechecked": 10,
+  "clusters_with_validated_evidence": 115,
+  "extra_duplicate_names": 0,
+  "embedding_requests": 101,
+  "label_requests": 115,
+  "complete_label_responses": 115,
+  "vector_norm_max_abs_error": 1.1920928955078125e-07
+}
