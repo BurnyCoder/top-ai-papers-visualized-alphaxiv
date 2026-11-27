@@ -9,6 +9,19 @@ from playwright.sync_api import sync_playwright, expect
 from atlas.catalog import remote_catalog
 
 
+def wait_for_index(page):
+    """Allow a slow snapshot transfer to continue while the viewer reports progress."""
+    status = page.locator("#subtitle")
+    while not page.locator("#visible").inner_text():
+        message = status.inner_text()
+        if "could not be loaded" in message:
+            raise AssertionError(message)
+        # Restart the timeout only when another block arrives or the map is ready.
+        page.wait_for_function("""previous => document.getElementById("visible").textContent ||
+            document.getElementById("subtitle").textContent !== previous""",
+            arg=message, timeout=120_000)
+
+
 def check_like_sizes(page, papers):
     """Measure isolated dots on the rendered canvas, including their clickable edges."""
     legend = page.get_by_role("group", name="Likes per paper", exact=True)
@@ -66,7 +79,8 @@ def run(url,channel,shots):
         errors=[]
         page.on("pageerror",lambda e:errors.append(str(e)))
         page.goto(url)
-        expect(page.locator("#visible")).to_have_text(f"{len(papers):,} visible", timeout=90000)
+        wait_for_index(page)
+        expect(page.locator("#visible")).to_have_text(f"{len(papers):,} visible")
         threshold=data.get("threshold_exclusive",100)
         expect(page.locator("#likes")).to_have_value(str(threshold+1))
         expect(page.locator("#subtitle")).to_contain_text(f"more than {threshold} likes")
@@ -92,6 +106,7 @@ def run(url,channel,shots):
         page.locator("#sideBody .row").first.click()
         expect(page.locator("#sideBody h2")).to_have_text(nb[0])
         page.reload()
+        wait_for_index(page)
         expect(page.locator("#sideBody h2")).to_have_text(nb[0])
         page.get_by_role("button",name="Reset",exact=True).click()
         expect(page.locator("#likes")).to_have_value(str(threshold+1))
@@ -115,13 +130,17 @@ def run(url,channel,shots):
         assert downloaded.value.suggested_filename==data.get("csv","papers.csv")
         expect(page.get_by_role("combobox",name="Atlas edition")).to_have_value(str(threshold))
         if threshold in (10,20):
+            root = urljoin(url, "../")
             for other in ((20,50,100,10) if threshold==10 else (50,100,20)):
                 page.get_by_role("combobox",name="Atlas edition").select_option(str(other))
-                expect(page.locator("#subtitle")).to_contain_text(f"more than {other} likes",timeout=90000)
+                page.wait_for_url(root if other == 100 else urljoin(root, f"over-{other}/"))
+                wait_for_index(page)
+                expect(page.locator("#subtitle")).to_contain_text(f"more than {other} likes")
                 expect(page.locator("#likes")).to_have_value(str(other+1))
         mobile=browser.new_page(viewport={"width":390,"height":844},is_mobile=True,has_touch=True,device_scale_factor=1)
         mobile.goto(url)
-        expect(mobile.locator("#visible")).to_have_text(f"{len(papers):,} visible",timeout=90000)
+        wait_for_index(mobile)
+        expect(mobile.locator("#visible")).to_have_text(f"{len(papers):,} visible")
         expect(mobile.get_by_role("group", name="Likes per paper", exact=True)).to_be_visible()
         assert mobile.evaluate("document.documentElement.scrollWidth <= window.innerWidth")
         mobile.screenshot(path=str(shots/"atlas-mobile.png"),full_page=True)
