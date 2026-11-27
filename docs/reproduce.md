@@ -17,7 +17,7 @@ uv run python -m http.server 8000 --bind 127.0.0.1 --directory docs
 
 Open `http://127.0.0.1:8000/over-10/`. To collect new observations, use `uv run atlas refresh --threshold 10 --max-api-usd 50` with the local OpenAI key. A named snapshot resumes its durable spending ledger on restart. The authenticated-key option remains available on the earlier studies. The low-cutoff census uses the public metadata endpoint and incurs zero API credit charges. For optional CUDA acceleration of exact FP64 similarities, install `uv sync --frozen --extra cuda` and use the same extra when invoking uv. [Protocol](../reports/over-10/preregistration.md) · [Collection evidence](../reports/over-10/collection-amendment.md) · [API pricing](https://developers.openai.com/api/docs/pricing)
 
-To verify the live Pages files and every checksummed dataset artifact, run `uv run python scripts/verify_public.py 2026-11-26-over-10 --restore-arrays .` in the tagged checkout. It writes the three numerical arrays after checking their SHA-256 digests. With dependencies installed, `uv run --offline --frozen atlas build --snapshot 2026-11-26-over-10` rebuilds the edition without credentials. [Tagged source](https://github.com/BurnyCoder/top-ai-papers-visualized-alphaxiv/tree/atlas-2026-11-26-over-10)
+To verify the live Pages files and every checksummed dataset artifact, run `uv run python scripts/verify_public.py 2026-11-26-over-10 --restore-arrays .` from the deployed revision of `main`. It writes the three numerical arrays after checking their SHA-256 digests. With dependencies installed, `uv run --offline --frozen atlas build --snapshot 2026-11-26-over-10` rebuilds the edition without credentials. Check out the release tag to reproduce the original viewer. The current viewer draws each paper with a radius of `sqrt(likes / 10)` CSS pixels across all filters, projections and zoom levels. [Tagged source](https://github.com/BurnyCoder/top-ai-papers-visualized-alphaxiv/tree/atlas-2026-11-26-over-10)
 
 ### Over 20 likes
 
@@ -32,7 +32,7 @@ uv run python -m http.server 8000 --bind 127.0.0.1 --directory docs
 
 Open `http://127.0.0.1:8000/over-20/`. The explorer fetches abstract text when requested. Its gzip-compressed CSV expands into a UTF-8 table. The tagged Parquet table contains the same papers in the same order. [Dataset](https://huggingface.co/datasets/BurnyCoder/alphaxiv-paper-atlas/tree/atlas-2026-11-26-over-20) · [Coverage amendment](../reports/over-20/collection-amendment.md)
 
-Alternatively, run `uv run python scripts/verify_public.py 2026-11-26-over-20 --restore-arrays .` from the tagged checkout. It streams the live map assets and pinned Hub files, checks each digest, and restores the three numerical arrays after verification.
+Alternatively, run `uv run python scripts/verify_public.py 2026-11-26-over-20 --restore-arrays .` from the deployed revision of `main`. It streams the live map assets and pinned Hub files, checks each digest, and restores the three numerical arrays after verification.
 
 To re-record the optional browser walkthrough, serve the local site, install Chrome and FFmpeg, and run `uv run python scripts/record_demo.py http://127.0.0.1:8000/over-20/ docs/over-20/walkthrough.mp4`.
 

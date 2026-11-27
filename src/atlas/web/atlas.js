@@ -33,6 +33,23 @@ function topicName(id) {
   const topic=groupFor(id);
   return topic.display_name || topic.name;
 }
+// Circle area is proportional to likes. Use CSS pixels so the same count is
+// comparable across editions, projections, filters and zoom levels.
+// https://observablehq.com/plot/marks/dot
+function likeRadius(likes) { return Math.sqrt(likes / 10); }
+function showSizeKey(threshold) {
+  const key = by("sizeKey");
+  for (const likes of [25, 100, 400, 1600]) {
+    if (likes <= threshold) continue;
+    const sample = element("span", undefined, "size-example");
+    const dot = element("i");
+    dot.setAttribute("aria-hidden", "true");
+    dot.style.width = 2 * likeRadius(likes) + "px";
+    sample.dataset.likes = likes;
+    sample.append(dot, number(likes));
+    key.append(sample);
+  }
+}
 function toScreen(p) { return [(p.x-cx)*scale+width/2, height/2-(p.y-cy)*scale]; }
 function fitTo(indices) {
   if (!indices.length) return;
@@ -87,10 +104,11 @@ function drawPoints(ctx) {
   ctx.fillStyle="#ccd5c4";
   for(let x=14;x<width;x+=26) for(let y=14;y<height;y+=26) ctx.fillRect(x,y,1,1);
   const centers = new Map();
-  const radius = Math.max(2,Math.min(4,1.9+Math.log2(Math.max(1,scale/28))*.4));
-  for (const i of filtered) {
-    const p=papers[i], [x,y]=toScreen(p);
-    if(x < -5 || y < -5 || x>width+5 || y>height+5) continue;
+  // The paper list is sorted most-liked first. Paint in reverse so popular
+  // papers remain visible in dense neighborhoods when the map is zoomed out.
+  for (let j = filtered.length - 1; j >= 0; j--) {
+    const p=papers[filtered[j]], [x,y]=toScreen(p), radius=p.radius;
+    if(x < -radius || y < -radius || x>width+radius || y>height+radius) continue;
     const topic = groupFor(p.cluster);
     ctx.globalAlpha = p.cluster<0 ? .50 : .81;
     ctx.fillStyle=topic.color; ctx.beginPath(); ctx.arc(x,y,radius,0,Math.PI*2); ctx.fill();
@@ -123,8 +141,8 @@ function draw(){
   ctx.clearRect(0,0,width,height);ctx.drawImage(pointLayer,0,0,width,height);
   for(const i of [hovered,selected]){
     if(i<0 || !filteredSet.has(i)) continue;
-    const [x,y]=toScreen(papers[i]);
-    ctx.strokeStyle="#fff";ctx.lineWidth=4.5;ctx.beginPath();ctx.arc(x,y,7,0,Math.PI*2);ctx.stroke();
+    const p=papers[i], [x,y]=toScreen(p);
+    ctx.strokeStyle="#fff";ctx.lineWidth=4.5;ctx.beginPath();ctx.arc(x,y,p.radius+3,0,Math.PI*2);ctx.stroke();
     ctx.strokeStyle="#123c31";ctx.lineWidth=2;ctx.stroke();
   }
 }
@@ -136,8 +154,11 @@ function zoomAt(factor,x=width/2,y=height/2){
 }
 function nearest(x,y) {
   let best=-1, d=90;
+  // Test frontmost dots first. When the pointer is in a gap, retain the
+  // nearest-center tolerance so a small isolated paper is easy to select.
   for(const i of filtered){
-    const [px,py]=toScreen(papers[i]), dist=(px-x)**2+(py-y)**2;
+    const p=papers[i], [px,py]=toScreen(p), dist=(px-x)**2+(py-y)**2;
+    if(dist<=p.radius*p.radius)return i;
     if(dist<d){best=i;d=dist;}
   }
   return best;
@@ -152,7 +173,7 @@ canvas.addEventListener("pointermove",e=>{
     if(drag.moved){cx=drag.cx-(x-drag.x)/scale;cy=drag.cy+(y-drag.y)/scale;hideTip();} return;}
   hovered=nearest(x,y);const tip=by("tip");
   tip.hidden=hovered<0;
-  if(hovered>=0){tip.textContent=papers[hovered].title;tip.style.left=Math.max(4,Math.min(width-tip.offsetWidth-5,x+12))+"px";
+  if(hovered>=0){const p=papers[hovered];tip.textContent=p.title+" · "+number(p.likes)+" likes";tip.style.left=Math.max(4,Math.min(width-tip.offsetWidth-5,x+12))+"px";
     tip.style.top=Math.max(4,Math.min(height-tip.offsetHeight-5,y+14))+"px";}
   queueDraw();
 });
@@ -276,6 +297,7 @@ async function load(){
   if(data.csv){by("csvDownload").href=data.csv;by("csvDownload").textContent="Download CSV (.gz) ↓";}
   // The original, tagged atlas predates the threshold field and used a strict cutoff of 100.
   const threshold=data.threshold_exclusive??100;
+  showSizeKey(threshold);
   if(data.controls)enableProjectionControls(data.controls);
   by("likes").min=String(threshold+1);by("likes").value=by("likes").min;
   const root=threshold===100?"./":"../";
@@ -284,6 +306,7 @@ async function load(){
   by("edition").onchange=e=>{const n=Number(e.target.value);location.href=root+(n===100?"":"over-"+n+"/");};
   const subjects=new Set(),years=new Set();
   papers.forEach((p,i)=>{ids.set(p.paper_id,i);p.search=[p.title,p.paper_id,p.id,...p.authors].join(" ").toLocaleLowerCase();
+    p.radius=likeRadius(p.likes);
     p.subjects.forEach(t=>subjects.add(t));if(p.date)years.add(p.date.slice(0,4));});
   for(const [id] of Object.entries(clusters).sort((a,b)=>a[1].name.localeCompare(b[1].name)))option("cluster",id,topicName(id));
   [...subjects].sort().forEach(s=>option("subject",s,s));[...years].sort().reverse().forEach(y=>option("year",y,y));

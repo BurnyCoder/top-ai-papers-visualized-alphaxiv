@@ -1,6 +1,6 @@
 # Paper Atlas
 
-Explore all alphaXiv papers with **more than 10 likes**. Search by title, author or ID, inspect the ten closest papers in the original embeddings, or switch between UMAP, PCA and shuffled positions. Topic colors come from a separate ten-dimensional clustering. [Open the atlas](https://burnycoder.github.io/top-ai-papers-visualized-alphaxiv/over-10/) · [Paper](reports/over-10/paper.pdf) · [Dataset and embeddings](https://huggingface.co/datasets/BurnyCoder/alphaxiv-paper-atlas/tree/atlas-2026-11-26-over-10) · [Preregistration](reports/over-10/preregistration.md) · [Run matrix](reports/over-10/planned-runs.md)
+Explore all alphaXiv papers with **more than 10 likes**. Each dot’s area is proportional to the paper’s likes at collection time. Its color shows the topic assigned by a separate ten-dimensional clustering. Search by title, author or ID, inspect the ten closest papers in the original embeddings, or switch between UMAP, PCA and shuffled positions. [Open the atlas](https://burnycoder.github.io/top-ai-papers-visualized-alphaxiv/over-10/) · [Paper](reports/over-10/paper.pdf) · [Dataset and embeddings](https://huggingface.co/datasets/BurnyCoder/alphaxiv-paper-atlas/tree/atlas-2026-11-26-over-10) · [Preregistration](reports/over-10/preregistration.md) · [Run matrix](reports/over-10/planned-runs.md)
 
 [Watch the map walkthrough](https://burnycoder.github.io/top-ai-papers-visualized-alphaxiv/over-10/walkthrough.mp4)
 

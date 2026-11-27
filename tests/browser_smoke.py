@@ -9,6 +9,47 @@ from playwright.sync_api import sync_playwright, expect
 from atlas.catalog import remote_catalog
 
 
+def check_like_sizes(page, papers):
+    """Measure isolated dots on the rendered canvas, including their clickable edges."""
+    legend = page.get_by_role("group", name="Likes per paper", exact=True)
+    expect(legend).to_be_visible(timeout=5000)
+    # Calibrate against the actual legend. Its samples and the plot use CSS pixels.
+    sample = legend.locator("[data-likes]").last
+    sample_likes = int(sample.get_attribute("data-likes"))
+    sample_diameter = sample.locator("i").bounding_box()["width"]
+    canvas = page.locator("canvas")
+    search = page.get_by_role("searchbox")
+    smallest = min(papers, key=lambda p: p["likes"])
+    middle = min(papers, key=lambda p: abs(p["likes"] - 400))
+    largest = max(papers, key=lambda p: p["likes"])
+    for paper in (smallest, middle, largest):
+        search.fill(paper["paper_id"])
+        expect(page.locator("#visible")).to_have_text("1 visible")
+        page.get_by_role("button", name="Fit visible papers").click()
+        # Count contiguous, filled pixels on the center scanline after the redraw.
+        diameter = canvas.evaluate("""async canvas => {
+            await new Promise(requestAnimationFrame);
+            const x = Math.floor(canvas.width / 2), y = Math.floor(canvas.height / 2);
+            const row = canvas.getContext("2d").getImageData(0, y, canvas.width, 1).data;
+            const filled = i => row[4 * i + 3] > 45;
+            let left = x, right = x;
+            while (left >= 0 && filled(left)) left--;
+            while (right < canvas.width && filled(right)) right++;
+            return (right - left - 1) * canvas.clientWidth / canvas.width;
+        }""")
+        expected = sample_diameter * (paper["likes"] / sample_likes) ** 0.5
+        assert abs(diameter - expected) <= 2, (paper["paper_id"], diameter, expected)
+    # The outer part of the largest paper's dot must behave like its center.
+    box = canvas.bounding_box()
+    x = box["x"] + box["width"] / 2 + diameter / 2 - 2
+    y = box["y"] + box["height"] / 2
+    page.mouse.move(x, y)
+    expect(page.locator("#tip")).to_contain_text(f'{largest["likes"]:,} likes')
+    page.mouse.click(x, y)
+    expect(page.locator("#sideBody h2")).to_have_text(largest["title"])
+    page.get_by_role("button", name="Reset", exact=True).click()
+
+
 def run(url,channel,shots):
     url=url.rstrip("/")+"/"
     data=remote_catalog(url)
@@ -29,6 +70,7 @@ def run(url,channel,shots):
         threshold=data.get("threshold_exclusive",100)
         expect(page.locator("#likes")).to_have_value(str(threshold+1))
         expect(page.locator("#subtitle")).to_contain_text(f"more than {threshold} likes")
+        check_like_sizes(page, papers)
         if data.get("controls"):
             for mode in ("pca","shuffled","umap"):
                 page.get_by_role("combobox",name="Map projection").select_option(mode)
@@ -80,6 +122,7 @@ def run(url,channel,shots):
         mobile=browser.new_page(viewport={"width":390,"height":844},is_mobile=True,has_touch=True,device_scale_factor=1)
         mobile.goto(url)
         expect(mobile.locator("#visible")).to_have_text(f"{len(papers):,} visible",timeout=90000)
+        expect(mobile.get_by_role("group", name="Likes per paper", exact=True)).to_be_visible()
         assert mobile.evaluate("document.documentElement.scrollWidth <= window.innerWidth")
         mobile.screenshot(path=str(shots/"atlas-mobile.png"),full_page=True)
         mobile.get_by_role("searchbox").fill(clustered["paper_id"])
