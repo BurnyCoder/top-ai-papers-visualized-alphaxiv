@@ -1,5 +1,7 @@
 # Progress
 
+On 27 November 2026, the interactive maps gained a shared size legend. Circle area encodes the public like count recorded in each snapshot. Desktop browser tests measured small, medium and large dots against the legend and opened a paper by clicking near the edge of its dot in every edition. Mobile layout checks passed for each edition. [Explorer](https://burnycoder.github.io/top-ai-papers-visualized-alphaxiv/over-10/) · [Browser checks](../tests/browser_smoke.py)
+
 The over-10 edition is published. Two reconstructions of the public alphaXiv feed agreed on every qualifying paper group. Desktop and mobile tests passed on GitHub Pages. A fresh checkout of the tagged source rebuilt the map, downloadable tables, figures and paper from the public numerical arrays with both API keys absent. The SHA-256 checks matched the published files. [Explore the over-10 atlas](https://burnycoder.github.io/top-ai-papers-visualized-alphaxiv/over-10/) · [Scientific results](over-10/summary.md) · [Public verification record](../results/2026-11-26-over-10/public-verification.json)
 
 The expanded edition covers more than 50 public likes. Collection, embedding, cluster naming, ten-seed evaluation, desktop and mobile interaction checks, and independent verification of the full neighbor table are complete. The original 100-like edition remains accessible at its original address. [Expanded map](https://burnycoder.github.io/top-ai-papers-visualized-alphaxiv/over-50/) · [Measured results](over-50/summary.md) · [Numerical audit](over-50/reviews/release.md)
